@@ -13,6 +13,7 @@ Sempre verifique as versões das dependências instaladas para evitar erros de b
 ### Dependências Principais (`dependencies`)
 *   `react`: `^19.1.0` (React 19.x)
 *   `react-dom`: `^19.1.0`
+*   `react-router-dom` : `^7.17.0`
 *   `@tauri-apps/api`: `^2` (Tauri v2 API)
 *   `@tauri-apps/plugin-opener`: `^2` (Tauri v2 Opener)
 *   `lucide-react`: `^1.17.0` (Pacote de ícones)
@@ -23,6 +24,7 @@ Sempre verifique as versões das dependências instaladas para evitar erros de b
 *   `tailwind-merge`: `^3.6.0`
 *   `tw-animate-css`: `^1.4.0`
 *   `@fontsource-variable/geist`: `^5.2.9` (Fonte padrão)
+*   `zustand`: `^5.0.14`
 
 ### Dependências de Desenvolvimento (`devDependencies`)
 *   `vite`: `^7.0.4` (Vite v7)
