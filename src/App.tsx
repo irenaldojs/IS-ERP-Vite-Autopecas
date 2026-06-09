@@ -34,6 +34,11 @@ import {
   Layers,
   Navigation,
   Map,
+  FileText,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  ShieldAlert,
 } from "lucide-react";
 
 function App() {
@@ -1346,6 +1351,339 @@ function App() {
     },
   ];
 
+  // Define screens for the Finance Module (Finanças)
+  const financasTabs = [
+    {
+      id: "receber",
+      label: "Contas a Receber",
+      icon: TrendingUp,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action and Summary Row */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center shrink-0">
+            <div className="flex gap-4 items-center">
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                <input
+                  type="text"
+                  placeholder="Pesquisar contas a receber..."
+                  className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+              <div className="flex gap-1 bg-[#0e1626]/40 p-1 border border-slate-800 rounded-lg">
+                <span className="text-[10px] text-slate-400 font-bold px-2 py-0.5 rounded cursor-pointer bg-slate-800">Todos</span>
+                <span className="text-[10px] text-slate-500 hover:text-slate-300 px-2 py-0.5 rounded cursor-pointer">Pendentes</span>
+                <span className="text-[10px] text-slate-500 hover:text-slate-300 px-2 py-0.5 rounded cursor-pointer">Vencidos</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 self-stretch sm:self-auto justify-between bg-[#0e1626]/30 border border-slate-850 px-3 py-1.5 rounded-xl text-[10px] font-semibold text-slate-400">
+              <span className="flex items-center gap-1"><Coins className="h-3.5 w-3.5 text-indigo-400" /> Total a Receber: <strong className="text-slate-200">R$ 42.150,00</strong></span>
+              <span className="h-3 w-[1px] bg-slate-800" />
+              <span className="flex items-center gap-1"><ShieldAlert className="h-3.5 w-3.5 text-red-400" /> Vencidos: <strong className="text-red-400">R$ 5.400,00</strong></span>
+            </div>
+          </div>
+
+          {/* Receivables Table */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">Fatura</th>
+                    <th className="p-3">Cliente</th>
+                    <th className="p-3">Vencimento</th>
+                    <th className="p-3 text-right">Valor</th>
+                    <th className="p-3 text-center">Status</th>
+                    <th className="p-3 text-center">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#REC-1092</td>
+                    <td className="p-3 font-semibold text-slate-200">Oficina Central de Freios Ltda</td>
+                    <td className="p-3">15/06/2026</td>
+                    <td className="p-3 text-right font-bold">R$ 1.840,00</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20 uppercase tracking-wider">Pendente</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <Button className="bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/20 text-emerald-450 text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider flex items-center gap-1.5 mx-auto animate-pulse">
+                        <MessageCircle className="h-3 w-3" /> Cobrar WhatsApp
+                      </Button>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#REC-1090</td>
+                    <td className="p-3 font-semibold text-slate-200">Distribuidora de Peças Rápido</td>
+                    <td className="p-3">05/06/2026</td>
+                    <td className="p-3 text-right font-bold">R$ 5.400,00</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 uppercase tracking-wider animate-pulse">Vencido</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <Button className="bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/20 text-emerald-450 text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider flex items-center gap-1.5 mx-auto">
+                        <MessageCircle className="h-3 w-3" /> Notificar WhatsApp
+                      </Button>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#REC-1088</td>
+                    <td className="p-3 font-semibold text-slate-200">Juliano Souza Auto Mecânica</td>
+                    <td className="p-3">01/06/2026</td>
+                    <td className="p-3 text-right font-bold text-slate-400">R$ 890,00</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 uppercase tracking-wider">Pago</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <span className="text-[10px] text-slate-500 font-semibold font-mono">Recebido Itaú</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "pagar",
+      label: "Contas a Pagar",
+      icon: TrendingDown,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action and Summary Row */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center shrink-0">
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+              <input
+                type="text"
+                placeholder="Pesquisar contas a pagar..."
+                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none"
+              />
+            </div>
+            
+            <div className="flex gap-2">
+              <Button className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg flex items-center gap-1.5 cursor-pointer">
+                <Plus className="h-3.5 w-3.5" /> Adicionar Despesa
+              </Button>
+            </div>
+          </div>
+
+          {/* Payables Table */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">Cód. Despesa</th>
+                    <th className="p-3">Fornecedor / Descrição</th>
+                    <th className="p-3">Categoria</th>
+                    <th className="p-3">Vencimento</th>
+                    <th className="p-3 text-right">Valor</th>
+                    <th className="p-3 text-center">Status</th>
+                    <th className="p-3 text-center">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#PAG-0891</td>
+                    <td className="p-3 font-semibold text-slate-200">Cofap Componentes Distribuidora</td>
+                    <td className="p-3">Fornecedor (Peças)</td>
+                    <td className="p-3">12/06/2026</td>
+                    <td className="p-3 text-right font-bold text-amber-450">R$ 12.450,00</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20 uppercase tracking-wider">Pendente</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <Button className="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        Dar Baixa
+                      </Button>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#PAG-0890</td>
+                    <td className="p-3 font-semibold text-slate-200">Prefeitura de SP - IPTU Parcela 05</td>
+                    <td className="p-3">Impostos / IPTU</td>
+                    <td className="p-3">10/06/2026</td>
+                    <td className="p-3 text-right font-bold">R$ 780,00</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20 uppercase tracking-wider">Pendente</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <Button className="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        Dar Baixa
+                      </Button>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#PAG-0888</td>
+                    <td className="p-3 font-semibold text-slate-200">Enel Distribuidora S/A</td>
+                    <td className="p-3">Despesa Fixa / Energia</td>
+                    <td className="p-3">02/06/2026</td>
+                    <td className="p-3 text-right font-bold text-slate-400">R$ 1.150,00</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 uppercase tracking-wider">Pago</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <span className="text-[10px] text-slate-500 font-semibold font-mono">Pago Bradesco</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "fluxo",
+      label: "Fluxo de Caixa",
+      icon: Activity,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Cash flow Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
+            <div className="bg-[#0e1626]/30 border border-slate-850 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-505 font-bold uppercase tracking-wider">Banco Itaú</span>
+              <span className="text-sm font-extrabold text-slate-100">R$ 45.230,00</span>
+              <span className="text-[9px] text-emerald-450 font-semibold flex items-center gap-0.5">Conciliação Ok</span>
+            </div>
+            <div className="bg-[#0e1626]/30 border border-slate-855 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-505 font-bold uppercase tracking-wider">Banco Bradesco</span>
+              <span className="text-sm font-extrabold text-slate-100">R$ 12.890,00</span>
+              <span className="text-[9px] text-slate-500 font-semibold">Sem pendências</span>
+            </div>
+            <div className="bg-[#0e1626]/30 border border-slate-855 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-550 font-bold uppercase tracking-wider">Caixa Interno (Balcão)</span>
+              <span className="text-sm font-extrabold text-slate-100">R$ 3.450,00</span>
+              <span className="text-[9px] text-indigo-400 font-semibold">Turno 01 Aberto</span>
+            </div>
+            <div className="bg-indigo-900/10 border border-indigo-500/20 p-3.5 rounded-xl flex flex-col space-y-1 shadow-inner shadow-indigo-500/5">
+              <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Total Disponível</span>
+              <span className="text-sm font-black text-indigo-300">R$ 61.570,00</span>
+              <span className="text-[9px] text-indigo-400 font-semibold">Soma de Caixas e Bancos</span>
+            </div>
+          </div>
+
+          {/* Daily operations log */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="p-3 border-b border-slate-850/60 bg-[#0e1626]/40 flex justify-between items-center shrink-0">
+              <h5 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Últimos Lançamentos Diários</h5>
+              <span className="text-[9px] font-mono text-slate-500">09/06/2026</span>
+            </div>
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/40 text-slate-455 font-semibold">
+                    <th className="p-2.5 pl-4">Hora</th>
+                    <th className="p-2.5">Descrição</th>
+                    <th className="p-2.5">Categoria</th>
+                    <th className="p-2.5">Origem/Destino</th>
+                    <th className="p-2.5 text-right pr-4">Valor</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850/60 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-2.5 pl-4 font-mono text-slate-550">01:10</td>
+                    <td className="p-2.5 font-semibold text-slate-200">Recebimento Venda #00981</td>
+                    <td className="p-2.5 text-slate-400">Venda Balcão</td>
+                    <td className="p-2.5 font-mono text-indigo-400">Caixa Interno</td>
+                    <td className="p-2.5 text-right pr-4 font-bold text-emerald-450">+ R$ 379,80</td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-2.5 pl-4 font-mono text-slate-550">00:55</td>
+                    <td className="p-2.5 font-semibold text-slate-200">Pagamento Frete Logística</td>
+                    <td className="p-2.5 text-slate-400">Despesa Entrega</td>
+                    <td className="p-2.5 font-mono text-slate-500">Caixa Interno</td>
+                    <td className="p-2.5 text-right pr-4 font-bold text-rose-450">- R$ 50,00</td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-2.5 pl-4 font-mono text-slate-550">00:15</td>
+                    <td className="p-2.5 font-semibold text-slate-200">Recebimento Fatura #REC-1088</td>
+                    <td className="p-2.5 text-slate-400">Fatura Cliente</td>
+                    <td className="p-2.5 font-mono text-indigo-400">Banco Itaú</td>
+                    <td className="p-2.5 text-right pr-4 font-bold text-emerald-450">+ R$ 890,00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "dre",
+      label: "DRE Simplificado",
+      icon: FileText,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Demonstrativo do Resultado do Exercício (DRE) - Competência Atual
+            </h4>
+            <div className="text-[10px] text-slate-455 bg-[#16223f]/40 px-2.5 py-1 rounded border border-slate-800 font-bold">
+              Junho / 2026
+            </div>
+          </div>
+
+          {/* DRE Structure */}
+          <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-4 space-y-1.5 font-mono text-xs text-slate-300">
+            <div className="flex justify-between items-center py-1 border-b border-slate-850/30">
+              <span className="font-bold text-slate-200">(+) Receita Bruta de Vendas</span>
+              <span className="text-slate-100 font-bold">R$ 145.200,00</span>
+            </div>
+            <div className="flex justify-between items-center py-1 text-rose-455">
+              <span>(-) Devoluções de Venda & Abatimentos</span>
+              <span>- R$ 2.400,00</span>
+            </div>
+            <div className="flex justify-between items-center py-1.5 border-b border-slate-850 font-bold text-slate-200 bg-[#0e1626]/60 px-2 rounded">
+              <span>(=) Receita Líquida</span>
+              <span className="text-indigo-400">R$ 142.800,00</span>
+            </div>
+            <div className="flex justify-between items-center py-1 text-rose-455">
+              <span>(-) Custo da Mercadoria Vendida (CMV)</span>
+              <span>- R$ 78.500,00</span>
+            </div>
+            <div className="flex justify-between items-center py-1.5 border-b border-slate-850 font-bold text-slate-200 bg-[#0e1626]/60 px-2 rounded">
+              <span>(=) Resultado Bruto (Lucro Bruto)</span>
+              <span className="text-indigo-400">R$ 64.300,00</span>
+            </div>
+            
+            {/* Expenses Breakdown */}
+            <div className="pl-4 space-y-1 text-slate-500 text-[11px] py-1">
+              <div className="flex justify-between">
+                <span>(-) Salários e Encargos da Equipe</span>
+                <span>- R$ 12.000,00</span>
+              </div>
+              <div className="flex justify-between">
+                <span>(-) Aluguel, IPTU e Luz da Loja</span>
+                <span>- R$ 5.500,00</span>
+              </div>
+              <div className="flex justify-between">
+                <span>(-) Investimentos em Marketing & Vendas</span>
+                <span>- R$ 4.600,00</span>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center py-1.5 border-b border-slate-850 font-bold text-slate-200 bg-[#0e1626]/60 px-2 rounded">
+              <span>(=) LAJIDA (EBITDA)</span>
+              <span className="text-indigo-400">R$ 42.200,00</span>
+            </div>
+            <div className="flex justify-between items-center py-1 text-rose-455">
+              <span>(-) Depreciação / Juros de Operação</span>
+              <span>- R$ 3.200,00</span>
+            </div>
+            <div className="flex justify-between items-center py-2 font-black text-sm bg-emerald-500/5 border border-emerald-500/10 text-emerald-450 px-2.5 rounded shadow-sm shadow-emerald-500/2">
+              <span>(=) LUCRO LÍQUIDO DO PERÍODO</span>
+              <span>R$ 39.000,00</span>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <DashboardLayout
       activeModule={activeModule}
@@ -1407,6 +1745,17 @@ function App() {
             defaultTabId="baias"
             title="Entregas"
             icon={Truck}
+          />
+        </div>
+      ) : activeModule === "financas" ? (
+        <div className="flex-1 flex flex-col min-h-0 h-full">
+          {/* Module Sub-tabs Container with integrated title */}
+          <ModuleTabContainer
+            key="financas"
+            tabs={financasTabs}
+            defaultTabId="receber"
+            title="Financeiro"
+            icon={DollarSign}
           />
         </div>
       ) : (
@@ -1471,16 +1820,13 @@ function App() {
                 onClick={() => setActiveModule("entregas")}
               />
 
-              {/* Financeiro Card (Placeholder / Coming Soon) */}
-              <div className="opacity-40 cursor-not-allowed">
-                <ModuleCard
-                  title="Fluxo Financeiro"
-                  description="Controle de fluxo de caixa diário, contas a pagar, recebimentos e boletos."
-                  icon={DollarSign}
-                  onClick={() => {}}
-                  badge="Em breve"
-                />
-              </div>
+              {/* Financeiro Card (Active) */}
+              <ModuleCard
+                title="Fluxo Financeiro"
+                description="Controle de fluxo de caixa diário, contas a pagar, recebimentos e boletos."
+                icon={DollarSign}
+                onClick={() => setActiveModule("financas")}
+              />
             </div>
           </div>
 

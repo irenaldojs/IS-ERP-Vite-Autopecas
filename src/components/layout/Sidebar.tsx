@@ -1,4 +1,4 @@
-import { ShoppingCart, Wallet, Box, ShieldCheck, Truck } from "lucide-react";
+import { ShoppingCart, Wallet, Box, ShieldCheck, Truck, DollarSign, Receipt, BarChart3 } from "lucide-react";
 
 interface SidebarProps {
   activeModule?: string;
@@ -36,6 +36,24 @@ export function Sidebar({ activeModule = "vendas", onSelectModule }: SidebarProp
       label: "Entregas",
       icon: Truck,
       tooltip: "Módulo de Entregas & Logística",
+    },
+    {
+      id: "financas",
+      label: "Finanças",
+      icon: DollarSign,
+      tooltip: "Módulo Financeiro",
+    },
+    {
+      id: "faturamento",
+      label: "Faturamento",
+      icon: Receipt,
+      tooltip: "Módulo de Faturamento & Fiscal",
+    },
+    {
+      id: "gerencia",
+      label: "Gerência",
+      icon: BarChart3,
+      tooltip: "Módulo Gerencial & BI",
     },
   ];
 
