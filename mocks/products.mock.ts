@@ -4,7 +4,6 @@ import {
   ProdutoGrupo,
   ProdutoMarca,
   ProdutoAplicacaoLista,
-  ProdutoAplicacao,
   ProdutoTipoEspecificacao,
   ProdutoEspecificacao,
   CarroMontadora,

@@ -1,7 +1,9 @@
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Search, ShoppingCart, Plus } from "lucide-react";
+import { ShoppingCart, Plus } from "lucide-react";
+import { produtos, produtoGrupos, produtoMarcas } from "../../../../mocks/products.mock";
 
-type Product = { code: string; name: string; brand: string; price: number; stock?: number };
+type Product = { code: string; originalCode?: string; name: string; brand: string; price: number; stock?: number };
 type Item = { id: string; code: string; name: string; brand: string; qty: number; price: number };
 
 type Props = {
@@ -27,15 +29,8 @@ type Props = {
 
 export default function Orcamento(props: Props) {
   const {
-    clientName,
-    setClientName,
-    vehicleName,
-    setVehicleName,
     productSearchQuery,
     setProductSearchQuery,
-    showProductSuggestions,
-    setShowProductSuggestions,
-    filteredCatalog,
     activeSaleItems,
     setActiveSaleItems,
     subtotalSale,
@@ -47,99 +42,113 @@ export default function Orcamento(props: Props) {
     showToast,
   } = props;
 
+  const [currentProduct, setCurrentProduct] = useState<Product | undefined>(undefined);
+  const inputIdRef = useRef<HTMLInputElement>(null);
+  const addBtnRef = useRef<HTMLButtonElement>(null);
+
+  const handleSearchProduct = () => {
+    if (productSearchQuery.trim()) {
+      const searchVal = productSearchQuery.trim();
+      const mockProd = produtos.find((p) => p.id.toString() === searchVal);
+      
+      if (mockProd) {
+        const grupo = produtoGrupos.find(g => g.id === mockProd.grupo_id);
+        const marca = produtoMarcas.find(m => m.id === mockProd.marca_id);
+        
+        const prod: Product = {
+          code: mockProd.id.toString(),
+          originalCode: mockProd.codigo_original,
+          name: grupo?.descricao || "Produto Desconhecido",
+          brand: marca?.nome || "Sem Marca",
+          price: mockProd.preco,
+          stock: 10
+        };
+        setCurrentProduct(prod);
+      } else {
+        setCurrentProduct(undefined);
+        showToast("Produto não encontrado com este ID!", "error");
+      }
+    } else {
+      setCurrentProduct(undefined);
+    }
+  };
+
+  const handleAddProduct = () => {
+    if (!currentProduct) {
+      if (productSearchQuery.trim()) {
+        showToast("Busque o produto primeiro (Aperte Enter)", "info");
+      }
+      inputIdRef.current?.focus();
+      return;
+    }
+    
+    setActiveSaleItems((prev: Item[]) => {
+      const existing = prev.find((item) => item.code === currentProduct.code);
+      if (existing) {
+        return prev.map((item) =>
+          item.code === currentProduct.code ? { ...item, qty: item.qty + 1 } : item
+        );
+      } else {
+        return [
+          ...prev,
+          {
+            id: currentProduct.code,
+            code: currentProduct.code,
+            name: currentProduct.name,
+            brand: currentProduct.brand,
+            qty: 1,
+            price: currentProduct.price,
+          },
+        ];
+      }
+    });
+    setProductSearchQuery("");
+    setCurrentProduct(undefined);
+    showToast(`${currentProduct.name} adicionado!`, "success");
+    inputIdRef.current?.focus();
+  };
+
   return (
     <div className="flex-1 w-full h-full flex flex-col lg:flex-row gap-4 min-h-0 bg-[#070a13]">
       {/* Main List Entry Area */}
       <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/10 flex flex-col min-h-0">
-        {/* Header: Client & Vehicle Inputs */}
-        <div className="p-4 border-b border-slate-850/60 bg-[#0e1626]/30 grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0 rounded-t-xl">
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Nome do Cliente</label>
-            <input
-              type="text"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
-              placeholder="Nome do cliente (ou Consumidor Final)"
-              className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Modelo do Veículo</label>
-            <input
-              type="text"
-              value={vehicleName}
-              onChange={(e) => setVehicleName(e.target.value)}
-              placeholder="Ex: Honda Civic 2018 2.0"
-              className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
-            />
-          </div>
-        </div>
-
-        {/* Product Autocomplete Search Bar */}
-        <div className="p-3 border-b border-slate-850/60 bg-[#0e1626]/20 relative shrink-0">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
-            <input
-              type="text"
-              value={productSearchQuery}
-              onChange={(e) => {
-                setProductSearchQuery(e.target.value);
-                setShowProductSuggestions(true);
-              }}
-              onFocus={() => setShowProductSuggestions(true)}
-              placeholder="Pesquisar código, peça ou marca de veículo no catálogo..."
-              className="w-full pl-9 pr-4 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors"
-            />
-          </div>
-
-          {/* Suggestions Overlay */}
-          {showProductSuggestions && productSearchQuery.trim() !== "" && (
-            <div className="absolute left-3 right-3 mt-1.5 max-h-48 overflow-y-auto bg-[#070a13] border border-slate-800 rounded-xl shadow-2xl z-50 divide-y divide-slate-850/60">
-              {filteredCatalog.length > 0 ? (
-                filteredCatalog.map((prod) => (
-                  <button
-                    key={prod.code}
-                    type="button"
-                    onClick={() => {
-                      setActiveSaleItems((prev: Item[]) => {
-                        const existing = prev.find((item) => item.code === prod.code);
-                        if (existing) {
-                          return prev.map((item) => (item.code === prod.code ? { ...item, qty: item.qty + 1 } : item));
-                        } else {
-                          return [
-                            ...prev,
-                            {
-                              id: prod.code,
-                              code: prod.code,
-                              name: prod.name,
-                              brand: prod.brand,
-                              qty: 1,
-                              price: prod.price,
-                            },
-                          ];
-                        }
-                      });
-                      setProductSearchQuery("");
-                      setShowProductSuggestions(false);
-                      showToast(`${prod.name} adicionado!`);
-                    }}
-                    className="w-full px-4 py-2.5 hover:bg-[#16223f]/30 flex justify-between items-center text-left cursor-pointer transition-colors"
-                  >
-                    <div className="flex flex-col">
-                      <span className="text-xs font-bold text-slate-200">{prod.name}</span>
-                      <span className="text-[10px] text-slate-500 font-mono">Código: {prod.code} • Marca: {prod.brand}</span>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-[10px] font-bold text-slate-450">Estoque: {prod.stock} UN</span>
-                      <span className="text-xs font-black text-indigo-400">R$ {prod.price.toFixed(2)}</span>
-                    </div>
-                  </button>
-                ))
-              ) : (
-                <div className="px-4 py-3 text-center text-xs text-slate-500">Nenhuma autopeça encontrada.</div>
-              )}
+        {/* Product ID Input & Add Button */}
+        <div className="p-4 border-b border-slate-850/60 bg-[#0e1626]/30 flex gap-4 shrink-0 rounded-t-xl items-end">
+          <div className="flex-grow space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ID do Produto</label>
+            <div className="flex items-center gap-3">
+              <input
+                ref={inputIdRef}
+                type="text"
+                value={productSearchQuery}
+                onChange={(e) => {
+                  setProductSearchQuery(e.target.value);
+                  if (e.target.value === "") setCurrentProduct(undefined);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleSearchProduct();
+                    setTimeout(() => {
+                      addBtnRef.current?.focus();
+                    }, 10);
+                  }
+                }}
+                placeholder="ID..."
+                className="w-24 px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors shrink-0 text-center"
+              />
+              <div className="text-sm font-semibold text-slate-300 whitespace-nowrap truncate flex-1 flex items-center h-[38px] px-3 bg-[#070a13]/50 border border-slate-800/50 rounded-lg">
+                {currentProduct ? `${currentProduct.originalCode ? currentProduct.originalCode + ' - ' : ''}${currentProduct.name} - ${currentProduct.brand}` : "Aguardando código..."}
+              </div>
             </div>
-          )}
+          </div>
+          <Button
+            ref={addBtnRef}
+            onClick={handleAddProduct}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg h-[38px] flex items-center justify-center shrink-0 cursor-pointer"
+          >
+            <Plus className="h-5 w-5" />
+          </Button>
         </div>
 
         {/* Cart Items Table */}
@@ -157,51 +166,48 @@ export default function Orcamento(props: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-850/50 text-slate-355">
-              {activeSaleItems.map((item) => (
-                <tr key={item.code} className="hover:bg-[#16223f]/10">
+              {activeSaleItems.map((item, index) => (
+                <tr 
+                  key={item.code} 
+                  className="hover:bg-[#16223f]/10 cursor-pointer"
+                  onClick={() => document.getElementById(`qty-input-${index}`)?.focus()}
+                >
                   <td className="p-2.5 pl-4 font-mono text-slate-450">{item.code}</td>
                   <td className="p-2.5 font-semibold text-slate-200">{item.name}</td>
                   <td className="p-2.5 text-slate-400">{item.brand}</td>
-                  <td className="p-2.5 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
-                      <button
-                        onClick={() => {
-                          setActiveSaleItems((prev: Item[]) => prev.map((i) => (i.code === item.code ? { ...i, qty: Math.max(1, i.qty - 1) } : i)));
-                        }}
-                        className="h-5 w-5 rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-[10px] text-slate-400 hover:text-white cursor-pointer active:scale-92 transition-all"
-                      >
-                        -
-                      </button>
-                      <span className="font-bold text-slate-200 text-xs w-6 text-center">{item.qty}</span>
-                      <button
-                        onClick={() => {
-                          setActiveSaleItems((prev: Item[]) => prev.map((i) => (i.code === item.code ? { ...i, qty: i.qty + 1 } : i)));
-                        }}
-                        className="h-5 w-5 rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-[10px] text-slate-400 hover:text-white cursor-pointer active:scale-92 transition-all"
-                      >
-                        +
-                      </button>
-                    </div>
+                  <td className="p-2.5 text-center font-bold text-slate-200">
+                    <input
+                      id={`qty-input-${index}`}
+                      type="number"
+                      min="1"
+                      className="w-16 bg-[#070a13] border border-slate-700 rounded px-2 py-1 text-center text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                      value={item.qty}
+                      onChange={(e) => {
+                        const val = e.target.value === "" ? 0 : parseInt(e.target.value);
+                        setActiveSaleItems((prev: Item[]) =>
+                          prev.map((i) => (i.code === item.code ? { ...i, qty: val } : i))
+                        );
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'ArrowDown') {
+                          e.preventDefault();
+                          document.getElementById(`qty-input-${index + 1}`)?.focus();
+                        } else if (e.key === 'ArrowUp') {
+                          e.preventDefault();
+                          document.getElementById(`qty-input-${index - 1}`)?.focus();
+                        }
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                   </td>
-                  <td className="p-2.5 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <span className="text-[10px] text-slate-500">R$</span>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={item.price}
-                        onChange={(e) => {
-                          const val = parseFloat(e.target.value) || 0;
-                          setActiveSaleItems((prev: Item[]) => prev.map((i) => (i.code === item.code ? { ...i, price: val } : i)));
-                        }}
-                        className="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-indigo-500 text-right w-16 text-slate-200 font-semibold focus:outline-none transition-colors"
-                      />
-                    </div>
+                  <td className="p-2.5 text-right font-semibold text-slate-200">
+                    R$ {item.price.toFixed(2)}
                   </td>
                   <td className="p-2.5 text-right pr-4 font-bold text-slate-200">R$ {(item.price * item.qty).toFixed(2)}</td>
                   <td className="p-2.5 text-center">
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setActiveSaleItems((prev: Item[]) => prev.filter((i) => i.code !== item.code));
                         showToast(`${item.name} removido!`, "info");
                       }}
@@ -218,7 +224,7 @@ export default function Orcamento(props: Props) {
                   <td colSpan={7} className="p-10 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center space-y-2">
                       <ShoppingCart className="h-8 w-8 text-slate-700" />
-                      <span className="text-xs font-semibold">Tabela limpa. Insira itens usando a busca de produtos acima.</span>
+                      <span className="text-xs font-semibold">Tabela limpa. Insira o ID do produto acima.</span>
                     </div>
                   </td>
                 </tr>
