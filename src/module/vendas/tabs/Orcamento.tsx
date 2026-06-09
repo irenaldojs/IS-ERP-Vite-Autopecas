@@ -231,6 +231,18 @@ export default function Orcamento(props: Props) {
     };
   }, [isSearchModalOpen, modalResults, activeSelectedProd]);
 
+  // Auto-scroll selected row into view in the search results table
+  useEffect(() => {
+    if (!isSearchModalOpen || !activeSelectedProd) return;
+    const rowElement = document.getElementById(`search-prod-row-${activeSelectedProd.id}`);
+    if (rowElement) {
+      rowElement.scrollIntoView({
+        behavior: "auto", // snappy scroll for keyboard navigation
+        block: "nearest", // scroll only as much as needed to make it visible
+      });
+    }
+  }, [activeSelectedProd, isSearchModalOpen]);
+
   const cashSaleValue = totalSale * 0.95;
   const maxInstallments = totalSale >= 50 ? Math.min(10, Math.floor(totalSale / 50)) : 0;
   const installmentAmount = maxInstallments > 0 ? totalSale / maxInstallments : 0;
@@ -305,7 +317,7 @@ export default function Orcamento(props: Props) {
               {activeSaleItems.map((item, index) => (
                 <tr 
                   key={item.code} 
-                  className="hover:bg-[#16223f]/50 focus-within:bg-[#16223f]/50 cursor-pointer transition-colors"
+                  className="hover:bg-[#16223f]/50 focus-within:bg-indigo-650/20 cursor-pointer transition-all border-l-4 border-transparent focus-within:border-indigo-500"
                   onClick={() => document.getElementById(`qty-input-${index}`)?.focus()}
                 >
                   <td className="p-2.5 pl-4 font-mono text-slate-450">{item.code}</td>
@@ -608,6 +620,7 @@ export default function Orcamento(props: Props) {
                     return (
                       <tr
                         key={prod.id}
+                        id={`search-prod-row-${prod.id}`}
                         onClick={() => {
                           setSelectedModalProduct(prod);
                           setCurrentImageIndex(0);
@@ -615,8 +628,8 @@ export default function Orcamento(props: Props) {
                         onDoubleClick={() => {
                           handleAddProductFromModal(prod);
                         }}
-                        className={`hover:bg-[#16223f]/40 cursor-pointer transition-colors ${
-                          isSelected ? "bg-indigo-650/15 border-l-2 border-indigo-500" : ""
+                        className={`hover:bg-[#16223f]/40 cursor-pointer transition-all ${
+                          isSelected ? "bg-indigo-600/25 border-l-4 border-indigo-500 font-semibold text-white shadow-inner" : "border-l-4 border-transparent"
                         }`}
                       >
                         <td className="py-1 px-3 pl-4 font-mono text-slate-400">{prod.id}</td>
