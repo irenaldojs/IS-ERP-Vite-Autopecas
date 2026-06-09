@@ -2,10 +2,11 @@ import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Server, ShieldCheck, Terminal, Cpu } from "lucide-react";
+import { ModuleCard } from "@/components/dashboard/ModuleCard";
+import { ShoppingCart, Server, ShieldCheck, Terminal, Cpu, Box, DollarSign, LayoutGrid } from "lucide-react";
 
 function App() {
-  const [activeModule, setActiveModule] = useState("vendas");
+  const [activeModule, setActiveModule] = useState("home"); // Changed default to home
   const [name, setName] = useState("");
   const [greetMsg, setGreetMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -156,22 +157,55 @@ function App() {
           </div>
         </div>
       ) : (
-        /* Empty Dashboard Home State (Vite/Tauri welcome) */
-        <div className="flex flex-col items-center justify-center min-h-[450px] text-center space-y-5 relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
-
-          <div className="h-16 w-16 bg-[#0e1626] border border-slate-800 rounded-2xl flex items-center justify-center text-indigo-400 shadow-lg relative group">
-            <Cpu className="h-8 w-8 animate-pulse text-indigo-400" />
-            <div className="absolute -inset-0.5 bg-gradient-to-tr from-indigo-500 to-violet-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition-opacity duration-300 -z-10" />
-          </div>
-          
-          <div className="space-y-2 max-w-sm">
-            <h2 className="text-lg font-bold text-slate-100 tracking-tight">
-              Bem-vindo ao IS-ERP Autopeças
-            </h2>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              O sistema operacional está pronto para uso. Navegue pelos módulos disponíveis na barra lateral à esquerda.
+        /* Modules Dashboard (Home View) */
+        <div className="space-y-6">
+          {/* Dashboard Header */}
+          <div className="flex flex-col gap-1.5 relative">
+            <div className="absolute -top-12 -left-12 w-48 h-48 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none" />
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 text-indigo-400">
+                <LayoutGrid className="h-4.5 w-4.5" />
+              </div>
+              <h2 className="text-xl font-bold tracking-tight text-slate-100">
+                Módulos do Sistema
+              </h2>
+            </div>
+            <p className="text-xs text-slate-400 max-w-xl">
+              Selecione o módulo abaixo para iniciar as operações do ERP. Módulos adicionais serão habilitados conforme o nível de acesso da estação.
             </p>
+          </div>
+
+          {/* Module Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {/* Vendas Card (Active) */}
+            <ModuleCard
+              title="Vendas & Faturamento"
+              description="Abertura de PDV, lançamento de orçamentos rápidos, finalização de notas e controle de caixa."
+              icon={ShoppingCart}
+              onClick={() => setActiveModule("vendas")}
+            />
+
+            {/* Estoque Card (Placeholder / Coming Soon) */}
+            <div className="opacity-40 cursor-not-allowed">
+              <ModuleCard
+                title="Controle de Estoque"
+                description="Cadastro de autopeças, controle de prateleiras, inventários e entrada automática de XML."
+                icon={Box}
+                onClick={() => {}}
+                badge="Em breve"
+              />
+            </div>
+
+            {/* Financeiro Card (Placeholder / Coming Soon) */}
+            <div className="opacity-40 cursor-not-allowed">
+              <ModuleCard
+                title="Fluxo Financeiro"
+                description="Controle de fluxo de caixa diário, contas a pagar, recebimentos e boletos."
+                icon={DollarSign}
+                onClick={() => {}}
+                badge="Em breve"
+              />
+            </div>
           </div>
         </div>
       )}
