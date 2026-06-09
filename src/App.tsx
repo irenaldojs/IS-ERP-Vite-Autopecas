@@ -99,7 +99,7 @@ function App() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-450 font-semibold">
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
                     <th className="p-3">Nº</th>
                     <th className="p-3">Cliente</th>
                     <th className="p-3">Veículo</th>
@@ -172,9 +172,9 @@ function App() {
               <button className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-[#0e1626]/40 text-left cursor-pointer">
                 <div className="flex flex-col min-w-0">
                   <span className="text-xs font-bold text-slate-300 truncate">Oficina Central</span>
-                  <span className="text-[10px] text-slate-500 truncate">Tudo certo com a entrega?</span>
+                  <span className="text-[10px] text-slate-505 truncate">Tudo certo com a entrega?</span>
                 </div>
-                <span className="text-[9px] text-slate-500 font-mono">Ontem</span>
+                <span className="text-[9px] text-slate-505 font-mono">Ontem</span>
               </button>
             </div>
           </div>
@@ -366,7 +366,7 @@ function App() {
                   <span className="text-slate-500">Rua Vergueiro, 3500 - Vila Mariana</span>
                 </div>
                 <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
-                  <span className="text-[10px] text-slate-500 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 font-semibold">Retirada Balcão</span>
+                  <span className="text-[10px] text-slate-505 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 font-semibold">Retirada Balcão</span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#16223f] text-slate-400 border border-slate-800">Pendente</span>
                 </div>
               </div>
@@ -384,17 +384,17 @@ function App() {
           {/* Quick Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
             <div className="bg-[#0e1626]/40 border border-slate-850 p-4 rounded-xl space-y-1 shadow-sm">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Faturamento Hoje</span>
+              <span className="text-[10px] font-bold text-slate-505 uppercase tracking-wider">Faturamento Hoje</span>
               <h4 className="text-base font-black text-slate-100">R$ 4.894,70</h4>
               <span className="text-[9px] text-emerald-450 font-semibold">+ 12% em relação a ontem</span>
             </div>
             <div className="bg-[#0e1626]/40 border border-slate-850 p-4 rounded-xl space-y-1 shadow-sm">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Orçamentos Abertos</span>
+              <span className="text-[10px] font-bold text-slate-505 uppercase tracking-wider">Orçamentos Abertos</span>
               <h4 className="text-base font-black text-slate-100">8 Ativos</h4>
               <span className="text-[9px] text-indigo-400 font-semibold">Conversão de 65%</span>
             </div>
             <div className="bg-[#0e1626]/40 border border-slate-850 p-4 rounded-xl space-y-1 shadow-sm">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Ticket Médio</span>
+              <span className="text-[10px] font-bold text-slate-505 uppercase tracking-wider">Ticket Médio</span>
               <h4 className="text-base font-black text-slate-100">R$ 326,30</h4>
               <span className="text-[9px] text-indigo-400 font-semibold">Dentro da meta</span>
             </div>
@@ -424,19 +424,19 @@ function App() {
                 <div className="bg-indigo-600/20 hover:bg-indigo-650/40 border border-indigo-600/30 w-full h-20 rounded-t-md transition-all duration-300 relative group">
                   <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">950</span>
                 </div>
-                <span className="text-[9px] text-slate-500 font-semibold">QUA</span>
+                <span className="text-[9px] text-slate-505 font-semibold">QUA</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 w-8">
                 <div className="bg-indigo-600/30 hover:bg-indigo-650/50 border border-indigo-500/40 w-full h-40 rounded-t-md transition-all duration-300 relative group">
                   <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity font-bold">2.4k</span>
                 </div>
-                <span className="text-[9px] text-slate-450 font-bold">QUI</span>
+                <span className="text-[9px] text-slate-455 font-bold">QUI</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 w-8">
                 <div className="bg-indigo-600/20 hover:bg-indigo-650/40 border border-indigo-600/30 w-full h-14 rounded-t-md transition-all duration-300 relative group">
                   <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">600</span>
                 </div>
-                <span className="text-[9px] text-slate-500 font-semibold">SEX</span>
+                <span className="text-[9px] text-slate-505 font-semibold">SEX</span>
               </div>
             </div>
           </div>
@@ -460,7 +460,7 @@ function App() {
               <input
                 type="text"
                 placeholder="Buscar pré-venda pendente..."
-                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none focus:border-indigo-500"
+                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-355 focus:outline-none focus:border-indigo-500"
               />
             </div>
             <div className="text-[10px] text-slate-400 bg-[#0e1626]/20 px-3 py-1.5 rounded-lg border border-slate-800">
@@ -629,7 +629,7 @@ function App() {
               <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-350 text-xs font-semibold py-2 px-4 h-auto rounded-lg cursor-pointer">
                 Sangria (Retirada)
               </Button>
-              <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-350 text-xs font-semibold py-2 px-4 h-auto rounded-lg cursor-pointer">
+              <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-350 text-slate-350 text-xs font-semibold py-2 px-4 h-auto rounded-lg cursor-pointer">
                 Suprimento (Aporte)
               </Button>
               <Button className="ml-auto bg-red-950/20 hover:bg-red-950/40 border border-red-900/30 text-red-400 text-xs font-semibold py-2 px-4 h-auto rounded-lg cursor-pointer">
@@ -665,7 +665,7 @@ function App() {
                 <h4 className="text-xs font-bold text-slate-200">Entrada Manual</h4>
                 <p className="text-[10px] text-slate-500">Lance notas de fornecedores sem XML</p>
               </div>
-              <Button className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-200 text-[10px] py-1.5 h-auto rounded-lg cursor-pointer mt-3">
+              <Button className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-205 text-[10px] py-1.5 h-auto rounded-lg cursor-pointer mt-3">
                 Nova Entrada Manual
               </Button>
             </div>
@@ -725,18 +725,18 @@ function App() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Código Interno</label>
-                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="EX: AP-1092" />
+                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" placeholder="EX: AP-1092" />
                 </div>
                 <div className="md:col-span-2 space-y-1">
                   <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Descrição do Produto</label>
-                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="EX: Jogo Pastilha de Freio Dianteira" />
+                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" placeholder="EX: Jogo Pastilha de Freio Dianteira" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Marca</label>
-                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="EX: Cobreq" />
+                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" placeholder="EX: Cobreq" />
                 </div>
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Categoria</label>
@@ -876,6 +876,7 @@ function App() {
         <div className="flex-1 flex flex-col min-h-0 h-full">
           {/* Module Sub-tabs Container with integrated title */}
           <ModuleTabContainer
+            key="vendas"
             tabs={vendasTabs}
             defaultTabId="orcamento"
             title="Vendas"
@@ -886,6 +887,7 @@ function App() {
         <div className="flex-1 flex flex-col min-h-0 h-full">
           {/* Module Sub-tabs Container with integrated title */}
           <ModuleTabContainer
+            key="caixa"
             tabs={caixaTabs}
             defaultTabId="prevendas"
             title="Caixa"
@@ -898,6 +900,7 @@ function App() {
         <div className="flex-1 flex flex-col min-h-0 h-full">
           {/* Module Sub-tabs Container with integrated title */}
           <ModuleTabContainer
+            key="estoque"
             tabs={estoqueTabs}
             defaultTabId="entrada"
             title="Estoque"
