@@ -1,4 +1,4 @@
-import { ShoppingCart, Wallet } from "lucide-react";
+import { ShoppingCart, Wallet, Box } from "lucide-react";
 
 interface SidebarProps {
   activeModule?: string;
@@ -18,6 +18,12 @@ export function Sidebar({ activeModule = "vendas", onSelectModule }: SidebarProp
       label: "Caixa",
       icon: Wallet,
       tooltip: "Módulo de Caixa & PDV",
+    },
+    {
+      id: "estoque",
+      label: "Estoque",
+      icon: Box,
+      tooltip: "Módulo de Estoque",
     },
   ];
 

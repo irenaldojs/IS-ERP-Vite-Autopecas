@@ -27,6 +27,10 @@ import {
   Printer,
   Coins,
   Banknote,
+  FileUp,
+  PlusCircle,
+  Scale,
+  List,
 } from "lucide-react";
 
 function App() {
@@ -112,7 +116,7 @@ function App() {
                     <td className="p-3">09/06/2026</td>
                     <td className="p-3 text-right font-semibold">R$ 1.250,00</td>
                     <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Aguardando</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20">Aguardando</span>
                     </td>
                   </tr>
                   <tr className="hover:bg-[#16223f]/10">
@@ -122,7 +126,7 @@ function App() {
                     <td className="p-3">08/06/2026</td>
                     <td className="p-3 text-right font-semibold">R$ 394,80</td>
                     <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Aprovado</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20">Aprovado</span>
                     </td>
                   </tr>
                   <tr className="hover:bg-[#16223f]/10">
@@ -281,7 +285,7 @@ function App() {
 
               <div className="space-y-2">
                 <div className="flex justify-between text-xs">
-                  <span className="text-slate-450">Subtotal:</span>
+                  <span className="text-slate-455">Subtotal:</span>
                   <span className="text-slate-250 font-semibold">R$ {subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-xs">
@@ -325,7 +329,7 @@ function App() {
           <div className="grid grid-cols-3 gap-4 shrink-0">
             <div className="bg-[#0e1626]/30 border border-slate-850 p-3.5 rounded-xl flex items-center justify-between">
               <span className="text-xs text-slate-400">Pendentes</span>
-              <span className="text-lg font-bold text-amber-450">2</span>
+              <span className="text-lg font-bold text-amber-455">2</span>
             </div>
             <div className="bg-[#0e1626]/30 border border-slate-850 p-3.5 rounded-xl flex items-center justify-between">
               <span className="text-xs text-slate-400">Em Rota</span>
@@ -333,7 +337,7 @@ function App() {
             </div>
             <div className="bg-[#0e1626]/30 border border-slate-850 p-3.5 rounded-xl flex items-center justify-between">
               <span className="text-xs text-slate-400">Finalizadas</span>
-              <span className="text-lg font-bold text-emerald-450">14</span>
+              <span className="text-lg font-bold text-emerald-455">14</span>
             </div>
           </div>
 
@@ -352,7 +356,7 @@ function App() {
                 </div>
                 <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
                   <span className="text-[10px] text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 font-semibold">Motoboy Carlos</span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Em Rota</span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-455 border border-amber-500/20">Em Rota</span>
                 </div>
               </div>
 
@@ -484,9 +488,9 @@ function App() {
                     <td className="p-3 font-semibold text-slate-200">Marcos Rogério Silva</td>
                     <td className="p-3">Irenaldo (Vendas)</td>
                     <td className="p-3">09/06/2026</td>
-                    <td className="p-3 text-right font-bold text-slate-105">R$ 267,30</td>
+                    <td className="p-3 text-right font-bold text-slate-100">R$ 267,30</td>
                     <td className="p-3 text-center">
-                      <Button className="bg-indigo-650 hover:bg-indigo-550 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                      <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
                         Receber e Emitir
                       </Button>
                     </td>
@@ -496,9 +500,9 @@ function App() {
                     <td className="p-3 font-semibold text-slate-200">Auto Mecânica Souza</td>
                     <td className="p-3">Irenaldo (Vendas)</td>
                     <td className="p-3">09/06/2026</td>
-                    <td className="p-3 text-right font-bold text-slate-105">R$ 145,00</td>
+                    <td className="p-3 text-right font-bold text-slate-100">R$ 145,00</td>
                     <td className="p-3 text-center">
-                      <Button className="bg-indigo-650 hover:bg-indigo-550 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                      <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
                         Receber e Emitir
                       </Button>
                     </td>
@@ -638,12 +642,235 @@ function App() {
     },
   ];
 
+  // Define screens for the Stock Module (Estoque)
+  const estoqueTabs = [
+    {
+      id: "entrada",
+      label: "Entrada",
+      icon: FileUp,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
+            {/* XML Import Zone */}
+            <div className="md:col-span-2 border border-dashed border-slate-800 bg-[#0e1626]/20 rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:border-indigo-500/35 transition-colors">
+              <FileUp className="h-7 w-7 text-indigo-400 mb-2" />
+              <span className="text-xs font-bold text-slate-200">Importar XML de NFe</span>
+              <p className="text-[10px] text-slate-500 mt-0.5">Arraste o arquivo XML do fornecedor ou clique para selecionar</p>
+            </div>
+            {/* Manual Entrada Form Card */}
+            <div className="bg-[#0e1626]/30 border border-slate-850 p-4 rounded-xl flex flex-col justify-between">
+              <div className="space-y-1">
+                <span className="text-[9px] font-bold text-slate-500 uppercase">Lançamento</span>
+                <h4 className="text-xs font-bold text-slate-200">Entrada Manual</h4>
+                <p className="text-[10px] text-slate-500">Lance notas de fornecedores sem XML</p>
+              </div>
+              <Button className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-200 text-[10px] py-1.5 h-auto rounded-lg cursor-pointer mt-3">
+                Nova Entrada Manual
+              </Button>
+            </div>
+          </div>
+
+          {/* Recent entries table */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="p-3 border-b border-slate-850/60 bg-[#0e1626]/40 flex justify-between items-center shrink-0">
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Notas Fiscais de Entrada Importadas</h4>
+            </div>
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">Nº Nota</th>
+                    <th className="p-3">Fornecedor</th>
+                    <th className="p-3">Chave de Acesso</th>
+                    <th className="p-3">Data Entrada</th>
+                    <th className="p-3 text-right pr-4">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">002.190.283</td>
+                    <td className="p-3 font-semibold text-slate-200">Distribuidora DPK Autopeças</td>
+                    <td className="p-3 font-mono text-slate-500">352606...908123</td>
+                    <td className="p-3">09/06/2026</td>
+                    <td className="p-3 text-right pr-4 font-bold">R$ 4.390,20</td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">001.209.182</td>
+                    <td className="p-3 font-semibold text-slate-200">Cofap Sistemas de Suspensão</td>
+                    <td className="p-3 font-mono text-slate-500">352606...908990</td>
+                    <td className="p-3">08/06/2026</td>
+                    <td className="p-3 text-right pr-4 font-bold">R$ 12.800,00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "cadastro",
+      label: "Cadastro",
+      icon: PlusCircle,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Cadastro Form Card */}
+          <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-5 space-y-4 max-w-3xl mx-auto w-full">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">
+              Cadastrar Nova Autopeça
+            </h4>
+            
+            <form className="space-y-4 text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Código Interno</label>
+                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="EX: AP-1092" />
+                </div>
+                <div className="md:col-span-2 space-y-1">
+                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Descrição do Produto</label>
+                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="EX: Jogo Pastilha de Freio Dianteira" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Marca</label>
+                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="EX: Cobreq" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Categoria</label>
+                  <select className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-400 focus:outline-none">
+                    <option>Freios</option>
+                    <option>Motor</option>
+                    <option>Suspensão</option>
+                    <option>Elétrica</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Preço Custo</label>
+                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="R$ 0,00" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Preço Venda</label>
+                  <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="R$ 0,00" />
+                </div>
+              </div>
+
+              <Button type="button" className="bg-indigo-650 hover:bg-indigo-555 text-white font-bold py-2 px-4 h-auto rounded-lg cursor-pointer uppercase tracking-wider">
+                Salvar Produto
+              </Button>
+            </form>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "balanco",
+      label: "Balanço",
+      icon: Scale,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action Row */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Inventário e Balanço de Estoque
+            </h4>
+            <Button className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg cursor-pointer">
+              Iniciar Novo Balanço
+            </Button>
+          </div>
+
+          {/* Active Balance Tasks */}
+          <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-4 space-y-3">
+            <div className="p-3 bg-[#070a13] border border-slate-850 rounded-xl flex flex-col sm:flex-row justify-between gap-3 text-xs">
+              <div className="flex flex-col space-y-1">
+                <span className="font-bold text-slate-200">Balanço Geral - Setor Freios (Estante A)</span>
+                <span className="text-slate-500 font-mono text-[10px]">Contagem iniciada em 09/06/2026</span>
+              </div>
+              <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
+                {/* Custom CSS Progress Bar */}
+                <div className="w-32 bg-slate-850 h-2 rounded-full overflow-hidden border border-slate-800">
+                  <div className="bg-indigo-550 h-full w-[45%]" />
+                </div>
+                <span className="text-[10px] text-slate-400 font-semibold">45% Concluído</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20">Em Andamento</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "lista",
+      label: "Lista",
+      icon: List,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Filter Bar */}
+          <div className="flex gap-2 shrink-0">
+            <div className="relative flex-grow max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+              <input
+                type="text"
+                placeholder="Pesquisar no catálogo..."
+                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Products Table */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">Código</th>
+                    <th className="p-3">Peça</th>
+                    <th className="p-3">Marca</th>
+                    <th className="p-3">Categoria</th>
+                    <th className="p-3 text-right">Preço Venda</th>
+                    <th className="p-3 text-center">Quantidade</th>
+                    <th className="p-3 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">FP-1092</td>
+                    <td className="p-3 font-semibold text-slate-200">Pastilha de Freio Cobreq (Par)</td>
+                    <td className="p-3">Cobreq</td>
+                    <td className="p-3">Freios</td>
+                    <td className="p-3 text-right">R$ 189,90</td>
+                    <td className="p-3 text-center font-bold">12 UN</td>
+                    <td className="p-3 text-center">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 inline-block" />
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">OL-3021</td>
+                    <td className="p-3 font-semibold text-slate-200">Óleo Motor Selenia 5W30 1L</td>
+                    <td className="p-3">Selenia</td>
+                    <td className="p-3">Motor</td>
+                    <td className="p-3 text-right">R$ 42,50</td>
+                    <td className="p-3 text-center font-bold">4 UN</td>
+                    <td className="p-3 text-center">
+                      <span className="h-2 w-2 rounded-full bg-red-500 inline-block animate-pulse" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <DashboardLayout
       activeModule={activeModule}
       onSelectModule={setActiveModule}
       onHomeClick={() => setActiveModule("home")}
-      hideLayout={isCaixaMaximized && activeModule === "caixa"}
     >
       {activeModule === "vendas" ? (
         <div className="flex-1 flex flex-col min-h-0 h-full">
@@ -656,8 +883,8 @@ function App() {
           />
         </div>
       ) : activeModule === "caixa" ? (
-        <div className="flex-grow flex flex-col min-h-0 h-full">
-          {/* Module Sub-tabs Container with integrated title and maximize controls */}
+        <div className="flex-1 flex flex-col min-h-0 h-full">
+          {/* Module Sub-tabs Container with integrated title */}
           <ModuleTabContainer
             tabs={caixaTabs}
             defaultTabId="prevendas"
@@ -665,6 +892,16 @@ function App() {
             icon={Wallet}
             isMaximized={isCaixaMaximized}
             onMaximizeToggle={() => setIsCaixaMaximized(!isCaixaMaximized)}
+          />
+        </div>
+      ) : activeModule === "estoque" ? (
+        <div className="flex-1 flex flex-col min-h-0 h-full">
+          {/* Module Sub-tabs Container with integrated title */}
+          <ModuleTabContainer
+            tabs={estoqueTabs}
+            defaultTabId="entrada"
+            title="Estoque"
+            icon={Box}
           />
         </div>
       ) : (
@@ -705,16 +942,13 @@ function App() {
                 onClick={() => setActiveModule("caixa")}
               />
 
-              {/* Estoque Card (Placeholder / Coming Soon) */}
-              <div className="opacity-40 cursor-not-allowed">
-                <ModuleCard
-                  title="Controle de Estoque"
-                  description="Cadastro de autopeças, controle de prateleiras, inventários e entrada automática de XML."
-                  icon={Box}
-                  onClick={() => {}}
-                  badge="Em breve"
-                />
-              </div>
+              {/* Estoque Card (Active) */}
+              <ModuleCard
+                title="Controle de Estoque"
+                description="Cadastro de autopeças, importação de XML de compras, inventário e controle de balanço."
+                icon={Box}
+                onClick={() => setActiveModule("estoque")}
+              />
 
               {/* Financeiro Card (Placeholder / Coming Soon) */}
               <div className="opacity-40 cursor-not-allowed">
@@ -731,14 +965,14 @@ function App() {
 
           {/* Relocated Developer / Connection Tests section (Bottom of Home View) */}
           <div className="border-t border-slate-850/60 pt-6 mt-8 space-y-4">
-            <div className="flex items-center gap-2 text-slate-450">
+            <div className="flex items-center gap-2 text-slate-455">
               <Terminal className="h-4 w-4" />
               <h3 className="text-xs font-bold uppercase tracking-wider">Painel de Desenvolvimento</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Connection Status Card */}
-              <div className="bg-[#0e1626]/20 border border-slate-850/80 rounded-xl p-4 flex items-center justify-between text-xs text-slate-400">
+              <div className="bg-[#0e1626]/20 border border-slate-850/80 rounded-xl p-4 flex items-center justify-between text-xs text-slate-450">
                 <span className="flex items-center gap-2">
                   <Cpu className="h-3.5 w-3.5 text-indigo-400" />
                   Terminal: <strong className="text-slate-200">CAIXA-01</strong>
@@ -768,7 +1002,7 @@ function App() {
               >
                 <input
                   type="text"
-                  className="flex-1 px-3 py-1.5 bg-[#0e1626]/20 border border-slate-850 rounded-lg text-xs text-slate-350 focus:outline-none focus:border-indigo-500"
+                  className="flex-1 px-3 py-1.5 bg-[#0e1626]/20 border border-slate-850 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-indigo-500"
                   onChange={(e) => setName(e.currentTarget.value)}
                   placeholder="Nome para saudar..."
                   value={name}
