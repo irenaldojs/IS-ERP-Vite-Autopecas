@@ -191,7 +191,7 @@ export const produtoImagens: ProdutoImagem[] = [
 export const produtos: Produto[] = [
   {
     id: 1,
-    subgrupo_id: 1,
+    grupo_id: 1,
     marca_id: 1,
     aplicacao_lista_id: 1,
     codigo_original: "AF-25167",
@@ -201,7 +201,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 2,
-    subgrupo_id: 2,
+    grupo_id: 2,
     marca_id: 7,
     aplicacao_lista_id: 5,
     codigo_original: "DB-3214",
@@ -211,7 +211,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 3,
-    subgrupo_id: 8,
+    grupo_id: 8,
     marca_id: 6,
     aplicacao_lista_id: 5,
     codigo_original: "BT-65A",
@@ -221,7 +221,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 4,
-    subgrupo_id: 6,
+    grupo_id: 6,
     marca_id: 4,
     aplicacao_lista_id: 2,
     codigo_original: "BP-345A",
@@ -231,7 +231,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 5,
-    subgrupo_id: 4,
+    grupo_id: 4,
     marca_id: 3,
     aplicacao_lista_id: 3,
     codigo_original: "AM-1198",
@@ -241,7 +241,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 6,
-    subgrupo_id: 11,
+    grupo_id: 11,
     marca_id: 2,
     aplicacao_lista_id: 3,
     codigo_original: "RD-2134",
@@ -251,7 +251,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 7,
-    subgrupo_id: 1,
+    grupo_id: 1,
     marca_id: 10,
     aplicacao_lista_id: 1,
     codigo_original: "FC-985",
@@ -261,7 +261,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 8,
-    subgrupo_id: 7,
+    grupo_id: 7,
     marca_id: 9,
     aplicacao_lista_id: 6,
     codigo_original: "RC-420",
@@ -271,7 +271,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 9,
-    subgrupo_id: 9,
+    grupo_id: 9,
     marca_id: 5,
     aplicacao_lista_id: 4,
     codigo_original: "AL-240",
@@ -281,7 +281,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 10,
-    subgrupo_id: 14,
+    grupo_id: 14,
     marca_id: 1,
     aplicacao_lista_id: 4,
     codigo_original: "MV-110",
@@ -291,7 +291,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 11,
-    subgrupo_id: 13,
+    grupo_id: 13,
     marca_id: 2,
     aplicacao_lista_id: 6,
     codigo_original: "PR-752",
@@ -301,7 +301,7 @@ export const produtos: Produto[] = [
   },
   {
     id: 12,
-    subgrupo_id: 5,
+    grupo_id: 5,
     marca_id: 8,
     aplicacao_lista_id: 6,
     codigo_original: "ML-302",

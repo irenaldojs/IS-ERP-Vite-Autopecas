@@ -58,9 +58,8 @@
 ## 4. Módulos Implementados
 
 ### `vendas`
-* Orçamentos com status.
-* Chat WhatsApp mockado.
 * Pré-vendas com cálculo de total e opções de pagamento.
+* Orçamentos / Lista de peças para enviar ao cliente.
 * Entregas ativas.
 * Relatório com métricas e gráfico de vendas.
 

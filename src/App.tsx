@@ -33,7 +33,6 @@ import {
   Archive,
   Activity,
 } from "lucide-react";
-import Lista from "@/module/vendas/tabs/Lista";
 import Orcamento from "@/module/vendas/tabs/Orcamento";
 import Prevendas from "@/module/vendas/tabs/Prevendas";
 import Entregas from "@/module/vendas/tabs/Entregas";
@@ -54,7 +53,7 @@ function App() {
   const navigate = useNavigate();
   const pathSegments = location.pathname.split("/").filter(Boolean);
   const activeModule = pathSegments[0] || "home";
-  const vendasActiveTabId = activeModule === "vendas" ? pathSegments[1] || "lista" : "lista";
+  const vendasActiveTabId = activeModule === "vendas" ? pathSegments[1] || "orcamento" : "orcamento";
 
   const isCaixaMaximized = useAppStore((state) => state.isCaixaMaximized);
   const clientName = useAppStore((state) => state.clientName);
@@ -191,10 +190,10 @@ function App() {
   const vendasTabs = [
     {
       id: "lista",
-      label: "Lista",
-      icon: List,
+      label: "Orçamento",
+      icon: ClipboardList,
       component: (
-        <Lista
+        <Orcamento
           clientName={clientName}
           setClientName={setClientName}
           vehicleName={vehicleName}
@@ -215,12 +214,6 @@ function App() {
           showToast={showToast}
         />
       ),
-    },
-    {
-      id: "orcamento",
-      label: "Orçamento",
-      icon: ClipboardList,
-      component: <Orcamento />,
     },
     {
       id: "prevendas",
