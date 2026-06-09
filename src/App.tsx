@@ -34,6 +34,7 @@ function App() {
   const [name, setName] = useState("");
   const [greetMsg, setGreetMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isCaixaMaximized, setIsCaixaMaximized] = useState(false);
 
   // Cashier item state for mock Pre-Vendas
   const [cartItems, setCartItems] = useState([
@@ -642,6 +643,7 @@ function App() {
       activeModule={activeModule}
       onSelectModule={setActiveModule}
       onHomeClick={() => setActiveModule("home")}
+      hideLayout={isCaixaMaximized && activeModule === "caixa"}
     >
       {activeModule === "vendas" ? (
         <div className="flex-1 flex flex-col min-h-0 h-full">
@@ -654,13 +656,15 @@ function App() {
           />
         </div>
       ) : activeModule === "caixa" ? (
-        <div className="flex-1 flex flex-col min-h-0 h-full">
-          {/* Module Sub-tabs Container with integrated title */}
+        <div className="flex-grow flex flex-col min-h-0 h-full">
+          {/* Module Sub-tabs Container with integrated title and maximize controls */}
           <ModuleTabContainer
             tabs={caixaTabs}
             defaultTabId="prevendas"
             title="Caixa"
             icon={Wallet}
+            isMaximized={isCaixaMaximized}
+            onMaximizeToggle={() => setIsCaixaMaximized(!isCaixaMaximized)}
           />
         </div>
       ) : (
