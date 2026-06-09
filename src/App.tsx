@@ -41,6 +41,8 @@ import {
   ShieldAlert,
   Receipt,
   Sliders,
+  Users,
+  Settings,
 } from "lucide-react";
 
 function App() {
@@ -1991,6 +1993,297 @@ function App() {
     },
   ];
 
+  // Define screens for the Management Module (Gerência)
+  const gerenciaTabs = [
+    {
+      id: "dashboard",
+      label: "Painel Executivo",
+      icon: BarChart3,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Executive KPIs */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
+            <div className="bg-[#0e1626]/30 border border-slate-850 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-505 font-bold uppercase tracking-wider">Ticket Médio Vendas</span>
+              <span className="text-sm font-extrabold text-slate-100">R$ 485,00</span>
+              <span className="text-[9px] text-emerald-450 font-semibold flex items-center gap-0.5">Subiu 4.2% este mês</span>
+            </div>
+            <div className="bg-[#0e1626]/30 border border-slate-855 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-555 font-bold uppercase tracking-wider">Margem Comercial Média</span>
+              <span className="text-sm font-extrabold text-slate-100">42.50%</span>
+              <span className="text-[9px] text-emerald-450 font-semibold">Alvo planejado: 40.0%</span>
+            </div>
+            <div className="bg-[#0e1626]/30 border border-slate-855 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-555 font-bold uppercase tracking-wider">Curva ABC (Top Produto)</span>
+              <span className="text-sm font-extrabold text-indigo-300 truncate">Cobreq FP-1092</span>
+              <span className="text-[9px] text-slate-500 font-semibold">120 unidades vendidas</span>
+            </div>
+            <div className="bg-[#0e1626]/30 border border-slate-855 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-555 font-bold uppercase tracking-wider">Descontos Acumulados</span>
+              <span className="text-sm font-extrabold text-rose-450">R$ 1.250,00</span>
+              <span className="text-[9px] text-rose-450 font-semibold">Dentro do orçamento limite</span>
+            </div>
+          </div>
+
+          {/* Monthly target progress */}
+          <div className="bg-[#0e1626]/20 border border-slate-850 p-4 rounded-xl space-y-3 shrink-0">
+            <div className="flex justify-between items-center text-xs">
+              <span className="font-bold text-slate-300">Meta de Faturamento - Junho/2026</span>
+              <span className="font-mono text-slate-400">R$ 142.800,00 / <strong className="text-indigo-400">R$ 150.000,00</strong> (95.2% Concluído)</span>
+            </div>
+            {/* Custom CSS Progress Bar */}
+            <div className="w-full bg-slate-855 h-2.5 rounded-full overflow-hidden border border-slate-800">
+              <div className="bg-indigo-500 h-full w-[95.2%]" />
+            </div>
+          </div>
+
+          {/* Brand market share */}
+          <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-4 space-y-4 shrink-0">
+            <h5 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Distribuição de Faturamento por Fabricante</h5>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
+              <div className="flex flex-col space-y-1 border-l-2 border-indigo-500 pl-3">
+                <span className="text-slate-500 text-[10px] font-sans">Cofap</span>
+                <span className="font-bold text-slate-200">35.0% (R$ 49.980)</span>
+              </div>
+              <div className="flex flex-col space-y-1 border-l-2 border-indigo-450 pl-3">
+                <span className="text-slate-500 text-[10px] font-sans">Bosch</span>
+                <span className="font-bold text-slate-200">25.0% (R$ 35.700)</span>
+              </div>
+              <div className="flex flex-col space-y-1 border-l-2 border-violet-500 pl-3">
+                <span className="text-slate-500 text-[10px] font-sans">Magneti Marelli</span>
+                <span className="font-bold text-slate-200">20.0% (R$ 28.560)</span>
+              </div>
+              <div className="flex flex-col space-y-1 border-l-2 border-slate-700 pl-3">
+                <span className="text-slate-500 text-[10px] font-sans">Outros</span>
+                <span className="font-bold text-slate-200">20.0% (R$ 28.560)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "usuarios",
+      label: "Usuários & Permissões",
+      icon: Users,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Header */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Níveis de Acesso e Matriz de Permissões
+            </h4>
+            <Button className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg flex items-center gap-1.5 cursor-pointer">
+              <Plus className="h-3.5 w-3.5" /> Novo Usuário
+            </Button>
+          </div>
+
+          {/* Users Matrix Table */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">Colaborador</th>
+                    <th className="p-3">Cargo / Perfil</th>
+                    <th className="p-3 text-center">Vendas</th>
+                    <th className="p-3 text-center">Caixa</th>
+                    <th className="p-3 text-center">Estoque</th>
+                    <th className="p-3 text-center">Finanças</th>
+                    <th className="p-3 text-center">Faturamento</th>
+                    <th className="p-3 text-center">Gerência</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-semibold text-slate-200">Carlos Oliveira</td>
+                    <td className="p-3 text-slate-400">Vendedor Operacional</td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" disabled className="h-3.5 w-3.5" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" disabled className="h-3.5 w-3.5" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" disabled className="h-3.5 w-3.5" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" disabled className="h-3.5 w-3.5" />
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-semibold text-slate-200">Juliana Mendes</td>
+                    <td className="p-3 text-slate-400">Operadora Frente de Caixa</td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" disabled className="h-3.5 w-3.5" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" disabled className="h-3.5 w-3.5" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" disabled className="h-3.5 w-3.5" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" disabled className="h-3.5 w-3.5" />
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-semibold text-slate-200">Roberto Manager</td>
+                    <td className="p-3 text-slate-400">Gerente Geral da Loja</td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <input type="checkbox" checked readOnly className="accent-indigo-550 h-3.5 w-3.5 cursor-pointer" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "configuracoes",
+      label: "Configurações",
+      icon: Settings,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1 text-xs">
+          {/* Settings Grid Form */}
+          <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-5 space-y-4">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider border-b border-slate-800/80 pb-2">
+              Dados da Empresa & Fiscal
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-555 uppercase tracking-wider">Razão Social</label>
+                <input type="text" value="IS-ERP AUTO PEÇAS LTDA" readOnly className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-555 uppercase tracking-wider">CNPJ</label>
+                <input type="text" value="12.345.678/0001-90" readOnly className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-555 uppercase tracking-wider">Inscrição Estadual</label>
+                <input type="text" value="111.222.333.444" readOnly className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-555 uppercase tracking-wider">Regime Tributário</label>
+                <select disabled className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none">
+                  <option>Simples Nacional (ME/EPP)</option>
+                  <option>Lucro Presumido</option>
+                  <option>Lucro Real</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-555 uppercase tracking-wider">Certificado Digital SEFAZ (A1)</label>
+                <div className="border border-dashed border-slate-800 bg-[#070a13] rounded-lg p-1.5 flex items-center justify-between text-[11px] text-slate-400">
+                  <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-emerald-450" /> certificado_2026.pfx</span>
+                  <span className="text-[10px] font-bold text-slate-500 font-mono">Vence em: 01/01/2027</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 flex justify-end">
+              <Button type="button" className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-300 text-xs font-semibold py-1.5 px-3 h-auto rounded-lg cursor-pointer">
+                Salvar Configurações
+              </Button>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "auditoria",
+      label: "Logs de Auditoria",
+      icon: Sliders,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Header */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Logs Globais de Ações do Sistema
+            </h4>
+          </div>
+
+          {/* Audit Logs Table */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">Horário</th>
+                    <th className="p-3">Usuário</th>
+                    <th className="p-3">Ação Realizada</th>
+                    <th className="p-3">Detalhamento</th>
+                    <th className="p-3 text-center">Nível</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-slate-500">09/06 01:05</td>
+                    <td className="p-3 font-semibold text-slate-200">Carlos Oliveira</td>
+                    <td className="p-3 text-amber-450">Desconto Pré-Venda</td>
+                    <td className="p-3 text-slate-400">Aplicado desconto de 8% (limite permitido era 5%) sob autorização de gerente</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20 uppercase tracking-wider">Aviso</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-slate-500">09/06 00:42</td>
+                    <td className="p-3 font-semibold text-slate-200">Juliana Mendes</td>
+                    <td className="p-3">Abertura de Caixa</td>
+                    <td className="p-3 text-slate-400">Abertura de caixa (Frente Caixa) com saldo de suprimento inicial de R$ 150,00</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#16223f] text-slate-450 border border-slate-800 uppercase tracking-wider">Info</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-slate-500">08/06 18:22</td>
+                    <td className="p-3 font-semibold text-slate-200">Roberto Manager</td>
+                    <td className="p-3 text-red-400">Exclusão Orçamento</td>
+                    <td className="p-3 text-slate-400">Orçamento #00980 (Fiat Uno) excluído permanentemente do banco de dados</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 uppercase tracking-wider animate-pulse">Crítico</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <DashboardLayout
       activeModule={activeModule}
@@ -2076,6 +2369,17 @@ function App() {
             icon={Receipt}
           />
         </div>
+      ) : activeModule === "gerencia" ? (
+        <div className="flex-1 flex flex-col min-h-0 h-full">
+          {/* Module Sub-tabs Container with integrated title */}
+          <ModuleTabContainer
+            key="gerencia"
+            tabs={gerenciaTabs}
+            defaultTabId="dashboard"
+            title="Painel Gerencial"
+            icon={BarChart3}
+          />
+        </div>
       ) : (
         /* Modules Dashboard (Home View) */
         <div className="space-y-6 flex-grow flex flex-col justify-between">
@@ -2154,16 +2458,13 @@ function App() {
                 onClick={() => setActiveModule("faturamento")}
               />
 
-              {/* Gerencial Card (Placeholder / Coming Soon) */}
-              <div className="opacity-40 cursor-not-allowed">
-                <ModuleCard
-                  title="Painel Gerencial"
-                  description="Dashboard de BI, controle de permissões de usuários e logs de auditoria."
-                  icon={BarChart3}
-                  onClick={() => {}}
-                  badge="Em breve"
-                />
-              </div>
+              {/* Gerencial Card (Active) */}
+              <ModuleCard
+                title="Painel Gerencial"
+                description="Dashboard de BI, controle de permissões de usuários e logs de auditoria."
+                icon={BarChart3}
+                onClick={() => setActiveModule("gerencia")}
+              />
             </div>
           </div>
 
