@@ -77,7 +77,7 @@ src/
 *   Grid de acesso aos 5 módulos operacionais ativos.
 *   **Painel de Desenvolvimento**: Exibe o status da conexão (Vite Browser ou Tauri Shell) e formulário para testar a comunicação com a API do Tauri em Rust (`greet`).
 
-### B. Vendas & Faturamento (Module: `vendas`)
+### B. Vendas & Orçamentos (Module: `vendas`)
 1.  **Orçamento**: Listagem de orçamentos emitidos com indicador de status coloridos (`Aprovado`, `Aguardando`, `Cancelado`).
 2.  **Whatsapp**: Chat mockado com o cliente para negociação de orçamentos diretamente pela interface do ERP.
 3.  **Pré-Vendas**: Carrinho de itens mockados que calcula subtotal, descontos e total líquido, com opções de formas de pagamento (PIX / Cartão).
@@ -108,6 +108,24 @@ src/
 3.  **Mapa**: Interface com rotas vetoriais (SVG) mockadas mostrando portadores ativos no mapa em tempo real.
 4.  **Frota**: Cadastro e status dos veículos da empresa (placas, motoristas e pendências de manutenção).
 
+### G. Fluxo Financeiro (Module: `financas`)
+1.  **Contas a Receber**: Listagem e gerenciamento de faturas de clientes, filtros por status e cobrança rápida via WhatsApp.
+2.  **Contas a Pagar**: Controle de compromissos de fornecedores e despesas com indicadores de vencimento coloridos e baixa manual.
+3.  **Fluxo de Caixa**: Conciliação de saldos em bancos (Itaú, Bradesco) e caixas internos, acompanhada de histórico detalhado de lançamentos diários.
+4.  **DRE Simplificado**: Demonstrativo de resultado do exercício sob o regime de caixa.
+
+### H. Faturamento & Fiscal (Module: `faturamento`)
+1.  **Painel Fiscal (Sefaz Monitor)**: Monitoramento de notas emitidas com status de aprovação em tempo real pela SEFAZ, download de XML/DANFE e opção de correção de erros.
+2.  **Regras Tributárias**: Cadastro e parametrização de alíquotas de ICMS, ICMS ST (MVA) e PIS/COFINS por códigos NCM e CEST de autopeças.
+3.  **CC-e & Cancelamento**: Histórico e transmissão de Cartas de Correção Eletrônica e cancelamentos de notas homologados pela SEFAZ.
+4.  **Faturamento Consol.**: Métricas fiscais consolidadas e gráfico de faturamento diário gerado em CSS.
+
+### I. Painel Gerencial (Module: `gerencia`)
+1.  **Painel Executivo (BI)**: Dashboard de alta gerência com ticket médio, margens acumuladas, produto curva ABC, metas e participação de mercado de fabricantes.
+2.  **Usuários & Permissões**: Matriz de acessos interativa por cargo utilizando checkboxes funcionais.
+3.  **Configurações**: Dados cadastrais da empresa, comissionamento de vendas e controle de certificado digital A1.
+4.  **Logs de Auditoria**: Rastreabilidade de ações críticas (descontos e exclusões) por nível de prioridade (Crítico, Aviso, Info).
+
 ---
 
 ## 5. Práticas e Fixes Importantes Aplicados
@@ -115,79 +133,3 @@ src/
 *   **Evitando Bleed de Estados de Abas**: Para evitar que a mudança de módulos principais mantivesse o estado das sub-abas internas desalinhado, todas as chamadas do componente `<ModuleTabContainer>` em `App.tsx` utilizam chaves únicas (`key="vendas"`, `key="caixa"`, etc.), forçando o React a recriar o container e redefinir o estado da aba ativa para o padrão quando o módulo é trocado.
 *   **z-index do Dropdown de Perfil**: Ajustado o empilhamento da barra superior (`relative z-50` no header) para garantir que o menu suspenso do perfil de usuário (`z-50` interno) sobreponha corretamente o conteúdo principal e a barra de navegação lateral.
 *   Viewport sem Scroll Geral: A aplicação foi ajustada para se comportar como uma aplicação desktop nativa (Tauri), utilizando `h-screen` e `overflow-hidden` nas bordas mais externas, canalizando qualquer barra de rolagem apenas dentro dos painéis internos de dados de cada tela.
-
----
-
-## 6. Telas Sugeridas para Próximos Módulos
-
-Abaixo estão descritas as telas sugeridas para cada um dos novos módulos, respeitando o padrão visual de alta densidade de dados e estética Premium Dark (`bg-[#070a13]`, `bg-[#0e1626]`, bordas sutis e tipografia compacta).
-
-### A. Módulo Finanças (Module: `financas`)
-Este módulo controlará toda a saúde financeira do caixa, contas de bancos e análises de rentabilidade.
-1.  **Contas a Receber**:
-    *   **Finalidade**: Listar e gerenciar títulos em aberto de clientes.
-    *   **Recursos**:
-        *   Filtros rápidos de status (Em aberto, Vencidos, Pagos).
-        *   Pesquisa de boletos gerados e integração de cobrança ativa (envio de lembrete pelo WhatsApp com link de PIX copia e cola).
-        *   Gráfico em barra mostrando previsões de recebimentos da semana.
-2.  **Contas a Pagar**:
-    *   **Finalidade**: Controle de compromissos financeiros e faturas de fornecedores (peças).
-    *   **Recursos**:
-        *   Painel compacto listando as faturas com código de barras, data de vencimento e alertas coloridos para vencimentos no dia (amarelo) ou vencidos (vermelho).
-        *   Opção para "Dar Baixa" manual ou via conciliação de arquivos CNAB.
-3.  **Fluxo de Caixa & Contas Bancárias**:
-    *   **Finalidade**: Conciliação de saldos em bancos e caixas físicos.
-    *   **Recursos**:
-        *   Tabela com o extrato de entradas e saídas diárias com classificação por categorias (Fornecedor, Despesa Fixa, Venda Balcão).
-        *   Mapeamento de saldo consolidado em tempo real (Caixa Interno, Itaú, Bradesco, etc.).
-4.  **DRE Financeiro (Relatórios)**:
-    *   **Finalidade**: Demonstrativo de resultado do exercício sob o regime de caixa.
-    *   **Recursos**:
-        *   Estrutura clássica de DRE (Receita Bruta - Deduções - Custos de Mercadoria = Lucro Bruto - Despesas Operacionais = Lucro Líquido).
-        *   Fácil exportação em PDF e Excel estruturado.
-
-### B. Módulo Faturamento (Module: `faturamento`)
-Focado na emissão fiscal, parametrização de tributos de autopeças (ICMS ST, PIS/COFINS) e relatórios de vendas consolidadas.
-1.  **Painel Fiscal (Sefaz Monitor)**:
-    *   **Finalidade**: Controle e monitoramento de Notas Fiscais emitidas (NF-e, NFC-e, NFS-e).
-    *   **Recursos**:
-        *   Lista de notas fiscais com status do retorno da SEFAZ (Autorizada, Rejeitada, Denegada, Cancelada) com coloração visual indicativa.
-        *   Botões de ação rápida para baixar XML, visualizar DANFE (PDF), enviar XML por e-mail ou retransmitir notas pendentes de validação.
-2.  **Regras Tributárias (NCM / CEST / ST)**:
-    *   **Finalidade**: Cadastro central de impostos aplicados a autopeças.
-    *   **Recursos**:
-        *   Mapeamento de tributos por NCM (Nomenclatura Comum do Mercosul) e CEST (Código Especificador da Substituição Tributária) de autopeças.
-        *   Configuração simples de Substituição Tributária (ICMS ST) e alíquotas interestaduais.
-3.  **CC-e & Cancelamento**:
-    *   **Finalidade**: Operações de correção pós-emissão de Notas Fiscais.
-    *   **Recursos**:
-        *   Formulário para emissão de Carta de Correção Eletrônica (CC-e) integrada à SEFAZ.
-        *   Workflow de cancelamento de notas dentro do prazo legal, com justificativa.
-4.  **Relatórios de Faturamento**:
-    *   **Finalidade**: Análise de faturamento por grupos e períodos.
-    *   **Recursos**:
-        *   Totais faturados agrupados por Categoria de Produto, Marca de Peça, Vendedor e Região geográfica de entrega.
-
-### C. Módulo Gerência / Administração (Module: `gerencia`)
-Visualizações estratégicas para tomada de decisão, controle de usuários e parametrizações gerais do sistema.
-1.  **Painel Executivo (BI)**:
-    *   **Finalidade**: Visão geral e consolidação de performance operacional do ERP.
-    *   **Recursos**:
-        *   Kpi Cards destacados (Ticket Médio, Margem Média Global, Curva ABC de Clientes e Produtos mais vendidos).
-        *   Gráficos dinâmicos de faturamento mensal vs metas de venda estabelecidas.
-        *   Monitor de "Perdas e Descontos" (exibe descontos manuais excessivos aplicados por vendedores nas Pré-Vendas).
-2.  **Usuários & Permissões**:
-    *   **Finalidade**: Controle de níveis de acesso a recursos críticos.
-    *   **Recursos**:
-        *   Grid com usuários ativos do sistema.
-        *   Matriz de permissões (Exemplo: Caixa não pode dar desconto > 5%, Caixa não pode acessar DRE, Vendedor não pode fazer alteração manual de estoque).
-3.  **Configurações do Sistema**:
-    *   **Finalidade**: Cadastro dos dados da empresa e certificados digitais.
-    *   **Recursos**:
-        *   Formulário com informações fiscais da empresa (CNPJ, Razão Social, Inscrição Estadual).
-        *   Upload e configuração de Certificado Digital A1.
-        *   Parâmetros de comissionamento de vendedores por marca/categoria.
-4.  **Logs de Auditoria**:
-    *   **Finalidade**: Rastreabilidade de ações críticas.
-    *   **Recursos**:
-        *   Tabela com o histórico detalhado de alterações críticas (exclusão de itens de orçamento, abertura de caixa com saldo incorreto, reajustes manuais de preços), listando Quem fez, O que mudou, Data/Hora e Valor anterior/atual.
