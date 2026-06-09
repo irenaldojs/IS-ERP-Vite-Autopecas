@@ -20,19 +20,20 @@ import {
   Search,
   Plus,
   Send,
-  UserCheck,
   Clock,
-  ArrowRight,
   Wallet,
   Printer,
   Coins,
-  Banknote,
   FileUp,
   PlusCircle,
   Scale,
   List,
   Archive,
   CornerDownLeft,
+  MapPin,
+  Layers,
+  Navigation,
+  Map,
 } from "lucide-react";
 
 function App() {
@@ -43,7 +44,7 @@ function App() {
   const [isCaixaMaximized, setIsCaixaMaximized] = useState(false);
 
   // Cashier item state for mock Pre-Vendas
-  const [cartItems, setCartItems] = useState([
+  const [cartItems] = useState([
     { id: 1, name: "Pastilha de Freio Cobreq (Par)", code: "FP-1092", qty: 1, price: 189.90 },
     { id: 2, name: "Óleo Motor Selenia 5W30 1L", code: "OL-3021", qty: 4, price: 42.50 },
     { id: 3, name: "Filtro de Combustível Fram", code: "FC-4009", qty: 1, price: 34.90 },
@@ -118,7 +119,7 @@ function App() {
                     <td className="p-3">09/06/2026</td>
                     <td className="p-3 text-right font-semibold">R$ 1.250,00</td>
                     <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Aguardando</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20">Aguardando</span>
                     </td>
                   </tr>
                   <tr className="hover:bg-[#16223f]/10">
@@ -160,7 +161,7 @@ function App() {
               <input
                 type="text"
                 placeholder="Pesquisar conversa..."
-                className="w-full pl-3 pr-3 py-1 bg-[#070a13] border border-slate-800 rounded-lg text-[11px] text-slate-350 focus:outline-none"
+                className="w-full pl-3 pr-3 py-1 bg-[#070a13] border border-slate-800 rounded-lg text-[11px] text-slate-355 focus:outline-none"
               />
             </div>
             <div className="flex-1 overflow-y-auto p-1.5 space-y-1">
@@ -202,7 +203,7 @@ function App() {
               {/* Receiver */}
               <div className="bg-[#0e1626]/60 border border-slate-850 rounded-xl p-3 max-w-[80%] self-start text-xs text-slate-300 leading-relaxed shadow-sm">
                 Olá, gostaria de cotar o jogo de pastilhas de freio dianteiras e filtros para o meu Civic 2018.
-                <span className="block text-[9px] text-slate-500 text-right mt-1 font-mono">12:30</span>
+                <span className="block text-[9px] text-slate-505 text-right mt-1 font-mono">12:30</span>
               </div>
               {/* Sender */}
               <div className="bg-indigo-650 rounded-xl p-3 max-w-[80%] self-end text-xs text-slate-100 leading-relaxed shadow-md shadow-indigo-600/5">
@@ -253,7 +254,7 @@ function App() {
             <div className="flex-grow overflow-y-auto min-h-0">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-850/60 text-slate-505 font-semibold bg-[#0e1626]/10">
+                  <tr className="border-b border-slate-850/60 text-slate-500 font-semibold bg-[#0e1626]/10">
                     <th className="p-2.5 pl-4">Código</th>
                     <th className="p-2.5">Descrição da Peça</th>
                     <th className="p-2.5 text-center">Qtd</th>
@@ -265,7 +266,7 @@ function App() {
                   {cartItems.map((item) => (
                     <tr key={item.id} className="hover:bg-[#16223f]/10">
                       <td className="p-2.5 pl-4 font-mono text-slate-450">{item.code}</td>
-                      <td className="p-2.5 font-semibold text-slate-250">{item.name}</td>
+                      <td className="p-2.5 font-semibold text-slate-255">{item.name}</td>
                       <td className="p-2.5 text-center font-semibold">{item.qty}</td>
                       <td className="p-2.5 text-right">R$ {item.price.toFixed(2)}</td>
                       <td className="p-2.5 text-right pr-4 font-bold text-slate-200">
@@ -365,7 +366,7 @@ function App() {
               <div className="p-3 bg-[#070a13] border border-slate-850 rounded-xl flex flex-col sm:flex-row justify-between gap-3 text-xs">
                 <div className="flex flex-col space-y-1">
                   <span className="font-bold text-slate-300">#ENT-9091 • Auto Mecânica Souza</span>
-                  <span className="text-slate-500">Rua Vergueiro, 3500 - Vila Mariana</span>
+                  <span className="text-slate-500">Rua Vergueiro, 3505 - Vila Mariana</span>
                 </div>
                 <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
                   <span className="text-[10px] text-slate-505 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 font-semibold">Retirada Balcão</span>
@@ -429,7 +430,7 @@ function App() {
                 <span className="text-[9px] text-slate-505 font-semibold">QUA</span>
               </div>
               <div className="flex flex-col items-center gap-1.5 w-8">
-                <div className="bg-indigo-600/30 hover:bg-indigo-650/50 border border-indigo-500/40 w-full h-40 rounded-t-md transition-all duration-300 relative group">
+                <div className="bg-indigo-600/30 hover:bg-indigo-650/50 border border-indigo-505/40 w-full h-40 rounded-t-md transition-all duration-300 relative group">
                   <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity font-bold">2.4k</span>
                 </div>
                 <span className="text-[9px] text-slate-455 font-bold">QUI</span>
@@ -759,7 +760,7 @@ function App() {
                 </div>
               </div>
 
-              <Button type="button" className="bg-indigo-650 hover:bg-indigo-555 text-white font-bold py-2 px-4 h-auto rounded-lg cursor-pointer uppercase tracking-wider">
+              <Button type="button" className="bg-indigo-655 hover:bg-indigo-555 text-white font-bold py-2 px-4 h-auto rounded-lg cursor-pointer uppercase tracking-wider">
                 Salvar Produto
               </Button>
             </form>
@@ -816,7 +817,7 @@ function App() {
               <input
                 type="text"
                 placeholder="Pesquisar no catálogo..."
-                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-355 focus:outline-none"
+                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none"
               />
             </div>
           </div>
@@ -892,7 +893,7 @@ function App() {
           </div>
 
           {/* Pending Warranties Table */}
-          <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+          <div className="flex-1 border border-slate-855 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
@@ -947,7 +948,7 @@ function App() {
           </div>
 
           {/* Shipped Warranties Table */}
-          <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+          <div className="flex-1 border border-slate-855 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
@@ -1002,7 +1003,7 @@ function App() {
           </div>
 
           {/* Return Warranties Table */}
-          <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+          <div className="flex-1 border border-slate-855 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
@@ -1022,7 +1023,7 @@ function App() {
                     <td className="p-3">Cofap Suspensões</td>
                     <td className="p-3">09/06/2026</td>
                     <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 uppercase tracking-wider">Procedente</span>
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">Procedente</span>
                     </td>
                     <td className="p-3 text-center">
                       <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
@@ -1065,7 +1066,7 @@ function App() {
           </div>
 
           {/* Archive Table */}
-          <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+          <div className="flex-1 border border-slate-855 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
@@ -1098,6 +1099,246 @@ function App() {
                   </tr>
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  // Define screens for the Deliveries Module (Entregas)
+  const entregasTabs = [
+    {
+      id: "baias",
+      label: "Baias",
+      icon: Layers,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action Row */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Baias de Separação e Carregamento (Logística)
+            </h4>
+          </div>
+
+          {/* Bays Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
+            <div className="bg-[#0e1626]/30 border border-slate-850 p-4 rounded-xl space-y-3">
+              <div className="flex justify-between items-center border-b border-slate-800/60 pb-2">
+                <span className="font-bold text-xs text-slate-200">Baia 01 - ZONA SUL</span>
+                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20 uppercase tracking-wider">Aguardando</span>
+              </div>
+              <div className="space-y-1.5 text-xs text-slate-400">
+                <p>Pedidos agrupados: <strong className="text-slate-250">5 volumes</strong></p>
+                <p>Peso total: <strong className="text-slate-250">14.5 kg</strong></p>
+                <p>Rota estimada: <strong className="text-slate-255">Sto. Amaro / Campo Belo</strong></p>
+              </div>
+              <Button className="w-full bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1.5 h-auto rounded-lg cursor-pointer">
+                Liberar para Carregamento
+              </Button>
+            </div>
+
+            <div className="bg-[#0e1626]/30 border border-slate-855 p-4 rounded-xl space-y-3">
+              <div className="flex justify-between items-center border-b border-slate-800/60 pb-2">
+                <span className="font-bold text-xs text-slate-200">Baia 02 - ZONA OESTE</span>
+                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 uppercase tracking-wider">Carregado</span>
+              </div>
+              <div className="space-y-1.5 text-xs text-slate-400">
+                <p>Pedidos agrupados: <strong className="text-slate-250">3 volumes</strong></p>
+                <p>Peso total: <strong className="text-slate-250">8.2 kg</strong></p>
+                <p>Rota estimada: <strong className="text-slate-255">Pinheiros / Lapa</strong></p>
+              </div>
+              <Button className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-300 text-[10px] py-1.5 h-auto rounded-lg cursor-pointer">
+                Despachar Portador
+              </Button>
+            </div>
+
+            <div className="bg-[#0e1626]/30 border border-slate-855 p-4 rounded-xl space-y-3">
+              <div className="flex justify-between items-center border-b border-slate-800/60 pb-2">
+                <span className="font-bold text-xs text-slate-200">Baia 03 - ZONA NORTE</span>
+                <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-400 border border-slate-700 uppercase tracking-wider">Vazia</span>
+              </div>
+              <div className="space-y-1.5 text-xs text-slate-500">
+                <p>Nenhum pedido vinculado a esta baia de carregamento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "enviando",
+      label: "Enviando",
+      icon: Navigation,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Header */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Ordens de Entrega em Trânsito (Rota Ativa)
+            </h4>
+          </div>
+
+          {/* Shipped Deliveries List */}
+          <div className="flex-grow border border-slate-855 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">Código PV</th>
+                    <th className="p-3">Cliente Destinatário</th>
+                    <th className="p-3">Entregador / Portador</th>
+                    <th className="p-3">Horário Saída</th>
+                    <th className="p-3 text-center">Status de Trânsito</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#PV-9821</td>
+                    <td className="p-3 font-semibold text-slate-200">Marcos Rogério Silva</td>
+                    <td className="p-3">Carlos Motoboy (Honda CG)</td>
+                    <td className="p-3">09/06/2026 00:58</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20 uppercase tracking-wider">Em Rota de Entrega</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#PV-9815</td>
+                    <td className="p-3 font-semibold text-slate-200">Auto Oficina Martins</td>
+                    <td className="p-3">Jonas Fiorino (VUC)</td>
+                    <td className="p-3">09/06/2026 00:30</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wider">A Caminho (Entrega 2/4)</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "mapa",
+      label: "Mapa",
+      icon: MapPin,
+      component: (
+        <div className="flex-grow flex flex-col md:flex-row gap-4 h-full min-h-0 bg-[#070a13]">
+          {/* Active Routes list */}
+          <div className="w-full md:w-64 border border-slate-855 bg-[#0e1626]/20 rounded-xl p-4 flex flex-col shrink-0 min-h-0 space-y-4">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850 pb-2">
+              Portadores Ativos
+            </h4>
+            <div className="space-y-2.5 text-xs flex-grow overflow-y-auto">
+              <div className="p-2.5 bg-[#070a13]/80 border border-indigo-500/25 rounded-lg flex flex-col space-y-1">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-slate-200">Carlos Motoboy</span>
+                  <span className="text-[9px] text-indigo-400 bg-indigo-500/10 px-1.5 py-0.2 rounded border border-indigo-500/10">MOTO-01</span>
+                </div>
+                <span className="text-[10px] text-slate-500">Local: Av. Jabaquara, 450</span>
+              </div>
+
+              <div className="p-2.5 bg-[#0e1626]/10 border border-slate-850 rounded-lg flex flex-col space-y-1">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-slate-300">Jonas Fiorino</span>
+                  <span className="text-[9px] text-slate-500 bg-slate-900 px-1.5 py-0.2 rounded border border-slate-800">CARRO-02</span>
+                </div>
+                <span className="text-[10px] text-slate-500">Local: Rua Vergueiro, 2200</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Styled Graphic Route Map representation */}
+          <div className="flex-grow border border-slate-850 bg-[#0e1626]/10 rounded-xl p-4 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-0">
+            {/* Visual map mesh background grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:24px_24px] opacity-20 pointer-events-none" />
+
+            {/* Stylized vector map routes */}
+            <svg className="w-full max-w-lg h-48 text-slate-800 stroke-indigo-500/15 stroke-[1.5] fill-none shrink-0" viewBox="0 0 400 200">
+              {/* Route lines */}
+              <path d="M 50,50 Q 150,20 200,80 T 350,150" />
+              <path d="M 50,150 Q 180,180 200,80 T 320,30" className="stroke-indigo-500/10" />
+              
+              {/* Map pin nodes */}
+              <circle cx="50" cy="50" r="4" className="fill-indigo-600 stroke-indigo-500 stroke-2 animate-pulse" />
+              <circle cx="200" cy="80" r="5" className="fill-indigo-400 stroke-indigo-400 stroke-2" />
+              <circle cx="350" cy="150" r="4" className="fill-violet-600 stroke-violet-500 stroke-2" />
+
+              {/* Courier active marker */}
+              <g className="translate-x-[120px] translate-y-[38px] animate-pulse">
+                <circle cx="0" cy="0" r="6" className="fill-indigo-500 stroke-white stroke-2" />
+                <path d="M-3,-10 L3,-10 L0,-4 Z" className="fill-indigo-500" />
+              </g>
+            </svg>
+
+            <span className="text-xs font-bold text-slate-300 z-10 mt-4 flex items-center gap-1.5 bg-[#0e1626] border border-slate-850 px-3 py-1.5 rounded-full shadow-md">
+              <Map className="h-3.5 w-3.5 text-indigo-400" /> Rastreamento de Rotas Ativo (Mock)
+            </span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "frota",
+      label: "Frota",
+      icon: Truck,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Header */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Frota de Veículos e Portadores Cadastrados
+            </h4>
+          </div>
+
+          {/* Vehicles Grid list */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 shrink-0">
+            <div className="bg-[#0e1626]/40 border border-slate-850 p-4 rounded-xl flex flex-col justify-between space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between items-start">
+                  <div className="flex flex-col">
+                    <span className="font-bold text-xs text-slate-200">Honda CG 160 Fan</span>
+                    <span className="text-[10px] text-slate-500 font-mono">Placa: QWY-9283</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wider">Em Rota</span>
+                </div>
+                <div className="text-[10px] text-slate-400 space-y-0.5">
+                  <p>Condutor: <strong className="text-slate-255">Carlos Motoboy</strong></p>
+                  <p>Manutenção: <strong className="text-emerald-450">Ok (Revisado)</strong></p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#0e1626]/40 border border-slate-855 p-4 rounded-xl flex flex-col justify-between space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between items-start">
+                  <div className="flex flex-col">
+                    <span className="font-bold text-xs text-slate-200">Fiorino 1.4 Hard Working</span>
+                    <span className="text-[10px] text-slate-500 font-mono">Placa: PXA-3021</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wider">Em Rota</span>
+                </div>
+                <div className="text-[10px] text-slate-400 space-y-0.5">
+                  <p>Condutor: <strong className="text-slate-255">Jonas Fiorino</strong></p>
+                  <p>Manutenção: <strong className="text-emerald-450">Ok (Revisado)</strong></p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#0e1626]/40 border border-slate-855 p-4 rounded-xl flex flex-col justify-between space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between items-start">
+                  <div className="flex flex-col">
+                    <span className="font-bold text-xs text-slate-200">Yamaha Factor 150</span>
+                    <span className="text-[10px] text-slate-500 font-mono">Placa: RKI-4009</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-400 border border-slate-700 uppercase tracking-wider">Disponível</span>
+                </div>
+                <div className="text-[10px] text-slate-400 space-y-0.5">
+                  <p>Condutor: <strong className="text-slate-500">Nenhum Vinculado</strong></p>
+                  <p>Manutenção: <strong className="text-amber-450">Troca de óleo pendente</strong></p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1157,6 +1398,17 @@ function App() {
             icon={ShieldCheck}
           />
         </div>
+      ) : activeModule === "entregas" ? (
+        <div className="flex-1 flex flex-col min-h-0 h-full">
+          {/* Module Sub-tabs Container with integrated title */}
+          <ModuleTabContainer
+            key="entregas"
+            tabs={entregasTabs}
+            defaultTabId="baias"
+            title="Entregas"
+            icon={Truck}
+          />
+        </div>
       ) : (
         /* Modules Dashboard (Home View) */
         <div className="space-y-6 flex-grow flex flex-col justify-between">
@@ -1209,6 +1461,14 @@ function App() {
                 description="Abertura de laudos de garantia, controle de remessa para fabricantes e retorno de peças."
                 icon={ShieldCheck}
                 onClick={() => setActiveModule("garantia")}
+              />
+
+              {/* Entregas Card (Active) */}
+              <ModuleCard
+                title="Logística & Entregas"
+                description="Planejamento de rotas, controle de baias de carregamento, monitoramento e frota."
+                icon={Truck}
+                onClick={() => setActiveModule("entregas")}
               />
 
               {/* Financeiro Card (Placeholder / Coming Soon) */}

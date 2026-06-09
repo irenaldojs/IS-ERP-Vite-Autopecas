@@ -1,4 +1,4 @@
-import { ShoppingCart, Wallet, Box, ShieldCheck } from "lucide-react";
+import { ShoppingCart, Wallet, Box, ShieldCheck, Truck } from "lucide-react";
 
 interface SidebarProps {
   activeModule?: string;
@@ -30,6 +30,12 @@ export function Sidebar({ activeModule = "vendas", onSelectModule }: SidebarProp
       label: "Garantia",
       icon: ShieldCheck,
       tooltip: "Módulo de Garantia",
+    },
+    {
+      id: "entregas",
+      label: "Entregas",
+      icon: Truck,
+      tooltip: "Módulo de Entregas & Logística",
     },
   ];
 
@@ -73,7 +79,7 @@ export function Sidebar({ activeModule = "vendas", onSelectModule }: SidebarProp
       </div>
 
       {/* Bottom Section: Client indicators or versions */}
-      <div className="text-[9px] font-mono text-slate-650 tracking-wider">
+      <div className="text-[9px] font-mono text-slate-655 tracking-wider">
         ERP
       </div>
     </aside>
