@@ -19,7 +19,7 @@ export function DashboardLayout({
   return (
     <div className="h-screen bg-[#070a13] text-slate-100 flex flex-col font-sans select-none antialiased overflow-hidden">
       {/* Top Header Row */}
-      <div className="flex h-16 border-b border-slate-800/80 bg-[#0e1626]/90 backdrop-blur-md shrink-0">
+      <div className="flex h-16 border-b border-slate-800/80 bg-[#0e1626]/90 backdrop-blur-md relative z-50">
         {/* Junction Box: Home / Logo Button */}
         <button
           onClick={onHomeClick}
