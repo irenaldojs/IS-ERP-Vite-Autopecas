@@ -31,6 +31,8 @@ import {
   PlusCircle,
   Scale,
   List,
+  Archive,
+  CornerDownLeft,
 } from "lucide-react";
 
 function App() {
@@ -116,7 +118,7 @@ function App() {
                     <td className="p-3">09/06/2026</td>
                     <td className="p-3 text-right font-semibold">R$ 1.250,00</td>
                     <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20">Aguardando</span>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Aguardando</span>
                     </td>
                   </tr>
                   <tr className="hover:bg-[#16223f]/10">
@@ -167,7 +169,7 @@ function App() {
                   <span className="text-xs font-bold text-slate-200 truncate">Marcos Rogério</span>
                   <span className="text-[10px] text-slate-400 truncate">Orçamento #00982 enviado...</span>
                 </div>
-                <span className="text-[9px] text-slate-500 font-mono">12:35</span>
+                <span className="text-[9px] text-slate-505 font-mono">12:35</span>
               </button>
               <button className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-[#0e1626]/40 text-left cursor-pointer">
                 <div className="flex flex-col min-w-0">
@@ -251,7 +253,7 @@ function App() {
             <div className="flex-grow overflow-y-auto min-h-0">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-850/60 text-slate-500 font-semibold bg-[#0e1626]/10">
+                  <tr className="border-b border-slate-850/60 text-slate-505 font-semibold bg-[#0e1626]/10">
                     <th className="p-2.5 pl-4">Código</th>
                     <th className="p-2.5">Descrição da Peça</th>
                     <th className="p-2.5 text-center">Qtd</th>
@@ -384,17 +386,17 @@ function App() {
           {/* Quick Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
             <div className="bg-[#0e1626]/40 border border-slate-850 p-4 rounded-xl space-y-1 shadow-sm">
-              <span className="text-[10px] font-bold text-slate-505 uppercase tracking-wider">Faturamento Hoje</span>
+              <span className="text-[10px] font-bold text-slate-550 uppercase tracking-wider">Faturamento Hoje</span>
               <h4 className="text-base font-black text-slate-100">R$ 4.894,70</h4>
               <span className="text-[9px] text-emerald-450 font-semibold">+ 12% em relação a ontem</span>
             </div>
             <div className="bg-[#0e1626]/40 border border-slate-850 p-4 rounded-xl space-y-1 shadow-sm">
-              <span className="text-[10px] font-bold text-slate-505 uppercase tracking-wider">Orçamentos Abertos</span>
+              <span className="text-[10px] font-bold text-slate-555 uppercase tracking-wider">Orçamentos Abertos</span>
               <h4 className="text-base font-black text-slate-100">8 Ativos</h4>
               <span className="text-[9px] text-indigo-400 font-semibold">Conversão de 65%</span>
             </div>
             <div className="bg-[#0e1626]/40 border border-slate-850 p-4 rounded-xl space-y-1 shadow-sm">
-              <span className="text-[10px] font-bold text-slate-505 uppercase tracking-wider">Ticket Médio</span>
+              <span className="text-[10px] font-bold text-slate-555 uppercase tracking-wider">Ticket Médio</span>
               <h4 className="text-base font-black text-slate-100">R$ 326,30</h4>
               <span className="text-[9px] text-indigo-400 font-semibold">Dentro da meta</span>
             </div>
@@ -610,11 +612,11 @@ function App() {
                   <p className="text-sm font-bold text-slate-300">R$ 200,00</p>
                 </div>
                 <div className="p-3 bg-[#070a13] border border-slate-850 rounded-lg">
-                  <span className="text-[9px] font-bold text-slate-500 uppercase">Entradas</span>
+                  <span className="text-[9px] font-bold text-slate-505 uppercase">Entradas</span>
                   <p className="text-sm font-bold text-emerald-450">R$ 850,00</p>
                 </div>
                 <div className="p-3 bg-[#070a13] border border-slate-850 rounded-lg">
-                  <span className="text-[9px] font-bold text-slate-500 uppercase">Saídas (Sangria)</span>
+                  <span className="text-[9px] font-bold text-slate-505 uppercase">Saídas (Sangria)</span>
                   <p className="text-sm font-bold text-red-400">R$ 50,00</p>
                 </div>
                 <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
@@ -629,7 +631,7 @@ function App() {
               <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-350 text-xs font-semibold py-2 px-4 h-auto rounded-lg cursor-pointer">
                 Sangria (Retirada)
               </Button>
-              <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-350 text-slate-350 text-xs font-semibold py-2 px-4 h-auto rounded-lg cursor-pointer">
+              <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-350 text-slate-355 text-xs font-semibold py-2 px-4 h-auto rounded-lg cursor-pointer">
                 Suprimento (Aporte)
               </Button>
               <Button className="ml-auto bg-red-950/20 hover:bg-red-950/40 border border-red-900/30 text-red-400 text-xs font-semibold py-2 px-4 h-auto rounded-lg cursor-pointer">
@@ -724,22 +726,22 @@ function App() {
             <form className="space-y-4 text-xs">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Código Interno</label>
+                  <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Código Interno</label>
                   <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" placeholder="EX: AP-1092" />
                 </div>
                 <div className="md:col-span-2 space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Descrição do Produto</label>
+                  <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Descrição do Produto</label>
                   <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" placeholder="EX: Jogo Pastilha de Freio Dianteira" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Marca</label>
+                  <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Marca</label>
                   <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" placeholder="EX: Cobreq" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Categoria</label>
+                  <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Categoria</label>
                   <select className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-400 focus:outline-none">
                     <option>Freios</option>
                     <option>Motor</option>
@@ -748,11 +750,11 @@ function App() {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Preço Custo</label>
+                  <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Preço Custo</label>
                   <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="R$ 0,00" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Preço Venda</label>
+                  <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Preço Venda</label>
                   <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-305 focus:outline-none" placeholder="R$ 0,00" />
                 </div>
               </div>
@@ -814,7 +816,7 @@ function App() {
               <input
                 type="text"
                 placeholder="Pesquisar no catálogo..."
-                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none"
+                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-355 focus:outline-none"
               />
             </div>
           </div>
@@ -855,6 +857,243 @@ function App() {
                     <td className="p-3 text-center font-bold">4 UN</td>
                     <td className="p-3 text-center">
                       <span className="h-2 w-2 rounded-full bg-red-500 inline-block animate-pulse" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  // Define screens for the Warranty Module (Garantia)
+  const garantiaTabs = [
+    {
+      id: "pendentes",
+      label: "Pendentes",
+      icon: Clock,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action Row */}
+          <div className="flex justify-between items-center shrink-0">
+            <div className="relative w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+              <input
+                type="text"
+                placeholder="Buscar garantia pendente..."
+                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-355 focus:outline-none"
+              />
+            </div>
+            <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg flex items-center gap-1.5 cursor-pointer">
+              <Plus className="h-3.5 w-3.5" /> Abrir Chamado
+            </Button>
+          </div>
+
+          {/* Pending Warranties Table */}
+          <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3">Cód. Chamado</th>
+                    <th className="p-3">Cliente</th>
+                    <th className="p-3">Peça / Produto</th>
+                    <th className="p-3">Data Abertura</th>
+                    <th className="p-3 text-center">Prazo Decorrido</th>
+                    <th className="p-3 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 font-mono text-indigo-400">#GAR-4512</td>
+                    <td className="p-3 font-semibold text-slate-200">Oficina Multimarcas Silva</td>
+                    <td className="p-3">Amortecedor Dianteiro Cofap (Cofap)</td>
+                    <td className="p-3">07/06/2026</td>
+                    <td className="p-3 text-center font-semibold text-slate-400">2 dias</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#16223f] text-slate-400 border border-slate-800 uppercase tracking-wider">Aguardando Envio</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 font-mono text-indigo-400">#GAR-4511</td>
+                    <td className="p-3 font-semibold text-slate-200">Ricardo Rodrigues Mendes</td>
+                    <td className="p-3">Bomba de Combustível Bosch (Bosch)</td>
+                    <td className="p-3">06/06/2026</td>
+                    <td className="p-3 text-center font-semibold text-slate-400">3 dias</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">Em Laudo Local</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "enviadas",
+      label: "Enviadas",
+      icon: Send,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action Bar */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Garantias Enviadas para os Fabricantes
+            </h4>
+          </div>
+
+          {/* Shipped Warranties Table */}
+          <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3">Cód. Chamado</th>
+                    <th className="p-3">Fabricante</th>
+                    <th className="p-3">Data Envio</th>
+                    <th className="p-3">Código Rastreio</th>
+                    <th className="p-3 text-center">NF de Remessa</th>
+                    <th className="p-3 text-center">Sefaz Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 font-mono text-indigo-400">#GAR-4509</td>
+                    <td className="p-3 font-semibold text-slate-200">Cofap Suspensões</td>
+                    <td className="p-3">01/06/2026</td>
+                    <td className="p-3 font-mono text-slate-500">QD908239023BR</td>
+                    <td className="p-3 text-center font-mono">00019283</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wider">Em Análise</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 font-mono text-indigo-400">#GAR-4508</td>
+                    <td className="p-3 font-semibold text-slate-200">Bosch Brasil Ltda</td>
+                    <td className="p-3">30/05/2026</td>
+                    <td className="p-3 font-mono text-slate-500">QD908123992BR</td>
+                    <td className="p-3 text-center font-mono">00019278</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wider">Em Análise</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "retorno",
+      label: "Retorno",
+      icon: CornerDownLeft,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Header */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Laudos de Retorno e Decisões dos Fabricantes
+            </h4>
+          </div>
+
+          {/* Return Warranties Table */}
+          <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3">Cód. Chamado</th>
+                    <th className="p-3">Cliente</th>
+                    <th className="p-3">Fabricante</th>
+                    <th className="p-3">Data Parecer</th>
+                    <th className="p-3 text-center">Decisão Laudo</th>
+                    <th className="p-3 text-center">Resolução / Ação</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 font-mono text-indigo-400">#GAR-4505</td>
+                    <td className="p-3 font-semibold text-slate-200">Mecânica do Gordo</td>
+                    <td className="p-3">Cofap Suspensões</td>
+                    <td className="p-3">09/06/2026</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 uppercase tracking-wider">Procedente</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        Gerar Crédito Cliente
+                      </Button>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 font-mono text-indigo-400">#GAR-4504</td>
+                    <td className="p-3 font-semibold text-slate-200">Fernanda Mendes Souza</td>
+                    <td className="p-3">Magneti Marelli</td>
+                    <td className="p-3">08/06/2026</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 uppercase tracking-wider">Improcedente</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-300 text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        Baixar Laudo (Negativa)
+                      </Button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "arquivo",
+      label: "Arquivo",
+      icon: Archive,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Header */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Histórico de Garantias Encerradas (Arquivo)
+            </h4>
+          </div>
+
+          {/* Archive Table */}
+          <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3">Cód. Chamado</th>
+                    <th className="p-3">Cliente</th>
+                    <th className="p-3">Fabricante</th>
+                    <th className="p-3">Data Arquivo</th>
+                    <th className="p-3 text-center">Resultado</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 font-mono text-indigo-400">#GAR-4498</td>
+                    <td className="p-3 font-semibold text-slate-200">Mecânica do Gordo</td>
+                    <td className="p-3">Cofap Suspensões</td>
+                    <td className="p-3">28/05/2026</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">Peça Trocada</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 font-mono text-indigo-400">#GAR-4495</td>
+                    <td className="p-3 font-semibold text-slate-200">Claudio Roberto Silva</td>
+                    <td className="p-3">Bosch Brasil</td>
+                    <td className="p-3">22/05/2026</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#16223f] text-slate-400 border border-slate-800 uppercase tracking-wider">Laudo Emitido (Negado)</span>
                     </td>
                   </tr>
                 </tbody>
@@ -907,6 +1146,17 @@ function App() {
             icon={Box}
           />
         </div>
+      ) : activeModule === "garantia" ? (
+        <div className="flex-1 flex flex-col min-h-0 h-full">
+          {/* Module Sub-tabs Container with integrated title */}
+          <ModuleTabContainer
+            key="garantia"
+            tabs={garantiaTabs}
+            defaultTabId="pendentes"
+            title="Garantia"
+            icon={ShieldCheck}
+          />
+        </div>
       ) : (
         /* Modules Dashboard (Home View) */
         <div className="space-y-6 flex-grow flex flex-col justify-between">
@@ -951,6 +1201,14 @@ function App() {
                 description="Cadastro de autopeças, importação de XML de compras, inventário e controle de balanço."
                 icon={Box}
                 onClick={() => setActiveModule("estoque")}
+              />
+
+              {/* Garantia Card (Active) */}
+              <ModuleCard
+                title="Controle de Garantias"
+                description="Abertura de laudos de garantia, controle de remessa para fabricantes e retorno de peças."
+                icon={ShieldCheck}
+                onClick={() => setActiveModule("garantia")}
               />
 
               {/* Financeiro Card (Placeholder / Coming Soon) */}
@@ -1005,7 +1263,7 @@ function App() {
               >
                 <input
                   type="text"
-                  className="flex-1 px-3 py-1.5 bg-[#0e1626]/20 border border-slate-850 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-indigo-500"
+                  className="flex-1 px-3 py-1.5 bg-[#0e1626]/20 border border-slate-850 rounded-lg text-xs text-slate-350 focus:outline-none focus:border-indigo-500"
                   onChange={(e) => setName(e.currentTarget.value)}
                   placeholder="Nome para saudar..."
                   value={name}
@@ -1013,7 +1271,7 @@ function App() {
                 <Button
                   type="submit"
                   disabled={loading || !name}
-                  className="text-xs bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-200 py-1.5 px-3 h-auto cursor-pointer"
+                  className="text-xs bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-205 py-1.5 px-3 h-auto cursor-pointer"
                 >
                   {loading ? "Testando..." : "Saudar Rust"}
                 </Button>
