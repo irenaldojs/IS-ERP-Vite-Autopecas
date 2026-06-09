@@ -317,10 +317,10 @@ export default function Orcamento(props: Props) {
               {activeSaleItems.map((item, index) => (
                 <tr 
                   key={item.code} 
-                  className="hover:bg-[#16223f]/50 focus-within:bg-indigo-650/20 cursor-pointer transition-all border-l-4 border-transparent focus-within:border-indigo-500"
+                  className="group hover:bg-[#16223f]/50 focus-within:bg-indigo-650/20 cursor-pointer transition-all"
                   onClick={() => document.getElementById(`qty-input-${index}`)?.focus()}
                 >
-                  <td className="p-2.5 pl-4 font-mono text-slate-450">{item.code}</td>
+                  <td className="p-2.5 pl-4 font-mono text-slate-450 border-l-4 border-transparent group-focus-within:border-indigo-500">{item.code}</td>
                   <td className="p-2.5 font-semibold text-slate-200">{item.name}</td>
                   <td className="p-2.5 text-slate-400">{item.brand}</td>
                   <td className="p-2.5 text-center font-bold text-slate-200">
@@ -629,10 +629,10 @@ export default function Orcamento(props: Props) {
                           handleAddProductFromModal(prod);
                         }}
                         className={`hover:bg-[#16223f]/40 cursor-pointer transition-all ${
-                          isSelected ? "bg-indigo-600/25 border-l-4 border-indigo-500 font-semibold text-white shadow-inner" : "border-l-4 border-transparent"
+                          isSelected ? "bg-indigo-600/25 font-semibold text-white shadow-inner" : ""
                         }`}
                       >
-                        <td className="py-1 px-3 pl-4 font-mono text-slate-400">{prod.id}</td>
+                        <td className={`py-1 px-3 pl-4 font-mono text-slate-400 border-l-4 ${isSelected ? "border-indigo-500" : "border-transparent"}`}>{prod.id}</td>
                         <td className="py-1 px-3 font-semibold text-slate-200">{prod.codigo_original}</td>
                         <td className="py-1 px-3 text-slate-300">{group?.descricao || "Sem Grupo"}</td>
                         <td className="py-1 px-3 text-slate-400">{brand?.nome || "Sem Marca"}</td>
