@@ -19,8 +19,8 @@ export function ModuleCard({ title, description, icon: Icon, onClick, badge }: M
 
       {/* Top Row: Icon + Badge/Arrow */}
       <div className="w-full flex items-center justify-between">
-        <div className="h-10 w-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 group-hover:border-indigo-500/20 group-hover:bg-[#16223f] transition-all duration-300 shadow-md">
-          <Icon className="h-4.5 w-4.5" />
+        <div className="h-16 w-16 rounded-xl bg-[#16223f]/40 border border-indigo-500/15 flex items-center justify-center text-indigo-400 group-hover:text-indigo-300 group-hover:border-indigo-500/35 group-hover:bg-[#16223f] group-hover:scale-105 transition-all duration-300 shadow-md shadow-indigo-950/20">
+          <Icon className="h-8 w-8" />
         </div>
 
         {badge ? (
@@ -28,18 +28,18 @@ export function ModuleCard({ title, description, icon: Icon, onClick, badge }: M
             {badge}
           </span>
         ) : (
-          <div className="h-6 w-6 rounded-lg flex items-center justify-center text-slate-650 group-hover:text-indigo-400 group-hover:bg-[#16223f]/55 transition-all duration-300">
-            <ArrowUpRight className="h-3.5 w-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          <div className="h-8 w-8 rounded-lg flex items-center justify-center text-slate-500 group-hover:text-indigo-400 group-hover:bg-[#16223f]/55 transition-all duration-300">
+            <ArrowUpRight className="h-4.5 w-4.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </div>
         )}
       </div>
 
       {/* Bottom Content: Title + Description */}
-      <div className="space-y-1 z-10 w-full text-left">
-        <h3 className="text-xs font-bold text-slate-100 tracking-tight group-hover:text-white transition-colors">
+      <div className="space-y-1.5 z-10 w-full text-left">
+        <h3 className="text-sm font-bold text-slate-100 tracking-tight group-hover:text-white transition-colors">
           {title}
         </h3>
-        <p className="text-[10px] text-slate-400 leading-snug group-hover:text-slate-350 transition-colors line-clamp-3">
+        <p className="text-xs text-slate-400 leading-normal group-hover:text-slate-300 transition-colors line-clamp-3">
           {description}
         </p>
       </div>

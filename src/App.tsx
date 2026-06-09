@@ -1,15 +1,11 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { ModuleCard } from "@/components/dashboard/ModuleCard";
 import { ModuleTabContainer } from "@/components/layout/ModuleTabContainer";
 import {
   ShoppingCart,
-  Server,
   ShieldCheck,
-  Terminal,
-  Cpu,
   Box,
   DollarSign,
   LayoutGrid,
@@ -45,46 +41,512 @@ import {
   Settings,
 } from "lucide-react";
 
+// Mock catalog products for search and select
+const MOCK_PRODUCTS = [
+  { code: "FP-1092", name: "Pastilha de Freio Cobreq (Par)", brand: "Cobreq", price: 189.90, stock: 12 },
+  { code: "OL-3021", name: "Óleo Motor Selenia 5W30 1L", brand: "Selenia", price: 42.50, stock: 4 },
+  { code: "FC-4009", name: "Filtro de Combustível Fram", brand: "Fram", price: 34.90, stock: 8 },
+  { code: "AM-2022", name: "Amortecedor Traseiro Cofap", brand: "Cofap", price: 320.00, stock: 6 },
+  { code: "BU-5011", name: "Bucha Bandeja Dianteira Axios", brand: "Axios", price: 45.00, stock: 15 },
+  { code: "VE-9031", name: "Vela de Ignição NGK (Unidade)", brand: "NGK", price: 28.50, stock: 24 },
+];
+
 function App() {
   const [activeModule, setActiveModule] = useState("home");
-  const [name, setName] = useState("");
-  const [greetMsg, setGreetMsg] = useState("");
-  const [loading, setLoading] = useState(false);
   const [isCaixaMaximized, setIsCaixaMaximized] = useState(false);
 
-  // Cashier item state for mock Pre-Vendas
-  const [cartItems] = useState([
-    { id: 1, name: "Pastilha de Freio Cobreq (Par)", code: "FP-1092", qty: 1, price: 189.90 },
-    { id: 2, name: "Óleo Motor Selenia 5W30 1L", code: "OL-3021", qty: 4, price: 42.50 },
-    { id: 3, name: "Filtro de Combustível Fram", code: "FC-4009", qty: 1, price: 34.90 },
+  // Vendas Active Tab control
+  const [vendasActiveTabId, setVendasActiveTabId] = useState("lista");
+
+  // State for the active sale items being entered in the "Lista" screen
+  const [activeSaleItems, setActiveSaleItems] = useState<Array<{
+    id: string;
+    code: string;
+    name: string;
+    brand: string;
+    qty: number;
+    price: number;
+  }>>([]);
+
+  const [clientName, setClientName] = useState("");
+  const [vehicleName, setVehicleName] = useState("");
+  const [discountValue, setDiscountValue] = useState(0);
+  const [productSearchQuery, setProductSearchQuery] = useState("");
+  const [showProductSuggestions, setShowProductSuggestions] = useState(false);
+
+  // Custom toast notifications state
+  const [toast, setToast] = useState<{ message: string; type: "success" | "info" | "error" } | null>(null);
+
+  const showToast = (message: string, type: "success" | "info" | "error" = "success") => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, 3500);
+  };
+
+  // Budgets state (Orçamentos)
+  const [budgets, setBudgets] = useState<Array<{
+    id: string;
+    client: string;
+    vehicle: string;
+    date: string;
+    total: number;
+    status: string;
+    items: Array<{ code: string; name: string; brand: string; qty: number; price: number }>;
+  }>>([
+    {
+      id: "#00982",
+      client: "Marcos Rogério Silva",
+      vehicle: "Honda Civic 2018 2.0",
+      date: "09/06/2026",
+      total: 1250.00,
+      status: "Aguardando",
+      items: [
+        { code: "FP-1092", name: "Pastilha de Freio Cobreq (Par)", brand: "Cobreq", qty: 2, price: 189.90 },
+        { code: "OL-3021", name: "Óleo Motor Selenia 5W30 1L", brand: "Selenia", qty: 4, price: 42.50 },
+        { code: "AM-2022", name: "Amortecedor Traseiro Cofap", brand: "Cofap", qty: 2, price: 320.00 }
+      ]
+    },
+    {
+      id: "#00981",
+      client: "Juliana Nogueira Santos",
+      vehicle: "Chevrolet Onix 1.0 Turbo",
+      date: "08/06/2026",
+      total: 394.80,
+      status: "Aprovado",
+      items: [
+        { code: "OL-3021", name: "Óleo Motor Selenia 5W30 1L", brand: "Selenia", qty: 4, price: 42.50 },
+        { code: "FC-4009", name: "Filtro de Combustível Fram", brand: "Fram", qty: 1, price: 34.90 },
+        { code: "FP-1092", name: "Pastilha de Freio Cobreq (Par)", brand: "Cobreq", qty: 1, price: 189.90 }
+      ]
+    },
+    {
+      id: "#00980",
+      client: "Auto Mecânica Souza",
+      vehicle: "Fiat Uno Vivace 1.0",
+      date: "08/06/2026",
+      total: 145.00,
+      status: "Cancelado",
+      items: [
+        { code: "BU-5011", name: "Bucha Bandeja Dianteira Axios", brand: "Axios", qty: 2, price: 45.00 },
+        { code: "FC-4009", name: "Filtro de Combustível Fram", brand: "Fram", qty: 1, price: 34.90 }
+      ]
+    }
   ]);
 
-  async function greet() {
-    if (!name) return;
-    setLoading(true);
-    try {
-      if (typeof window !== "undefined" && (window as any).__TAURI_INTERNALS__) {
-        setGreetMsg(await invoke("greet", { name }));
-      } else {
-        // Mock response if running in regular browser
-        await new Promise((resolve) => setTimeout(resolve, 600));
-        setGreetMsg(`Olá, ${name}! (Mensagem mock: Executando no navegador sem o Tauri)`);
-      }
-    } catch (error) {
-      console.error("Erro ao invocar Tauri:", error);
-      setGreetMsg(`Olá, ${name}! (Erro: ${error})`);
-    } finally {
-      setLoading(false);
+  // Pre-Sales state
+  const [preSales, setPreSales] = useState<Array<{
+    id: string;
+    client: string;
+    seller: string;
+    date: string;
+    total: number;
+    status: "Pendente" | "Pago";
+    items: Array<{ code: string; name: string; brand: string; qty: number; price: number }>;
+  }>>([
+    {
+      id: "#PV-9821",
+      client: "Marcos Rogério Silva",
+      seller: "Irenaldo (Vendas)",
+      date: "09/06/2026",
+      total: 267.30,
+      status: "Pendente",
+      items: [
+        { code: "FC-4009", name: "Filtro de Combustível Fram", brand: "Fram", qty: 1, price: 34.90 },
+        { code: "FP-1092", name: "Pastilha de Freio Cobreq (Par)", brand: "Cobreq", qty: 1, price: 189.90 },
+        { code: "VE-9031", name: "Vela de Ignição NGK (Unidade)", brand: "NGK", qty: 1, price: 28.50 }
+      ]
+    },
+    {
+      id: "#PV-9820",
+      client: "Auto Mecânica Souza",
+      seller: "Irenaldo (Vendas)",
+      date: "09/06/2026",
+      total: 145.00,
+      status: "Pendente",
+      items: [
+        { code: "BU-5011", name: "Bucha Bandeja Dianteira Axios", brand: "Axios", qty: 2, price: 45.00 },
+        { code: "FC-4009", name: "Filtro de Combustível Fram", brand: "Fram", qty: 1, price: 34.90 }
+      ]
     }
-  }
+  ]);
 
-  // Calculate cart totals
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
-  const discount = 15.00;
-  const total = subtotal - discount;
+  // Emitted NFC-e / NF-e state
+  const [invoices, setInvoices] = useState([
+    { id: "00010928", type: "NFC-e (65)", client: "Consumidor Não Identificado", date: "09/06/2026 00:44", total: 89.90, status: "Autorizada" },
+    { id: "00010927", type: "NFC-e (65)", client: "Juliana Nogueira Santos", date: "08/06/2026 18:21", total: 394.80, status: "Autorizada" }
+  ]);
+
+  // Calculations for active sale builder
+  const subtotalSale = activeSaleItems.reduce((acc, item) => acc + item.price * item.qty, 0);
+  const totalSale = Math.max(0, subtotalSale - discountValue);
+
+  // Filter catalog based on productSearchQuery
+  const filteredCatalog = MOCK_PRODUCTS.filter((prod) => {
+    const q = productSearchQuery.toLowerCase();
+    return (
+      prod.name.toLowerCase().includes(q) ||
+      prod.code.toLowerCase().includes(q) ||
+      prod.brand.toLowerCase().includes(q)
+    );
+  });
+
+  const handleSaveBudget = () => {
+    if (activeSaleItems.length === 0) {
+      showToast("Adicione pelo menos um item para salvar o orçamento.", "error");
+      return;
+    }
+
+    const nextIdNum = budgets.length > 0 ? parseInt(budgets[0].id.replace("#", "")) + 1 : 983;
+    const budgetId = `#${String(nextIdNum).padStart(5, "0")}`;
+
+    const newBudget = {
+      id: budgetId,
+      client: clientName.trim() || "Consumidor Final",
+      vehicle: vehicleName.trim() || "Não especificado",
+      date: new Date().toLocaleDateString("pt-BR"),
+      total: totalSale,
+      status: "Aguardando",
+      items: [...activeSaleItems],
+    };
+
+    setBudgets([newBudget, ...budgets]);
+
+    // Reset fields
+    setActiveSaleItems([]);
+    setClientName("");
+    setVehicleName("");
+    setDiscountValue(0);
+    setProductSearchQuery("");
+
+    // Switch tab to Orçamento
+    setVendasActiveTabId("orcamento");
+    showToast(`Orçamento ${budgetId} salvo com sucesso!`);
+  };
+
+  const handleSavePreSale = () => {
+    if (activeSaleItems.length === 0) {
+      showToast("Adicione pelo menos um item para realizar a pré-venda.", "error");
+      return;
+    }
+
+    const nextPVNum = preSales.length > 0 ? parseInt(preSales[0].id.replace("#PV-", "")) + 1 : 9822;
+    const pvId = `#PV-${nextPVNum}`;
+
+    const newPreSale = {
+      id: pvId,
+      client: clientName.trim() || "Consumidor Final",
+      seller: "Irenaldo (Vendas)",
+      date: new Date().toLocaleDateString("pt-BR"),
+      total: totalSale,
+      status: "Pendente" as const,
+      items: [...activeSaleItems],
+    };
+
+    setPreSales([newPreSale, ...preSales]);
+
+    // Reset fields
+    setActiveSaleItems([]);
+    setClientName("");
+    setVehicleName("");
+    setDiscountValue(0);
+    setProductSearchQuery("");
+
+    // Switch tab to Pré-Vendas
+    setVendasActiveTabId("prevendas");
+    showToast(`Pré-venda ${pvId} gerada! Aguardando caixa.`);
+  };
+
+  const handleReceivePreSale = (pvId: string) => {
+    const pv = preSales.find((p) => p.id === pvId);
+    if (!pv) return;
+
+    // Update status to Pago
+    setPreSales((prev) =>
+      prev.map((p) => (p.id === pvId ? { ...p, status: "Pago" as const } : p))
+    );
+
+    // Create Invoice (NFC-e)
+    const nextInvoiceNum = invoices.length > 0 ? parseInt(invoices[0].id) + 1 : 10929;
+    const invoiceNum = String(nextInvoiceNum).padStart(8, "0");
+
+    const newInvoice = {
+      id: invoiceNum,
+      type: "NFC-e (65)",
+      client: pv.client,
+      date: new Date().toLocaleString("pt-BR").substring(0, 16),
+      total: pv.total,
+      status: "Autorizada",
+    };
+
+    setInvoices([newInvoice, ...invoices]);
+    showToast(`Pré-venda ${pvId} recebida! Cupom fiscal ${invoiceNum} emitido.`);
+  };
+
+  // Cashier financial calculations
+  const openingBalance = 200.00;
+  const cashOutflow = 50.00;
+  const cashInflow = invoices.reduce((acc, inv) => acc + inv.total, 0);
+  const currentBalance = openingBalance + cashInflow - cashOutflow;
 
   // Define screens for the Sales Module (Vendas)
   const vendasTabs = [
+    {
+      id: "lista",
+      label: "Lista",
+      icon: List,
+      component: (
+        <div className="flex-1 w-full h-full flex flex-col lg:flex-row gap-4 min-h-0 bg-[#070a13]">
+          {/* Main List Entry Area */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/10 flex flex-col min-h-0">
+            {/* Header: Client & Vehicle Inputs */}
+            <div className="p-4 border-b border-slate-850/60 bg-[#0e1626]/30 grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0 rounded-t-xl">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  Nome do Cliente
+                </label>
+                <input
+                  type="text"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="Nome do cliente (ou Consumidor Final)"
+                  className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  Modelo do Veículo
+                </label>
+                <input
+                  type="text"
+                  value={vehicleName}
+                  onChange={(e) => setVehicleName(e.target.value)}
+                  placeholder="Ex: Honda Civic 2018 2.0"
+                  className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Product Autocomplete Search Bar */}
+            <div className="p-3 border-b border-slate-850/60 bg-[#0e1626]/20 relative shrink-0">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                <input
+                  type="text"
+                  value={productSearchQuery}
+                  onChange={(e) => {
+                    setProductSearchQuery(e.target.value);
+                    setShowProductSuggestions(true);
+                  }}
+                  onFocus={() => setShowProductSuggestions(true)}
+                  placeholder="Pesquisar código, peça ou marca de veículo no catálogo..."
+                  className="w-full pl-9 pr-4 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+              </div>
+
+              {/* Suggestions Overlay */}
+              {showProductSuggestions && productSearchQuery.trim() !== "" && (
+                <div className="absolute left-3 right-3 mt-1.5 max-h-48 overflow-y-auto bg-[#070a13] border border-slate-800 rounded-xl shadow-2xl z-50 divide-y divide-slate-850/60">
+                  {filteredCatalog.length > 0 ? (
+                    filteredCatalog.map((prod) => (
+                      <button
+                        key={prod.code}
+                        type="button"
+                        onClick={() => {
+                          setActiveSaleItems((prev) => {
+                            const existing = prev.find((item) => item.code === prod.code);
+                            if (existing) {
+                              return prev.map((item) =>
+                                item.code === prod.code ? { ...item, qty: item.qty + 1 } : item
+                              );
+                            } else {
+                              return [
+                                ...prev,
+                                {
+                                  id: prod.code,
+                                  code: prod.code,
+                                  name: prod.name,
+                                  brand: prod.brand,
+                                  qty: 1,
+                                  price: prod.price,
+                                },
+                              ];
+                            }
+                          });
+                          setProductSearchQuery("");
+                          setShowProductSuggestions(false);
+                          showToast(`${prod.name} adicionado!`);
+                        }}
+                        className="w-full px-4 py-2.5 hover:bg-[#16223f]/30 flex justify-between items-center text-left cursor-pointer transition-colors"
+                      >
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-slate-200">{prod.name}</span>
+                          <span className="text-[10px] text-slate-500 font-mono">
+                            Código: {prod.code} • Marca: {prod.brand}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                          <span className="text-[10px] font-bold text-slate-450">Estoque: {prod.stock} UN</span>
+                          <span className="text-xs font-black text-indigo-400">R$ {prod.price.toFixed(2)}</span>
+                        </div>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-3 text-center text-xs text-slate-500">
+                      Nenhuma autopeça encontrada.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Cart Items Table */}
+            <div className="flex-grow overflow-y-auto min-h-0">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850/60 text-slate-500 font-semibold bg-[#0e1626]/10">
+                    <th className="p-2.5 pl-4">Código</th>
+                    <th className="p-2.5">Descrição da Peça</th>
+                    <th className="p-2.5">Marca</th>
+                    <th className="p-2.5 text-center w-24">Qtd</th>
+                    <th className="p-2.5 text-right w-28">Unitário</th>
+                    <th className="p-2.5 text-right pr-4 w-28">Total</th>
+                    <th className="p-2.5 text-center w-12">Ação</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850/50 text-slate-355">
+                  {activeSaleItems.map((item) => (
+                    <tr key={item.code} className="hover:bg-[#16223f]/10">
+                      <td className="p-2.5 pl-4 font-mono text-slate-450">{item.code}</td>
+                      <td className="p-2.5 font-semibold text-slate-200">{item.name}</td>
+                      <td className="p-2.5 text-slate-400">{item.brand}</td>
+                      <td className="p-2.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => {
+                              setActiveSaleItems((prev) =>
+                                prev.map((i) =>
+                                  i.code === item.code ? { ...i, qty: Math.max(1, i.qty - 1) } : i
+                                )
+                              );
+                            }}
+                            className="h-5 w-5 rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-[10px] text-slate-400 hover:text-white cursor-pointer active:scale-92 transition-all"
+                          >
+                            -
+                          </button>
+                          <span className="font-bold text-slate-200 text-xs w-6 text-center">{item.qty}</span>
+                          <button
+                            onClick={() => {
+                              setActiveSaleItems((prev) =>
+                                prev.map((i) => (i.code === item.code ? { ...i, qty: i.qty + 1 } : i))
+                              );
+                            }}
+                            className="h-5 w-5 rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-[10px] text-slate-400 hover:text-white cursor-pointer active:scale-92 transition-all"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+                      <td className="p-2.5 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <span className="text-[10px] text-slate-500">R$</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={item.price}
+                            onChange={(e) => {
+                              const val = parseFloat(e.target.value) || 0;
+                              setActiveSaleItems((prev) =>
+                                prev.map((i) => (i.code === item.code ? { ...i, price: val } : i))
+                              );
+                            }}
+                            className="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-indigo-500 text-right w-16 text-slate-200 font-semibold focus:outline-none transition-colors"
+                          />
+                        </div>
+                      </td>
+                      <td className="p-2.5 text-right pr-4 font-bold text-slate-200">
+                        R$ {(item.price * item.qty).toFixed(2)}
+                      </td>
+                      <td className="p-2.5 text-center">
+                        <button
+                          onClick={() => {
+                            setActiveSaleItems((prev) => prev.filter((i) => i.code !== item.code));
+                            showToast(`${item.name} removido!`, "info");
+                          }}
+                          className="p-1 hover:bg-[#16223f] border border-transparent hover:border-slate-800 rounded text-red-400 hover:text-red-300 transition-colors cursor-pointer"
+                          title="Remover Item"
+                        >
+                          <Plus className="h-3.5 w-3.5 rotate-45" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {activeSaleItems.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="p-10 text-center text-slate-500">
+                        <div className="flex flex-col items-center justify-center space-y-2">
+                          <ShoppingCart className="h-8 w-8 text-slate-700" />
+                          <span className="text-xs font-semibold">Tabela limpa. Insira itens usando a busca de produtos acima.</span>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Checkout Totals Summary sidebar */}
+          <div className="w-full lg:w-72 border border-slate-850 rounded-xl bg-[#0e1626]/40 p-4 flex flex-col justify-between shrink-0">
+            <div className="space-y-4">
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">
+                Resumo da Venda
+              </h4>
+
+              <div className="space-y-2.5">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-455">Subtotal:</span>
+                  <span className="text-slate-250 font-semibold">R$ {subtotalSale.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-xs items-center">
+                  <span className="text-slate-455">Desconto (R$):</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max={subtotalSale}
+                    value={discountValue}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value) || 0;
+                      setDiscountValue(Math.min(subtotalSale, val));
+                    }}
+                    className="bg-[#070a13] border border-slate-800 rounded px-2 py-0.5 w-20 text-right text-xs text-emerald-450 font-semibold focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                <div className="border-t border-slate-800/80 my-2 pt-2 flex justify-between text-sm">
+                  <span className="font-bold text-slate-300">Total Líquido:</span>
+                  <span className="font-extrabold text-indigo-400">R$ {totalSale.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2 mt-6">
+              <Button
+                onClick={handleSaveBudget}
+                className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-200 text-xs font-bold py-2.5 h-auto rounded-lg cursor-pointer transition-colors uppercase tracking-wider"
+              >
+                Salvar Orçamento
+              </Button>
+              <Button
+                onClick={handleSavePreSale}
+                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-550 hover:to-teal-550 text-white text-xs font-bold py-2.5 h-auto rounded-lg shadow-lg shadow-emerald-600/10 cursor-pointer transition-all uppercase tracking-wider"
+              >
+                Vender (Pré-Venda)
+              </Button>
+            </div>
+          </div>
+        </div>
+      ),
+    },
     {
       id: "orcamento",
       label: "Orçamento",
@@ -101,7 +563,10 @@ function App() {
                 className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none focus:border-indigo-500"
               />
             </div>
-            <Button className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg flex items-center gap-1.5 cursor-pointer">
+            <Button
+              onClick={() => setVendasActiveTabId("lista")}
+              className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg flex items-center gap-1.5 cursor-pointer"
+            >
               <Plus className="h-3.5 w-3.5" /> Novo Orçamento
             </Button>
           </div>
@@ -121,36 +586,108 @@ function App() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-850 text-slate-300">
-                  <tr className="hover:bg-[#16223f]/10">
-                    <td className="p-3 font-mono text-indigo-400">#00982</td>
-                    <td className="p-3 font-semibold text-slate-200">Marcos Rogério Silva</td>
-                    <td className="p-3">Honda Civic 2018 2.0</td>
-                    <td className="p-3">09/06/2026</td>
-                    <td className="p-3 text-right font-semibold">R$ 1.250,00</td>
-                    <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-450 border border-amber-500/20">Aguardando</span>
-                    </td>
+                  {budgets.map((b) => (
+                    <tr key={b.id} className="hover:bg-[#16223f]/10">
+                      <td className="p-3 font-mono text-indigo-400">{b.id}</td>
+                      <td className="p-3 font-semibold text-slate-200">{b.client}</td>
+                      <td className="p-3">{b.vehicle}</td>
+                      <td className="p-3">{b.date}</td>
+                      <td className="p-3 text-right font-semibold">R$ {b.total.toFixed(2)}</td>
+                      <td className="p-3 text-center">
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                            b.status === "Aprovado"
+                              ? "bg-emerald-500/10 text-emerald-450 border-emerald-500/20"
+                              : b.status === "Cancelado"
+                              ? "bg-slate-800 text-slate-400 border-slate-700"
+                              : "bg-amber-500/10 text-amber-450 border-amber-500/20"
+                          }`}
+                        >
+                          {b.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {budgets.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="p-4 text-center text-slate-500">
+                        Nenhum orçamento salvo.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "prevendas",
+      label: "Pré-Vendas",
+      icon: ShoppingCart,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action Bar */}
+          <div className="flex justify-between items-center shrink-0">
+            <div className="relative w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+              <input
+                type="text"
+                placeholder="Pesquisar pré-venda..."
+                className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none focus:border-indigo-500"
+              />
+            </div>
+            <Button
+              onClick={() => setVendasActiveTabId("lista")}
+              className="bg-indigo-650 hover:bg-indigo-555 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg flex items-center gap-1.5 cursor-pointer font-bold uppercase tracking-wider"
+            >
+              <Plus className="h-3.5 w-3.5" /> Nova Venda
+            </Button>
+          </div>
+
+          {/* Table Container */}
+          <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3">Código PV</th>
+                    <th className="p-3">Cliente</th>
+                    <th className="p-3">Vendedor</th>
+                    <th className="p-3">Data</th>
+                    <th className="p-3 text-right">Valor Total</th>
+                    <th className="p-3 text-center">Status</th>
                   </tr>
-                  <tr className="hover:bg-[#16223f]/10">
-                    <td className="p-3 font-mono text-indigo-400">#00981</td>
-                    <td className="p-3 font-semibold text-slate-200">Juliana Nogueira Santos</td>
-                    <td className="p-3">Chevrolet Onix 1.0 Turbo</td>
-                    <td className="p-3">08/06/2026</td>
-                    <td className="p-3 text-right font-semibold">R$ 394,80</td>
-                    <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20">Aprovado</span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-[#16223f]/10">
-                    <td className="p-3 font-mono text-indigo-400">#00980</td>
-                    <td className="p-3 font-semibold text-slate-200">Auto Mecânica Souza</td>
-                    <td className="p-3">Fiat Uno Vivace 1.0</td>
-                    <td className="p-3">08/06/2026</td>
-                    <td className="p-3 text-right font-semibold">R$ 145,00</td>
-                    <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">Cancelado</span>
-                    </td>
-                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  {preSales.map((pv) => (
+                    <tr key={pv.id} className="hover:bg-[#16223f]/10">
+                      <td className="p-3 font-mono text-indigo-400">{pv.id}</td>
+                      <td className="p-3 font-semibold text-slate-200">{pv.client}</td>
+                      <td className="p-3">{pv.seller}</td>
+                      <td className="p-3">{pv.date}</td>
+                      <td className="p-3 text-right font-bold">R$ {pv.total.toFixed(2)}</td>
+                      <td className="p-3 text-center">
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                            pv.status === "Pago"
+                              ? "bg-emerald-500/10 text-emerald-450 border-emerald-500/20"
+                              : "bg-amber-500/10 text-amber-450 border-amber-500/20"
+                          }`}
+                        >
+                          {pv.status === "Pago" ? "Faturada / Paga" : "Pendente Caixa"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {preSales.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="p-4 text-center text-slate-500">
+                        Nenhuma pré-venda lançada.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -237,101 +774,6 @@ function App() {
       ),
     },
     {
-      id: "prevendas",
-      label: "Pré-Vendas",
-      icon: ShoppingCart,
-      component: (
-        <div className="flex-1 w-full h-full flex flex-col lg:flex-row gap-4 min-h-0 bg-[#070a13]">
-          {/* Main cashier item entries */}
-          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/10 flex flex-col min-h-0">
-            {/* Search items bar */}
-            <div className="p-3 border-b border-slate-850/60 bg-[#0e1626]/30 flex gap-2 shrink-0 rounded-t-xl">
-              <div className="relative flex-grow">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
-                <input
-                  type="text"
-                  placeholder="Pesquisar código, peça ou marca de veículo..."
-                  className="w-full pl-9 pr-4 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-              <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-300 text-xs font-semibold py-1.5 px-3 h-auto rounded-lg cursor-pointer">
-                Consultar Estoque
-              </Button>
-            </div>
-
-            {/* Cart Items Table */}
-            <div className="flex-grow overflow-y-auto min-h-0">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="border-b border-slate-850/60 text-slate-500 font-semibold bg-[#0e1626]/10">
-                    <th className="p-2.5 pl-4">Código</th>
-                    <th className="p-2.5">Descrição da Peça</th>
-                    <th className="p-2.5 text-center">Qtd</th>
-                    <th className="p-2.5 text-right">Unitário</th>
-                    <th className="p-2.5 text-right pr-4">Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-850/50 text-slate-355">
-                  {cartItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-[#16223f]/10">
-                      <td className="p-2.5 pl-4 font-mono text-slate-450">{item.code}</td>
-                      <td className="p-2.5 font-semibold text-slate-255">{item.name}</td>
-                      <td className="p-2.5 text-center font-semibold">{item.qty}</td>
-                      <td className="p-2.5 text-right">R$ {item.price.toFixed(2)}</td>
-                      <td className="p-2.5 text-right pr-4 font-bold text-slate-200">
-                        R$ {(item.price * item.qty).toFixed(2)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Checkout Totals Summary sidebar */}
-          <div className="w-full lg:w-72 border border-slate-850 rounded-xl bg-[#0e1626]/40 p-4 flex flex-col justify-between shrink-0">
-            <div className="space-y-4">
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">
-                Resumo da Pré-venda
-              </h4>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-455">Subtotal:</span>
-                  <span className="text-slate-250 font-semibold">R$ {subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-455">Descontos:</span>
-                  <span className="text-emerald-450 font-semibold">- R$ {discount.toFixed(2)}</span>
-                </div>
-                <div className="border-t border-slate-800/80 my-2 pt-2 flex justify-between text-sm">
-                  <span className="font-bold text-slate-300">Total Líquido:</span>
-                  <span className="font-extrabold text-indigo-400">R$ {total.toFixed(2)}</span>
-                </div>
-              </div>
-
-              {/* Payment Methods */}
-              <div className="space-y-2 pt-2">
-                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Forma de Pagamento</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button className="py-1.5 text-[10px] font-bold bg-[#16223f] border border-indigo-500/20 text-indigo-400 rounded-lg cursor-pointer">
-                    PIX
-                  </button>
-                  <button className="py-1.5 text-[10px] font-bold bg-slate-900 border border-slate-800 text-slate-400 rounded-lg cursor-pointer">
-                    Cartão
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <Button className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-550 hover:to-violet-550 text-white text-xs font-bold py-2.5 h-auto rounded-lg shadow-lg shadow-indigo-600/10 cursor-pointer mt-4 uppercase tracking-wider">
-              Lançar Pré-Venda
-            </Button>
-          </div>
-        </div>
-      ),
-    },
-    {
       id: "entregas",
       label: "Entregas",
       icon: Truck,
@@ -398,7 +840,7 @@ function App() {
             <div className="bg-[#0e1626]/40 border border-slate-850 p-4 rounded-xl space-y-1 shadow-sm">
               <span className="text-[10px] font-bold text-slate-550 uppercase tracking-wider">Faturamento Hoje</span>
               <h4 className="text-base font-black text-slate-100">R$ 4.894,70</h4>
-              <span className="text-[9px] text-emerald-450 font-semibold">+ 12% em relação a ontem</span>
+              <span className="text-[9px] text-emerald-455 font-semibold">+ 12% em relação a ontem</span>
             </div>
             <div className="bg-[#0e1626]/40 border border-slate-850 p-4 rounded-xl space-y-1 shadow-sm">
               <span className="text-[10px] font-bold text-slate-555 uppercase tracking-wider">Orçamentos Abertos</span>
@@ -495,30 +937,34 @@ function App() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-850 text-slate-300">
-                  <tr className="hover:bg-[#16223f]/10">
-                    <td className="p-3 font-mono text-indigo-400">#PV-9821</td>
-                    <td className="p-3 font-semibold text-slate-200">Marcos Rogério Silva</td>
-                    <td className="p-3">Irenaldo (Vendas)</td>
-                    <td className="p-3">09/06/2026</td>
-                    <td className="p-3 text-right font-bold text-slate-100">R$ 267,30</td>
-                    <td className="p-3 text-center">
-                      <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
-                        Receber e Emitir
-                      </Button>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-[#16223f]/10">
-                    <td className="p-3 font-mono text-indigo-400">#PV-9820</td>
-                    <td className="p-3 font-semibold text-slate-200">Auto Mecânica Souza</td>
-                    <td className="p-3">Irenaldo (Vendas)</td>
-                    <td className="p-3">09/06/2026</td>
-                    <td className="p-3 text-right font-bold text-slate-100">R$ 145,00</td>
-                    <td className="p-3 text-center">
-                      <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
-                        Receber e Emitir
-                      </Button>
-                    </td>
-                  </tr>
+                  {preSales
+                    .filter((pv) => pv.status === "Pendente")
+                    .map((pv) => (
+                      <tr key={pv.id} className="hover:bg-[#16223f]/10">
+                        <td className="p-3 font-mono text-indigo-400">{pv.id}</td>
+                        <td className="p-3 font-semibold text-slate-200">{pv.client}</td>
+                        <td className="p-3">{pv.seller}</td>
+                        <td className="p-3">{pv.date}</td>
+                        <td className="p-3 text-right font-bold text-slate-100">
+                          R$ {pv.total.toFixed(2)}
+                        </td>
+                        <td className="p-3 text-center">
+                          <Button
+                            onClick={() => handleReceivePreSale(pv.id)}
+                            className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider active:scale-95 transition-all"
+                          >
+                            Receber e Emitir
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  {preSales.filter((pv) => pv.status === "Pendente").length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="p-6 text-center text-slate-500 font-semibold">
+                        Nenhuma pré-venda pendente.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -560,36 +1006,35 @@ function App() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-850 text-slate-300">
-                  <tr className="hover:bg-[#16223f]/10">
-                    <td className="p-3 font-mono text-indigo-400">00010928</td>
-                    <td className="p-3 font-semibold text-slate-400">NFC-e (65)</td>
-                    <td className="p-3">Consumidor Não Identificado</td>
-                    <td className="p-3">09/06/2026 00:44</td>
-                    <td className="p-3 text-right font-semibold">R$ 89,90</td>
-                    <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 uppercase tracking-wider">Autorizada</span>
-                    </td>
-                    <td className="p-3 text-center flex justify-center gap-1.5">
-                      <button className="p-1 hover:bg-[#16223f] border border-slate-800 rounded text-slate-300 transition-colors cursor-pointer" title="Imprimir Danfe">
-                        <Printer className="h-3.5 w-3.5" />
-                      </button>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-[#16223f]/10">
-                    <td className="p-3 font-mono text-indigo-400">00010927</td>
-                    <td className="p-3 font-semibold text-slate-400">NFC-e (65)</td>
-                    <td className="p-3">Juliana Nogueira Santos</td>
-                    <td className="p-3">08/06/2026 18:21</td>
-                    <td className="p-3 text-right font-semibold">R$ 394,80</td>
-                    <td className="p-3 text-center">
-                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 uppercase tracking-wider">Autorizada</span>
-                    </td>
-                    <td className="p-3 text-center flex justify-center gap-1.5">
-                      <button className="p-1 hover:bg-[#16223f] border border-slate-800 rounded text-slate-300 transition-colors cursor-pointer" title="Imprimir Danfe">
-                        <Printer className="h-3.5 w-3.5" />
-                      </button>
-                    </td>
-                  </tr>
+                  {invoices.map((inv) => (
+                    <tr key={inv.id} className="hover:bg-[#16223f]/10">
+                      <td className="p-3 font-mono text-indigo-400">{inv.id}</td>
+                      <td className="p-3 font-semibold text-slate-400">{inv.type}</td>
+                      <td className="p-3">{inv.client}</td>
+                      <td className="p-3">{inv.date}</td>
+                      <td className="p-3 text-right font-semibold">R$ {inv.total.toFixed(2)}</td>
+                      <td className="p-3 text-center">
+                        <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 uppercase tracking-wider">
+                          {inv.status}
+                        </span>
+                      </td>
+                      <td className="p-3 text-center flex justify-center gap-1.5">
+                        <button
+                          className="p-1 hover:bg-[#16223f] border border-slate-800 rounded text-slate-300 transition-colors cursor-pointer"
+                          title="Imprimir Danfe"
+                        >
+                          <Printer className="h-3.5 w-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {invoices.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="p-6 text-center text-slate-500 font-semibold">
+                        Nenhuma nota fiscal emitida.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -619,19 +1064,19 @@ function App() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="p-3 bg-[#070a13] border border-slate-850 rounded-lg">
                   <span className="text-[9px] font-bold text-slate-500 uppercase">Abertura</span>
-                  <p className="text-sm font-bold text-slate-300">R$ 200,00</p>
+                  <p className="text-sm font-bold text-slate-300">R$ {openingBalance.toFixed(2)}</p>
                 </div>
                 <div className="p-3 bg-[#070a13] border border-slate-850 rounded-lg">
                   <span className="text-[9px] font-bold text-slate-505 uppercase">Entradas</span>
-                  <p className="text-sm font-bold text-emerald-450">R$ 850,00</p>
+                  <p className="text-sm font-bold text-emerald-450">R$ {cashInflow.toFixed(2)}</p>
                 </div>
                 <div className="p-3 bg-[#070a13] border border-slate-850 rounded-lg">
                   <span className="text-[9px] font-bold text-slate-505 uppercase">Saídas (Sangria)</span>
-                  <p className="text-sm font-bold text-red-400">R$ 50,00</p>
+                  <p className="text-sm font-bold text-red-400">R$ {cashOutflow.toFixed(2)}</p>
                 </div>
                 <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
                   <span className="text-[9px] font-bold text-indigo-450 uppercase">Saldo Atual</span>
-                  <p className="text-sm font-black text-indigo-300">R$ 1.000,00</p>
+                  <p className="text-sm font-black text-indigo-350">R$ {currentBalance.toFixed(2)}</p>
                 </div>
               </div>
             </div>
@@ -2285,18 +2730,20 @@ function App() {
   ];
 
   return (
-    <DashboardLayout
-      activeModule={activeModule}
-      onSelectModule={setActiveModule}
-      onHomeClick={() => setActiveModule("home")}
-    >
+    <>
+      <DashboardLayout
+        activeModule={activeModule}
+        onSelectModule={setActiveModule}
+        onHomeClick={() => setActiveModule("home")}
+      >
       {activeModule === "vendas" ? (
         <div className="flex-1 flex flex-col min-h-0 h-full">
           {/* Module Sub-tabs Container with integrated title */}
           <ModuleTabContainer
             key="vendas"
             tabs={vendasTabs}
-            defaultTabId="orcamento"
+            activeTabId={vendasActiveTabId}
+            onTabChange={setVendasActiveTabId}
             title="Vendas"
             icon={ShoppingCart}
           />
@@ -2383,11 +2830,11 @@ function App() {
       ) : (
         /* Modules Dashboard (Home View) */
         <div className="space-y-6 flex-grow flex flex-col justify-between">
-          <div className="space-y-6">
+          <div className="space-y-8 py-4">
             {/* Dashboard Header */}
-            <div className="flex flex-col gap-1.5 relative">
-              <div className="absolute -top-12 -left-12 w-48 h-48 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none" />
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col items-center text-center gap-2.5 relative">
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none" />
+              <div className="flex items-center gap-2 justify-center">
                 <div className="h-8 w-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 text-indigo-400">
                   <LayoutGrid className="h-4.5 w-4.5" />
                 </div>
@@ -2395,13 +2842,13 @@ function App() {
                   Módulos do Sistema
                 </h2>
               </div>
-              <p className="text-xs text-slate-400 max-w-xl font-medium">
+              <p className="text-xs text-slate-400 max-w-xl font-medium mx-auto">
                 Selecione o módulo abaixo para iniciar as operações do ERP. Módulos adicionais serão habilitados conforme o nível de acesso da estação.
               </p>
             </div>
 
             {/* Module Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto w-full">
               {/* Vendas Card (Active) */}
               <ModuleCard
                 title="Vendas & Orçamentos"
@@ -2467,70 +2914,24 @@ function App() {
               />
             </div>
           </div>
-
-          {/* Relocated Developer / Connection Tests section (Bottom of Home View) */}
-          <div className="border-t border-slate-850/60 pt-6 mt-8 space-y-4">
-            <div className="flex items-center gap-2 text-slate-455">
-              <Terminal className="h-4 w-4" />
-              <h3 className="text-xs font-bold uppercase tracking-wider">Painel de Desenvolvimento</h3>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Connection Status Card */}
-              <div className="bg-[#0e1626]/20 border border-slate-850/80 rounded-xl p-4 flex items-center justify-between text-xs text-slate-450">
-                <span className="flex items-center gap-2">
-                  <Cpu className="h-3.5 w-3.5 text-indigo-400" />
-                  Terminal: <strong className="text-slate-200">CAIXA-01</strong>
-                </span>
-                <span className="flex items-center gap-1.5 text-slate-300 font-semibold">
-                  {typeof window !== "undefined" && (window as any).__TAURI_INTERNALS__ ? (
-                    <>
-                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                      Tauri Shell
-                    </>
-                  ) : (
-                    <>
-                      <Server className="h-3.5 w-3.5 text-blue-500" />
-                      Vite Browser (1420)
-                    </>
-                  )}
-                </span>
-              </div>
-
-              {/* Tauri Greet Test Form */}
-              <form
-                className="flex gap-2"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  greet();
-                }}
-              >
-                <input
-                  type="text"
-                  className="flex-1 px-3 py-1.5 bg-[#0e1626]/20 border border-slate-850 rounded-lg text-xs text-slate-350 focus:outline-none focus:border-indigo-500"
-                  onChange={(e) => setName(e.currentTarget.value)}
-                  placeholder="Nome para saudar..."
-                  value={name}
-                />
-                <Button
-                  type="submit"
-                  disabled={loading || !name}
-                  className="text-xs bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-205 py-1.5 px-3 h-auto cursor-pointer"
-                >
-                  {loading ? "Testando..." : "Saudar Rust"}
-                </Button>
-              </form>
-            </div>
-
-            {greetMsg && (
-              <div className="p-3 bg-[#0e1626]/25 border border-slate-850 rounded-xl text-[11px] font-mono text-slate-400 border-l-2 border-l-indigo-500">
-                {greetMsg}
-              </div>
-            )}
-          </div>
         </div>
       )}
     </DashboardLayout>
+      {toast && (
+        <div className={`fixed bottom-4 right-4 z-[9999] flex items-center gap-2.5 px-4 py-3 bg-[#0e1626]/90 backdrop-blur-md border rounded-xl shadow-2xl transition-all duration-300 ${
+          toast.type === "success" ? "border-emerald-500/30 text-emerald-400 shadow-emerald-500/5" :
+          toast.type === "error" ? "border-red-500/30 text-red-400 shadow-red-500/5" :
+          "border-indigo-500/30 text-indigo-455 shadow-indigo-500/5"
+        }`}>
+          <div className={`h-2 w-2 rounded-full animate-pulse ${
+            toast.type === "success" ? "bg-emerald-500" :
+            toast.type === "error" ? "bg-red-500" :
+            "bg-indigo-500"
+          }`} />
+          <span className="text-xs font-bold">{toast.message}</span>
+        </div>
+      )}
+    </>
   );
 }
 

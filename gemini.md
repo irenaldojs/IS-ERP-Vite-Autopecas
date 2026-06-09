@@ -74,8 +74,7 @@ src/
 ## 4. Resumo dos Módulos Implementados
 
 ### A. Painel Principal (Dashboard / Home)
-*   Grid de acesso aos 5 módulos operacionais ativos.
-*   **Painel de Desenvolvimento**: Exibe o status da conexão (Vite Browser ou Tauri Shell) e formulário para testar a comunicação com a API do Tauri em Rust (`greet`).
+*   Grid de acesso aos módulos operacionais ativos.
 
 ### B. Vendas & Orçamentos (Module: `vendas`)
 1.  **Orçamento**: Listagem de orçamentos emitidos com indicador de status coloridos (`Aprovado`, `Aguardando`, `Cancelado`).

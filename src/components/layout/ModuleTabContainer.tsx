@@ -11,6 +11,8 @@ export interface ModuleTab {
 interface ModuleTabContainerProps {
   tabs: ModuleTab[];
   defaultTabId?: string;
+  activeTabId?: string;
+  onTabChange?: (tabId: string) => void;
   title?: string;
   icon?: LucideIcon;
   isMaximized?: boolean;
@@ -20,12 +22,26 @@ interface ModuleTabContainerProps {
 export function ModuleTabContainer({
   tabs,
   defaultTabId,
+  activeTabId: controlledActiveTabId,
+  onTabChange,
   title,
   icon: Icon,
   isMaximized = false,
   onMaximizeToggle,
 }: ModuleTabContainerProps) {
-  const [activeTabId, setActiveTabId] = useState(defaultTabId || (tabs[0]?.id || ""));
+  const [localActiveTabId, setLocalActiveTabId] = useState(defaultTabId || (tabs[0]?.id || ""));
+
+  const isControlled = controlledActiveTabId !== undefined;
+  const activeTabId = isControlled ? controlledActiveTabId : localActiveTabId;
+
+  const handleTabChange = (tabId: string) => {
+    if (onTabChange) {
+      onTabChange(tabId);
+    }
+    if (!isControlled) {
+      setLocalActiveTabId(tabId);
+    }
+  };
 
   const activeTab = tabs.find((t) => t.id === activeTabId);
 
@@ -70,7 +86,7 @@ export function ModuleTabContainer({
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTabId(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer focus:outline-none ${
                     isActive
                       ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/10"
