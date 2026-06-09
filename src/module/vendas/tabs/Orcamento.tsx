@@ -33,9 +33,6 @@ export default function Orcamento(props: Props) {
     setProductSearchQuery,
     activeSaleItems,
     setActiveSaleItems,
-    subtotalSale,
-    discountValue,
-    setDiscountValue,
     totalSale,
     handleSaveBudget,
     handleSavePreSale,
@@ -107,6 +104,10 @@ export default function Orcamento(props: Props) {
     showToast(`${currentProduct.name} adicionado!`, "success");
     inputIdRef.current?.focus();
   };
+
+  const cashSaleValue = totalSale * 0.95;
+  const maxInstallments = totalSale >= 50 ? Math.min(10, Math.floor(totalSale / 50)) : 0;
+  const installmentAmount = maxInstallments > 0 ? totalSale / maxInstallments : 0;
 
   return (
     <div className="flex-1 w-full h-full flex flex-col lg:flex-row gap-4 min-h-0 bg-[#070a13]">
@@ -240,27 +241,26 @@ export default function Orcamento(props: Props) {
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">Resumo da Venda</h4>
 
           <div className="space-y-2.5">
-            <div className="flex justify-between text-xs">
-              <span className="text-slate-455">Subtotal:</span>
-              <span className="text-slate-250 font-semibold">R$ {subtotalSale.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-xs items-center">
-              <span className="text-slate-455">Desconto (R$):</span>
-              <input
-                type="number"
-                min="0"
-                max={subtotalSale}
-                value={discountValue}
-                onChange={(e) => {
-                  const val = parseFloat(e.target.value) || 0;
-                  setDiscountValue(Math.min(subtotalSale, val));
-                }}
-                className="bg-[#070a13] border border-slate-800 rounded px-2 py-0.5 w-20 text-right text-xs text-emerald-450 font-semibold focus:outline-none focus:border-indigo-500"
-              />
-            </div>
-            <div className="border-t border-slate-800/80 my-2 pt-2 flex justify-between text-sm">
+            <div className="flex justify-between text-sm">
               <span className="font-bold text-slate-300">Total Líquido:</span>
               <span className="font-extrabold text-indigo-400">R$ {totalSale.toFixed(2)}</span>
+            </div>
+
+            <div className="space-y-2 pt-3 border-t border-slate-850/70">
+              <div className="flex justify-between text-xs text-slate-400">
+                <span>À vista (5% desconto):</span>
+                <span className="font-semibold text-slate-200">R$ {cashSaleValue.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-xs text-slate-400">
+                <span>Parcelamento:</span>
+                {maxInstallments > 0 ? (
+                  <span className="font-semibold text-slate-200">
+                    Até {maxInstallments}x de R$ {installmentAmount.toFixed(2)}
+                  </span>
+                ) : (
+                  <span className="font-semibold text-rose-300">Parcelas não disponíveis</span>
+                )}
+              </div>
             </div>
           </div>
         </div>
