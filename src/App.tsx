@@ -39,6 +39,8 @@ import {
   TrendingDown,
   Activity,
   ShieldAlert,
+  Receipt,
+  Sliders,
 } from "lucide-react";
 
 function App() {
@@ -1684,6 +1686,311 @@ function App() {
     },
   ];
 
+  // Define screens for the Billing Module (Faturamento)
+  const faturamentoTabs = [
+    {
+      id: "fiscal",
+      label: "Painel Fiscal",
+      icon: Receipt,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action Row with Status */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center shrink-0">
+            <div className="flex gap-4 items-center">
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                <input
+                  type="text"
+                  placeholder="Pesquisar nota fiscal..."
+                  className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-350 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 bg-[#0e1626]/30 border border-slate-850 px-3 py-1.5 rounded-xl text-[10px] font-semibold text-slate-400">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+              <span>Sefaz Autorizadora (SEFAZ-SP): <strong className="text-emerald-450 uppercase">Online</strong></span>
+            </div>
+          </div>
+
+          {/* Invoices Table */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">Nota / Chave</th>
+                    <th className="p-3">Tipo</th>
+                    <th className="p-3">Destinatário</th>
+                    <th className="p-3 text-right">Valor</th>
+                    <th className="p-3 text-center">Status Sefaz</th>
+                    <th className="p-3 text-center">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#NFT-5812</td>
+                    <td className="p-3">NF-e (Venda)</td>
+                    <td className="p-3 font-semibold text-slate-200">Auto Mecânica Silva & Filho</td>
+                    <td className="p-3 text-right font-bold">R$ 1.840,00</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-455 border border-emerald-500/20 uppercase tracking-wider">Autorizada</span>
+                    </td>
+                    <td className="p-3 text-center flex justify-center gap-1.5">
+                      <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-305 text-[9px] py-1 px-2 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        XML
+                      </Button>
+                      <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[9px] py-1 px-2 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        DANFE
+                      </Button>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#NFT-5811</td>
+                    <td className="p-3">NFC-e (Consumidor)</td>
+                    <td className="p-3 font-semibold text-slate-200">Venda Consumidor Balcão</td>
+                    <td className="p-3 text-right font-bold">R$ 189,90</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-455 border border-emerald-500/20 uppercase tracking-wider">Autorizada</span>
+                    </td>
+                    <td className="p-3 text-center flex justify-center gap-1.5">
+                      <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-305 text-[9px] py-1 px-2 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        XML
+                      </Button>
+                      <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[9px] py-1 px-2 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        DANFE
+                      </Button>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#NFT-5810</td>
+                    <td className="p-3">NF-e (Remessa)</td>
+                    <td className="p-3 font-semibold text-slate-200">Distribuidora Confiança Ltda</td>
+                    <td className="p-3 text-right font-bold">R$ 5.400,00</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 uppercase tracking-wider animate-pulse">Rejeitada</span>
+                    </td>
+                    <td className="p-3 text-center flex justify-center gap-1.5">
+                      <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-305 text-[9px] py-1 px-2 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        Ver Erro
+                      </Button>
+                      <Button className="bg-amber-600 hover:bg-amber-500 text-white text-[9px] py-1 px-2 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">
+                        Corrigir
+                      </Button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "regras",
+      label: "Regras Tributárias",
+      icon: Sliders,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action Row */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Regras Fiscais & Alíquotas de Autopeças (Substituição Tributária)
+            </h4>
+            <Button className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg flex items-center gap-1.5 cursor-pointer">
+              <Plus className="h-3.5 w-3.5" /> Adicionar Regra por NCM
+            </Button>
+          </div>
+
+          {/* Tax Matrix Table */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">NCM</th>
+                    <th className="p-3">Descrição da Categoria</th>
+                    <th className="p-3 text-center">ICMS Interno</th>
+                    <th className="p-3 text-center">ICMS ST</th>
+                    <th className="p-3 text-center">MVA Ajustado</th>
+                    <th className="p-3 text-center">PIS/COFINS</th>
+                    <th className="p-3 text-center">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">8708.29.99</td>
+                    <td className="p-3 font-semibold text-slate-200">Pastilhas de freio e componentes</td>
+                    <td className="p-3 text-center font-mono">18.00%</td>
+                    <td className="p-3 text-center">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase">Sim</span>
+                    </td>
+                    <td className="p-3 text-center font-mono">45.28%</td>
+                    <td className="p-3 text-center">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#16223f] text-slate-400 border border-slate-800 uppercase">Monofásico</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <span className="text-slate-500 hover:text-slate-200 cursor-pointer font-bold">Editar</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">2710.19.32</td>
+                    <td className="p-3 font-semibold text-slate-200">Óleos lubrificantes de motor</td>
+                    <td className="p-3 text-center font-mono">18.00%</td>
+                    <td className="p-3 text-center">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase">Sim</span>
+                    </td>
+                    <td className="p-3 text-center font-mono">38.90%</td>
+                    <td className="p-3 text-center">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#16223f] text-slate-400 border border-slate-800 uppercase">Monofásico</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <span className="text-slate-500 hover:text-slate-200 cursor-pointer font-bold">Editar</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">8708.80.00</td>
+                    <td className="p-3 font-semibold text-slate-200">Amortecedores de suspensão</td>
+                    <td className="p-3 text-center font-mono">18.00%</td>
+                    <td className="p-3 text-center">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-[#16223f] text-slate-500 border border-slate-800 uppercase">Não</span>
+                    </td>
+                    <td className="p-3 text-center font-mono">-</td>
+                    <td className="p-3 text-center">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase">Normal</span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <span className="text-slate-500 hover:text-slate-200 cursor-pointer font-bold">Editar</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "correcoes",
+      label: "CC-e & Cancelamento",
+      icon: CornerDownLeft,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Action Row */}
+          <div className="flex justify-between items-center shrink-0">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Histórico de Retificações e Cancelamento de Notas
+            </h4>
+            <div className="flex gap-2">
+              <Button className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-305 text-xs font-semibold py-1.5 px-3 h-auto rounded-lg cursor-pointer">
+                Carta de Correção (CC-e)
+              </Button>
+              <Button className="bg-rose-950/20 hover:bg-rose-950/40 border border-rose-500/20 text-rose-400 text-xs font-semibold py-1.5 px-3 h-auto rounded-lg cursor-pointer">
+                Solicitar Cancelamento NF-e
+              </Button>
+            </div>
+          </div>
+
+          {/* Modifications log */}
+          <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-455 font-semibold">
+                    <th className="p-3 pl-4">Nota</th>
+                    <th className="p-3">Operação</th>
+                    <th className="p-3">Detalhamento / Correção</th>
+                    <th className="p-3">Data Evento</th>
+                    <th className="p-3 text-center">Status Protocolo</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-850 text-slate-300">
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#NFT-5801</td>
+                    <td className="p-3 font-semibold">CC-e (Carta de Correção)</td>
+                    <td className="p-3 text-slate-400">Corrigido Placa do Transportador de PXA-3021 para PXA-3022</td>
+                    <td className="p-3">08/06/2026 15:45</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-455 border border-emerald-500/20 uppercase tracking-wider">Homologado Sefaz</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-[#16223f]/10">
+                    <td className="p-3 pl-4 font-mono text-indigo-400">#NFT-5799</td>
+                    <td className="p-3 font-semibold text-rose-455">Cancelamento de Nota</td>
+                    <td className="p-3 text-slate-400">Cancelamento total por desistência da compra e devolução da mercadoria</td>
+                    <td className="p-3">06/06/2026 10:12</td>
+                    <td className="p-3 text-center">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-rose-500/10 text-rose-455 border border-rose-500/20 uppercase tracking-wider">Cancelado Sefaz</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "relatorios",
+      label: "Faturamento Consol.",
+      icon: Scale,
+      component: (
+        <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
+          {/* Billing Reports Summary */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
+            <div className="bg-[#0e1626]/30 border border-slate-850 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-550 font-bold uppercase tracking-wider">Total NF-e</span>
+              <span className="text-sm font-extrabold text-slate-100">R$ 98.400,00</span>
+              <span className="text-[9px] text-indigo-400 font-semibold">Emitido em 24 notas</span>
+            </div>
+            <div className="bg-[#0e1626]/30 border border-slate-855 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-550 font-bold uppercase tracking-wider">Total NFC-e</span>
+              <span className="text-sm font-extrabold text-slate-100">R$ 44.400,00</span>
+              <span className="text-[9px] text-indigo-400 font-semibold">Emitido em 210 cupons</span>
+            </div>
+            <div className="bg-[#0e1626]/30 border border-slate-855 p-3.5 rounded-xl flex flex-col space-y-1">
+              <span className="text-[10px] text-slate-550 font-bold uppercase tracking-wider">Impostos Totais Estimados</span>
+              <span className="text-sm font-extrabold text-rose-400">R$ 25.704,00</span>
+              <span className="text-[9px] text-slate-500 font-semibold">DAS/Tributos Simples Nac.</span>
+            </div>
+            <div className="bg-indigo-900/10 border border-indigo-500/20 p-3.5 rounded-xl flex flex-col space-y-1 shadow-inner shadow-indigo-500/5">
+              <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Total Faturamento</span>
+              <span className="text-sm font-black text-indigo-300">R$ 142.800,00</span>
+              <span className="text-[9px] text-indigo-400 font-semibold">Competência Junho/2026</span>
+            </div>
+          </div>
+
+          {/* Simple Styled CSS Graph */}
+          <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-4 space-y-4 shrink-0">
+            <h5 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Faturamento Diário dos Últimos 5 Dias</h5>
+            <div className="h-32 flex items-end justify-between gap-4 pt-4 px-2 font-mono text-[9px] text-slate-500">
+              <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                <div className="w-full bg-[#16223f]/50 border border-slate-800 rounded-t h-[40%] flex items-center justify-center font-bold text-indigo-400">R$ 18k</div>
+                <span>05/06</span>
+              </div>
+              <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                <div className="w-full bg-[#16223f]/50 border border-slate-800 rounded-t h-[55%] flex items-center justify-center font-bold text-indigo-400">R$ 24k</div>
+                <span>06/06</span>
+              </div>
+              <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                <div className="w-full bg-[#16223f]/50 border border-slate-800 rounded-t h-[20%] flex items-center justify-center font-bold text-indigo-400">R$ 8k</div>
+                <span>07/06</span>
+              </div>
+              <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                <div className="w-full bg-indigo-550/80 border border-indigo-500/25 rounded-t h-[75%] flex items-center justify-center font-bold text-slate-100">R$ 32k</div>
+                <span>08/06</span>
+              </div>
+              <div className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                <div className="w-full bg-indigo-650 rounded-t h-[90%] flex items-center justify-center font-bold text-slate-100 shadow-lg shadow-indigo-600/5">R$ 38k</div>
+                <span>09/06</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <DashboardLayout
       activeModule={activeModule}
@@ -1758,6 +2065,17 @@ function App() {
             icon={DollarSign}
           />
         </div>
+      ) : activeModule === "faturamento" ? (
+        <div className="flex-1 flex flex-col min-h-0 h-full">
+          {/* Module Sub-tabs Container with integrated title */}
+          <ModuleTabContainer
+            key="faturamento"
+            tabs={faturamentoTabs}
+            defaultTabId="fiscal"
+            title="Faturamento & Fiscal"
+            icon={Receipt}
+          />
+        </div>
       ) : (
         /* Modules Dashboard (Home View) */
         <div className="space-y-6 flex-grow flex flex-col justify-between">
@@ -1782,7 +2100,7 @@ function App() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
               {/* Vendas Card (Active) */}
               <ModuleCard
-                title="Vendas & Faturamento"
+                title="Vendas & Orçamentos"
                 description="Lançamento de orçamentos rápidos, Whatsapp, pré-vendas integradas, entregas e relatórios."
                 icon={ShoppingCart}
                 onClick={() => setActiveModule("vendas")}
@@ -1827,6 +2145,25 @@ function App() {
                 icon={DollarSign}
                 onClick={() => setActiveModule("financas")}
               />
+
+              {/* Faturamento Card (Active) */}
+              <ModuleCard
+                title="Faturamento & Fiscal"
+                description="Emissão de notas NF-e/NFC-e, monitoramento Sefaz, CC-e, regras tributárias e relatórios."
+                icon={Receipt}
+                onClick={() => setActiveModule("faturamento")}
+              />
+
+              {/* Gerencial Card (Placeholder / Coming Soon) */}
+              <div className="opacity-40 cursor-not-allowed">
+                <ModuleCard
+                  title="Painel Gerencial"
+                  description="Dashboard de BI, controle de permissões de usuários e logs de auditoria."
+                  icon={BarChart3}
+                  onClick={() => {}}
+                  badge="Em breve"
+                />
+              </div>
             </div>
           </div>
 
