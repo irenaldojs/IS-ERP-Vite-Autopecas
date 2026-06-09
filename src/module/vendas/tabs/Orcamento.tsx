@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Plus } from "lucide-react";
+import { ShoppingCart, Plus, Search } from "lucide-react";
 import { produtos, produtoGrupos, produtoMarcas } from "../../../../mocks/products.mock";
 
 type Product = { code: string; originalCode?: string; name: string; brand: string; price: number; stock?: number };
@@ -114,9 +114,8 @@ export default function Orcamento(props: Props) {
       {/* Main List Entry Area */}
       <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/10 flex flex-col min-h-0">
         {/* Product ID Input & Add Button */}
-        <div className="p-4 border-b border-slate-850/60 bg-[#0e1626]/30 flex gap-4 shrink-0 rounded-t-xl items-end">
+        <div className="p-2 border-b border-slate-850/60 bg-[#0e1626]/30 flex gap-4 shrink-0 rounded-t-xl items-end">
           <div className="flex-grow space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ID do Produto</label>
             <div className="flex items-center gap-3">
               <input
                 ref={inputIdRef}
@@ -143,13 +142,23 @@ export default function Orcamento(props: Props) {
               </div>
             </div>
           </div>
-          <Button
-            ref={addBtnRef}
-            onClick={handleAddProduct}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg h-[38px] flex items-center justify-center shrink-0 cursor-pointer"
-          >
-            <Plus className="h-5 w-5" />
-          </Button>
+          <div className="flex gap-2 shrink-0">
+            <Button
+              onClick={handleSearchProduct}
+              className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-4 py-2 rounded-lg h-[38px] flex items-center justify-center cursor-pointer transition-colors"
+              title="Pesquisar Produto"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
+            <Button
+              ref={addBtnRef}
+              onClick={handleAddProduct}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg h-[38px] flex items-center justify-center cursor-pointer"
+              title="Adicionar Produto"
+            >
+              <Plus className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
 
         {/* Cart Items Table */}
@@ -170,7 +179,7 @@ export default function Orcamento(props: Props) {
               {activeSaleItems.map((item, index) => (
                 <tr 
                   key={item.code} 
-                  className="hover:bg-[#16223f]/10 cursor-pointer"
+                  className="hover:bg-[#16223f]/50 focus-within:bg-[#16223f]/50 cursor-pointer transition-colors"
                   onClick={() => document.getElementById(`qty-input-${index}`)?.focus()}
                 >
                   <td className="p-2.5 pl-4 font-mono text-slate-450">{item.code}</td>
@@ -183,6 +192,7 @@ export default function Orcamento(props: Props) {
                       min="1"
                       className="w-16 bg-[#070a13] border border-slate-700 rounded px-2 py-1 text-center text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                       value={item.qty}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         const val = e.target.value === "" ? 0 : parseInt(e.target.value);
                         setActiveSaleItems((prev: Item[]) =>
