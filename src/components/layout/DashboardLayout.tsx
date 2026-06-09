@@ -17,9 +17,9 @@ export function DashboardLayout({
   onHomeClick,
 }: DashboardLayoutProps) {
   return (
-    <div className="min-h-screen bg-[#070a13] text-slate-100 flex flex-col font-sans select-none antialiased">
+    <div className="h-screen bg-[#070a13] text-slate-100 flex flex-col font-sans select-none antialiased overflow-hidden">
       {/* Top Header Row */}
-      <div className="flex h-16 border-b border-slate-800/80 bg-[#0e1626]/90 backdrop-blur-md sticky top-0 z-50">
+      <div className="flex h-16 border-b border-slate-800/80 bg-[#0e1626]/90 backdrop-blur-md shrink-0">
         {/* Junction Box: Home / Logo Button */}
         <button
           onClick={onHomeClick}
@@ -36,13 +36,13 @@ export function DashboardLayout({
       </div>
 
       {/* Main Container Row */}
-      <div className="flex flex-1 relative">
+      <div className="flex flex-1 overflow-hidden relative">
         {/* Sidebar */}
         <Sidebar activeModule={activeModule} onSelectModule={onSelectModule} />
 
-        {/* Content Area */}
-        <main className="flex-1 p-8 overflow-y-auto h-[calc(100vh-4rem)] bg-[#070a13]">
-          <div className="max-w-7xl mx-auto space-y-6">
+        {/* Content Area (Maximized, no outer scrollbar) */}
+        <main className="flex-1 p-3 md:p-4 bg-[#070a13] flex flex-col overflow-hidden h-[calc(100vh-4rem)]">
+          <div className="w-full max-w-[99%] mx-auto flex-1 flex flex-col min-h-0">
             {children}
           </div>
         </main>
