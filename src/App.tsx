@@ -4,6 +4,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ModuleCard } from "@/components/dashboard/ModuleCard";
 import { ModuleTabContainer } from "@/components/layout/ModuleTabContainer";
 import { CATALOG_PRODUCTS, useAppStore } from "@/store/useAppStore";
+import type { Orcamento as OrcamentoType } from "@/types/sales.entities";
 import { usuarios } from "../mocks/products.mock";
 import {
   ShoppingCart,
@@ -94,7 +95,7 @@ function App() {
     [productSearchQuery]
   );
 
-  const subtotalSale = activeSaleItems.reduce((sum, item) => sum + item.qty * item.price, 0);
+  const subtotalSale = activeSaleItems.reduce((sum, item) => sum + item.quantidade * item.preco_unitario, 0);
   const totalSale = Math.max(0, subtotalSale - discountValue);
 
   const showToast = (message: string, type: "success" | "info" | "error" = "success") => {
@@ -115,13 +116,26 @@ function App() {
     navigate(`/vendas/${tabId}`);
   };
 
-  const handleSaveBudget = (data?: { id?: string; client: string; vehicle: string; discount: number; status: string; notes?: string }) => {
-    const client = data?.client ?? clientName ?? "Consumidor Final";
-    const vehicle = data?.vehicle ?? vehicleName ?? "Sem veículo";
-    const discount = data?.discount ?? discountValue ?? 0;
-    const status = data?.status ?? "Em Análise";
-    const subtotal = activeSaleItems.reduce((sum, item) => sum + item.qty * item.price, 0);
-    const total = Math.max(0, subtotal - discount);
+  const handleSaveBudget = (data?: {
+    id?: string;
+    cliente_nome: string;
+    cliente_id?: number | null;
+    telefone?: number | null;
+    veiculo_modelo: string;
+    desconto_total: number;
+    data_validade?: string | null;
+    status: OrcamentoType["status"];
+    observacoes?: string | null;
+  }) => {
+    const cliente_nome = data?.cliente_nome ?? clientName ?? "Consumidor Final";
+    const cliente_id = data?.cliente_id ?? null;
+    const telefone = data?.telefone ?? null;
+    const veiculo_modelo = data?.veiculo_modelo ?? vehicleName ?? "Sem veículo";
+    const desconto_total = data?.desconto_total ?? discountValue ?? 0;
+    const data_validade = data?.data_validade ?? null;
+    const status = data?.status ?? "Enviado";
+    const subtotal = activeSaleItems.reduce((sum, item) => sum + item.quantidade * item.preco_unitario, 0);
+    const total = Math.max(0, subtotal - desconto_total);
 
     setBudgets((prev) => {
       const exists = data?.id ? prev.some((b) => b.id === data.id) : false;
@@ -130,12 +144,16 @@ function App() {
           b.id === data?.id
             ? {
                 ...b,
-                client,
-                vehicle,
+                cliente_nome,
+                cliente_id,
+                telefone,
+                veiculo_modelo,
                 total,
                 status,
                 items: [...activeSaleItems],
-                discountValue: discount,
+                desconto_total,
+                data_validade,
+                observacoes: data?.observacoes || null,
               }
             : b
         );
@@ -145,13 +163,17 @@ function App() {
           ...prev,
           {
             id: newId,
-            client,
-            vehicle,
-            date: new Date().toLocaleDateString("pt-BR"),
+            cliente_nome,
+            cliente_id,
+            telefone,
+            veiculo_modelo,
+            data_criacao: new Date().toLocaleDateString("pt-BR"),
+            data_validade,
             total,
             status,
             items: [...activeSaleItems],
-            discountValue: discount,
+            desconto_total,
+            observacoes: data?.observacoes || null,
           },
         ];
       }

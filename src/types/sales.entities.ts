@@ -11,16 +11,17 @@ export interface OrcamentoItem {
   marca_produto: string;
   quantidade: number;
   preco_unitario: number;
-  desconto_percentual?: number | null;
   subtotal: number;
 }
 
 export interface Orcamento {
   /** Orçamento de vendas com múltiplos itens */
   id: string;
-  cliente_nome: string;
+  cliente_nome: string | null;
+  cliente_id: number | null;
+  telefone: number | null;
   veiculo_modelo: string;
-  data_criacao: string;
+  data_criacao: string; /** Data e hora do orçamento */
   data_validade?: string | null;
   items: OrcamentoItem[];
   desconto_total?: number | null;

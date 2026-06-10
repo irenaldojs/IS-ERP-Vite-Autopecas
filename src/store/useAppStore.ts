@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { Orcamento, OrcamentoItem } from "@/types/sales.entities";
 
 export type Product = {
   code: string;
@@ -6,28 +7,6 @@ export type Product = {
   brand: string;
   price: number;
   stock: number;
-};
-
-export type SaleItem = {
-  id: string;
-  code: string;
-  originalCode?: string;
-  name: string;
-  brand: string;
-  reference?: string;
-  qty: number;
-  price: number;
-};
-
-export type Budget = {
-  id: string;
-  client: string;
-  vehicle: string;
-  date: string;
-  total: number;
-  status: string;
-  items?: SaleItem[];
-  discountValue?: number;
 };
 
 export type PreSale = {
@@ -59,9 +38,9 @@ interface AppState {
   vehicleName: string;
   productSearchQuery: string;
   showProductSuggestions: boolean;
-  activeSaleItems: SaleItem[];
+  activeSaleItems: OrcamentoItem[];
   discountValue: number;
-  budgets: Budget[];
+  budgets: Orcamento[];
   preSales: PreSale[];
   invoices: Invoice[];
   openingBalance: number;
@@ -73,9 +52,9 @@ interface AppState {
   setVehicleName: (value: string) => void;
   setProductSearchQuery: (value: string) => void;
   setShowProductSuggestions: (value: boolean) => void;
-  setActiveSaleItems: (value: SaleItem[] | ((prev: SaleItem[]) => SaleItem[])) => void;
+  setActiveSaleItems: (value: OrcamentoItem[] | ((prev: OrcamentoItem[]) => OrcamentoItem[])) => void;
   setDiscountValue: (value: number) => void;
-  setBudgets: (value: Budget[] | ((prev: Budget[]) => Budget[])) => void;
+  setBudgets: (value: Orcamento[] | ((prev: Orcamento[]) => Orcamento[])) => void;
   setPreSales: (value: PreSale[] | ((prev: PreSale[]) => PreSale[])) => void;
   setInvoices: (value: Invoice[] | ((prev: Invoice[]) => Invoice[])) => void;
   setIsCaixaMaximized: (value: boolean) => void;
@@ -92,47 +71,53 @@ export const useAppStore = create<AppState>((set) => ({
   budgets: [
     {
       id: "ORC-1",
-      client: "João Silva",
-      vehicle: "Fiat Uno 1.0 2012",
-      date: "09/06/2026",
+      cliente_nome: "João Silva",
+      veiculo_modelo: "Fiat Uno 1.0 2012",
+      data_criacao: "09/06/2026",
       total: 232.40,
-      status: "Em Análise",
-      discountValue: 0,
+      status: "Enviado",
+      desconto_total: 0,
       items: [
         {
           id: "FP-1092",
-          code: "FP-1092",
-          name: "Pastilha de Freio Cobreq (Par)",
-          brand: "Cobreq",
-          qty: 1,
-          price: 189.9,
+          produto_id: 1,
+          codigo_produto: "FP-1092",
+          nome_produto: "Pastilha de Freio Cobreq (Par)",
+          marca_produto: "Cobreq",
+          quantidade: 1,
+          preco_unitario: 189.9,
+          subtotal: 189.9
         },
         {
           id: "OL-3021",
-          code: "OL-3021",
-          name: "Óleo Motor Selenia 5W30 1L",
-          brand: "Selenia",
-          qty: 1,
-          price: 42.5,
+          produto_id: 2,
+          codigo_produto: "OL-3021",
+          nome_produto: "Óleo Motor Selenia 5W30 1L",
+          marca_produto: "Selenia",
+          quantidade: 1,
+          preco_unitario: 42.5,
+          subtotal: 42.5
         }
       ]
     },
     {
       id: "ORC-2",
-      client: "Maria Oliveira",
-      vehicle: "Chevrolet Onix 1.4 2018",
-      date: "08/06/2026",
+      cliente_nome: "Maria Oliveira",
+      veiculo_modelo: "Chevrolet Onix 1.4 2018",
+      data_criacao: "08/06/2026",
       total: 549.00,
       status: "Aprovado",
-      discountValue: 0,
+      desconto_total: 0,
       items: [
         {
           id: "BD-4503",
-          code: "BD-4503",
-          name: "Bateria Moura 60Ah",
-          brand: "Moura",
-          qty: 1,
-          price: 549.0,
+          produto_id: 3,
+          codigo_produto: "BD-4503",
+          nome_produto: "Bateria Moura 60Ah",
+          marca_produto: "Moura",
+          quantidade: 1,
+          preco_unitario: 549.0,
+          subtotal: 549.0
         }
       ]
     }

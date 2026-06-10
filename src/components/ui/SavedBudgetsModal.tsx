@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Search, FileText, ClipboardList } from "lucide-react";
-import { useAppStore, Budget } from "@/store/useAppStore";
+import { useAppStore } from "@/store/useAppStore";
+import { Orcamento } from "@/types/sales.entities";
 
 interface SavedBudgetsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectBudget: (budget: Budget) => void;
+  onSelectBudget: (budget: Orcamento) => void;
 }
 
 export function SavedBudgetsModal({ isOpen, onClose, onSelectBudget }: SavedBudgetsModalProps) {
   const budgets = useAppStore((state) => state.budgets);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
+  const [selectedBudget, setSelectedBudget] = useState<Orcamento | null>(null);
 
   // Keyboard navigation inside search results modal
   useEffect(() => {
@@ -57,9 +58,9 @@ export function SavedBudgetsModal({ isOpen, onClose, onSelectBudget }: SavedBudg
     if (!query) return true;
     return (
       b.id.toLowerCase().includes(query) ||
-      b.client.toLowerCase().includes(query) ||
-      b.vehicle.toLowerCase().includes(query) ||
-      b.date.toLowerCase().includes(query)
+      b.cliente_nome.toLowerCase().includes(query) ||
+      b.veiculo_modelo.toLowerCase().includes(query) ||
+      b.data_criacao.toLowerCase().includes(query)
     );
   });
 
@@ -150,15 +151,15 @@ export function SavedBudgetsModal({ isOpen, onClose, onSelectBudget }: SavedBudg
                         }`}
                       >
                         <td className="py-2.5 px-3 pl-4 font-mono text-slate-300">{budget.id}</td>
-                        <td className="py-2.5 px-3 font-semibold text-slate-200">{budget.client}</td>
-                        <td className="py-2.5 px-3 text-slate-300">{budget.vehicle}</td>
-                        <td className="py-2.5 px-3 text-slate-400">{budget.date}</td>
+                        <td className="py-2.5 px-3 font-semibold text-slate-200">{budget.cliente_nome}</td>
+                        <td className="py-2.5 px-3 text-slate-300">{budget.veiculo_modelo}</td>
+                        <td className="py-2.5 px-3 text-slate-400">{budget.data_criacao}</td>
                         <td className="py-2.5 px-3 text-right font-bold text-indigo-400">
                           R$ {budget.total.toFixed(2)}
                         </td>
                         <td className="py-2.5 px-3 text-center">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            budget.status === "Em Análise" 
+                            budget.status === "Enviado" || budget.status === "Rascunho"
                               ? "bg-amber-950/40 text-amber-400 border border-amber-800/30"
                               : "bg-emerald-950/40 text-emerald-400 border border-emerald-800/30"
                           }`}>
@@ -190,10 +191,10 @@ export function SavedBudgetsModal({ isOpen, onClose, onSelectBudget }: SavedBudg
                           activeBudget.items.map((item, index) => (
                             <div key={index} className="py-2 text-xs flex justify-between gap-2">
                               <div className="truncate">
-                                <span className="text-slate-200 font-semibold block truncate">{item.name}</span>
-                                <span className="text-[10px] text-slate-500">{item.brand} | Qtd: {item.qty}</span>
+                                <span className="text-slate-200 font-semibold block truncate">{item.nome_produto}</span>
+                                <span className="text-[10px] text-slate-500">{item.marca_produto} | Qtd: {item.quantidade}</span>
                               </div>
-                              <span className="text-slate-250 font-bold shrink-0">R$ {(item.price * item.qty).toFixed(2)}</span>
+                              <span className="text-slate-250 font-bold shrink-0">R$ {item.subtotal.toFixed(2)}</span>
                             </div>
                           ))
                         ) : (
