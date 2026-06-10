@@ -11,6 +11,8 @@ import {
   Imagem,
   ProdutoImagem,
 } from "../src/types/products.entities";
+import { Cliente } from "../src/types/customers.entities";
+import { Endereco, Usuario } from "../src/types/infrastructure.entities";
 
 export const produtoCategorias: ProdutoCategoria[] = [
   { id: 1, descricao: "Motor" },
@@ -316,6 +318,25 @@ export const produtos: Produto[] = [
   },
 ];
 
+export const clientes: Cliente[] = [
+  { id: 1, nome: "Renaldo JS Martins", tipo_pessoa: "Física", cpf_cnpj: "12345678901", email: "renaldo@email.com", telefone: "11999999999", endereco_id: 1, permite_faturado: true, limite_credito: 5000.00, saldo_utilizado: 1200.50, bloqueado_por_atraso: false },
+  { id: 2, nome: "Auto Mecânica Toninho", tipo_pessoa: "Jurídica", cpf_cnpj: "98765432000100", email: "toninho@oficina.com", telefone: "1138888888", endereco_id: 2, permite_faturado: true, limite_credito: 15000.00, saldo_utilizado: 4500.00, bloqueado_por_atraso: false },
+  { id: 3, nome: "Ana Julia Souza", tipo_pessoa: "Física", cpf_cnpj: "45678912300", email: "anajulia@email.com", telefone: "11988887777", endereco_id: 3, permite_faturado: false, limite_credito: 0.00, saldo_utilizado: 0.00, bloqueado_por_atraso: false },
+  { id: 4, nome: "Carlos Henrique Lima", tipo_pessoa: "Física", cpf_cnpj: "32165498711", email: "carlos.lima@email.com", telefone: "11977776666", endereco_id: 4, permite_faturado: true, limite_credito: 2000.00, saldo_utilizado: 1950.00, bloqueado_por_atraso: true },
+];
+
+export const enderecos: Endereco[] = [
+  { id: 1, cliente_id: 1, cep: "01311200", rua: "Avenida Paulista", numero: "1000", bairro: "Bela Vista", cidade: "São Paulo", estado: "SP", pais: "Brasil", tipo_endereco: "principal", cadastro_ativo: true },
+  { id: 2, cliente_id: 2, cep: "09010000", rua: "Rua das Figueiras", numero: "450", bairro: "Jardim", cidade: "Santo André", estado: "SP", pais: "Brasil", tipo_endereco: "comercial", cadastro_ativo: true },
+  { id: 3, cliente_id: 3, cep: "04571010", rua: "Avenida Engenheiro Luís Carlos Berrini", numero: "105", bairro: "Cidade Monções", cidade: "São Paulo", estado: "SP", pais: "Brasil", tipo_endereco: "principal", cadastro_ativo: true },
+  { id: 4, cliente_id: 4, cep: "02011000", rua: "Rua Voluntários da Pátria", numero: "1200", bairro: "Santana", cidade: "São Paulo", estado: "SP", pais: "Brasil", tipo_endereco: "principal", cadastro_ativo: true },
+];
+
+export const usuarios: Usuario[] = [
+  { id: 1, nome: "Marcos Vendedor", email: "marcos@loja.com", senha_hash: "hash", cargo: "Vendedor", perfil_acesso: "operador", ativo: true, data_criacao: "2026-01-01T00:00:00Z" },
+  { id: 2, nome: "Juliana Gerente", email: "juliana@loja.com", senha_hash: "hash", cargo: "Gerente", perfil_acesso: "supervisor", ativo: true, data_criacao: "2026-01-01T00:00:00Z" },
+];
+
 export const mocks = {
   produtoCategorias,
   produtoGrupos,
@@ -328,4 +349,8 @@ export const mocks = {
   imagens,
   produtoImagens,
   produtos,
+  clientes,
+  enderecos,
+  usuarios,
 };
+

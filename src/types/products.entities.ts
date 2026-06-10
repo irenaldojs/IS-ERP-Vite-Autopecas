@@ -85,29 +85,3 @@ export interface Produto {
   simetria_preco?: number | null;
 }
 
-export interface OrcamentoItem {
-  /** Item individual de um orçamento */
-  id: string;
-  produto_id: number;
-  codigo_produto: string;
-  nome_produto: string;
-  marca_produto: string;
-  quantidade: number;
-  preco_unitario: number;
-  desconto_percentual?: number | null;
-  subtotal: number;
-}
-
-export interface Orcamento {
-  /** Orçamento de vendas com múltiplos itens */
-  id: string;
-  cliente_nome: string;
-  veiculo_modelo: string;
-  data_criacao: string;
-  data_validade?: string | null;
-  items: OrcamentoItem[];
-  desconto_total?: number | null;
-  total: number;
-  status: "Rascunho" | "Enviado" | "Aprovado" | "Recusado" | "Convertido";
-  observacoes?: string | null;
-}

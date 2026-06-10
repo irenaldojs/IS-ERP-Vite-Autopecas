@@ -1,7 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Plus, Search } from "lucide-react";
+import { ShoppingCart, Plus, Search, FolderOpen } from "lucide-react";
 import { ProductSearchModal } from "@/components/ui/ProductSearchModal";
+import { SavedBudgetsModal } from "@/components/ui/SavedBudgetsModal";
+import { SaveBudgetModal } from "@/components/ui/SaveBudgetModal";
+import { SavePreVendaModal } from "@/components/ui/SavePreVendaModal";
+import { useAppStore } from "@/store/useAppStore";
 import {
   produtos,
   produtoGrupos,
@@ -29,8 +33,15 @@ type Props = {
   discountValue: number;
   setDiscountValue: (v: number) => void;
   totalSale: number;
-  handleSaveBudget: () => void;
-  handleSavePreSale: () => void;
+  handleSaveBudget: (data?: { id?: string; client: string; vehicle: string; discount: number; status: string; notes?: string }) => void;
+  handleSavePreSale: (data?: {
+    client: string;
+    clientId?: number | null;
+    provisionalContact?: string;
+    sellerId: number;
+    discount: number;
+    notes: string;
+  }) => void;
   showToast: (msg: string, type?: "success" | "info" | "error") => void;
 };
 
@@ -44,6 +55,9 @@ export default function Orcamento(props: Props) {
     handleSaveBudget,
     handleSavePreSale,
     showToast,
+    setClientName,
+    setVehicleName,
+    setDiscountValue,
   } = props;
 
   const [currentProduct, setCurrentProduct] = useState<Product | undefined>(undefined);
@@ -53,16 +67,63 @@ export default function Orcamento(props: Props) {
 
   // Search Modal state
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isSavedBudgetsModalOpen, setIsSavedBudgetsModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [loadedBudgetId, setLoadedBudgetId] = useState<string | null>(null);
+
+  const handleSelectBudget = (budget: any) => {
+    setClientName(budget.client);
+    setVehicleName(budget.vehicle);
+    setDiscountValue(budget.discountValue || 0);
+    if (budget.items) {
+      setActiveSaleItems(budget.items);
+    } else {
+      setActiveSaleItems([]);
+    }
+    setLoadedBudgetId(budget.id);
+    showToast(`Orçamento ${budget.id} carregado!`, "success");
+    setIsSavedBudgetsModalOpen(false);
+  };
+
+  const handleConfirmSaveBudget = (data: { client: string; vehicle: string; discount: number; status: string; notes: string; overwrite: boolean }) => {
+    // Sync back client, vehicle, and discount to inputs
+    setClientName(data.client);
+    setVehicleName(data.vehicle);
+    setDiscountValue(data.discount);
+    
+    const targetId = data.overwrite && loadedBudgetId ? loadedBudgetId : undefined;
+
+    // Trigger save
+    handleSaveBudget({
+      id: targetId,
+      client: data.client,
+      vehicle: data.vehicle,
+      discount: data.discount,
+      status: data.status,
+      notes: data.notes,
+    });
+
+    if (targetId) {
+      setLoadedBudgetId(targetId);
+    } else {
+      const nextId = `ORC-${useAppStore.getState().budgets.length + 1}`;
+      setLoadedBudgetId(nextId);
+    }
+
+    setIsSaveModalOpen(false);
+  };
+
+  const [isPreVendaModalOpen, setIsPreVendaModalOpen] = useState(false);
 
   // Focus ID input when search modal closes
   useEffect(() => {
-    if (!isSearchModalOpen) {
+    if (!isSearchModalOpen && !isSavedBudgetsModalOpen && !isSaveModalOpen && !isPreVendaModalOpen) {
       const timer = setTimeout(() => {
         inputIdRef.current?.focus();
       }, 50);
       return () => clearTimeout(timer);
     }
-  }, [isSearchModalOpen]);
+  }, [isSearchModalOpen, isSavedBudgetsModalOpen, isSaveModalOpen, isPreVendaModalOpen]);
 
   // Set selected item code when current searched product updates
   useEffect(() => {
@@ -107,6 +168,7 @@ export default function Orcamento(props: Props) {
     setActiveSaleItems([]);
     setSelectedItemCode(null);
     setCurrentProduct(undefined);
+    setLoadedBudgetId(null);
     showToast("Lista de itens limpa!", "success");
   };
 
@@ -257,12 +319,27 @@ export default function Orcamento(props: Props) {
                 placeholder="ID..."
                 className="w-24 px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors shrink-0 text-center"
               />
-              <div className="text-sm font-semibold text-slate-300 whitespace-nowrap truncate flex-1 flex items-center h-[38px] px-3 bg-[#070a13]/50 border border-slate-800/50 rounded-lg">
-                {currentProduct ? `${currentProduct.originalCode ? currentProduct.originalCode + ' - ' : ''}${currentProduct.name} - ${currentProduct.brand}` : "Aguardando código..."}
+              <div className="text-sm font-semibold text-slate-300 whitespace-nowrap truncate flex-1 flex items-center justify-between h-[38px] px-3 bg-[#070a13]/50 border border-slate-800/50 rounded-lg">
+                <span className="truncate">
+                  {currentProduct ? `${currentProduct.originalCode ? currentProduct.originalCode + ' - ' : ''}${currentProduct.name} - ${currentProduct.brand}` : "Aguardando código..."}
+                </span>
+                {loadedBudgetId && (
+                  <span className="text-[10px] font-mono font-bold bg-indigo-950 text-indigo-400 border border-indigo-900/40 px-2 py-0.5 rounded ml-2 shrink-0 select-none">
+                    Editando: {loadedBudgetId}
+                  </span>
+                )}
               </div>
             </div>
           </div>
           <div className="flex gap-2 shrink-0">
+            <Button
+              ref={addBtnRef}
+              onClick={handleAddProduct}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg h-[38px] flex items-center justify-center cursor-pointer font-bold"
+              title="Adicionar Produto"
+            >
+              <Plus className="h-5 w-5" />
+            </Button>
             <Button
               onClick={() => setIsSearchModalOpen(true)}
               className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-4 py-2 rounded-lg h-[38px] flex items-center justify-center cursor-pointer transition-colors"
@@ -271,12 +348,11 @@ export default function Orcamento(props: Props) {
               <Search className="h-4 w-4" />
             </Button>
             <Button
-              ref={addBtnRef}
-              onClick={handleAddProduct}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg h-[38px] flex items-center justify-center cursor-pointer"
-              title="Adicionar Produto"
+              onClick={() => setIsSavedBudgetsModalOpen(true)}
+              className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-4 py-2 rounded-lg h-[38px] flex items-center justify-center cursor-pointer transition-colors"
+              title="Procurar Orçamentos Salvos"
             >
-              <Plus className="h-5 w-5" />
+              <FolderOpen className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -439,13 +515,19 @@ export default function Orcamento(props: Props) {
               Limpar Lista
             </Button>
             <Button
-              onClick={handleSaveBudget}
+              onClick={() => setIsSaveModalOpen(true)}
               className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-200 text-xs font-bold py-2.5 h-auto rounded-lg cursor-pointer transition-colors uppercase tracking-wider"
             >
               Salvar Orçamento
             </Button>
             <Button
-              onClick={handleSavePreSale}
+              onClick={() => {
+                if (activeSaleItems.length === 0) {
+                  showToast("Adicione pelo menos um item à lista!", "error");
+                  return;
+                }
+                setIsPreVendaModalOpen(true);
+              }}
               className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-550 hover:to-teal-550 text-white text-xs font-bold py-2.5 h-auto rounded-lg shadow-lg shadow-emerald-600/10 cursor-pointer transition-all uppercase tracking-wider"
             >
               Vender (Pré-Venda)
@@ -459,6 +541,37 @@ export default function Orcamento(props: Props) {
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
         onAddProduct={handleAddProductFromModal}
+      />
+
+      {/* Saved Budgets Modal */}
+      <SavedBudgetsModal
+        isOpen={isSavedBudgetsModalOpen}
+        onClose={() => setIsSavedBudgetsModalOpen(false)}
+        onSelectBudget={handleSelectBudget}
+      />
+
+      {/* Save Budget Form Modal */}
+      <SaveBudgetModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        defaultClient={props.clientName}
+        defaultVehicle={props.vehicleName}
+        defaultDiscount={props.discountValue}
+        totalAmount={props.subtotalSale}
+        onSave={handleConfirmSaveBudget}
+      />
+
+      {/* Save PreVenda Form Modal */}
+      <SavePreVendaModal
+        isOpen={isPreVendaModalOpen}
+        onClose={() => setIsPreVendaModalOpen(false)}
+        defaultClient={props.clientName}
+        defaultDiscount={props.discountValue}
+        totalAmount={props.subtotalSale}
+        onSave={(data) => {
+          handleSavePreSale(data);
+          setIsPreVendaModalOpen(false);
+        }}
       />
     </div>
   );

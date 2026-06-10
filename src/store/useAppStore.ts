@@ -26,6 +26,8 @@ export type Budget = {
   date: string;
   total: number;
   status: string;
+  items?: SaleItem[];
+  discountValue?: number;
 };
 
 export type PreSale = {
@@ -87,7 +89,54 @@ export const useAppStore = create<AppState>((set) => ({
   showProductSuggestions: false,
   activeSaleItems: [],
   discountValue: 0,
-  budgets: [],
+  budgets: [
+    {
+      id: "ORC-1",
+      client: "João Silva",
+      vehicle: "Fiat Uno 1.0 2012",
+      date: "09/06/2026",
+      total: 232.40,
+      status: "Em Análise",
+      discountValue: 0,
+      items: [
+        {
+          id: "FP-1092",
+          code: "FP-1092",
+          name: "Pastilha de Freio Cobreq (Par)",
+          brand: "Cobreq",
+          qty: 1,
+          price: 189.9,
+        },
+        {
+          id: "OL-3021",
+          code: "OL-3021",
+          name: "Óleo Motor Selenia 5W30 1L",
+          brand: "Selenia",
+          qty: 1,
+          price: 42.5,
+        }
+      ]
+    },
+    {
+      id: "ORC-2",
+      client: "Maria Oliveira",
+      vehicle: "Chevrolet Onix 1.4 2018",
+      date: "08/06/2026",
+      total: 549.00,
+      status: "Aprovado",
+      discountValue: 0,
+      items: [
+        {
+          id: "BD-4503",
+          code: "BD-4503",
+          name: "Bateria Moura 60Ah",
+          brand: "Moura",
+          qty: 1,
+          price: 549.0,
+        }
+      ]
+    }
+  ],
   preSales: [],
   invoices: [],
   openingBalance: 5420,

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Orcamento, OrcamentoItem } from "../types/products.entities";
+import type { Orcamento, OrcamentoItem } from "../types/sales.entities";
 
 interface OrcamentoState {
   orcamentoAtivo: Orcamento | null;

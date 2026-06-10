@@ -4,6 +4,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ModuleCard } from "@/components/dashboard/ModuleCard";
 import { ModuleTabContainer } from "@/components/layout/ModuleTabContainer";
 import { CATALOG_PRODUCTS, useAppStore } from "@/store/useAppStore";
+import { usuarios } from "../mocks/products.mock";
 import {
   ShoppingCart,
   ShieldCheck,
@@ -114,36 +115,81 @@ function App() {
     navigate(`/vendas/${tabId}`);
   };
 
-  const handleSaveBudget = () => {
-    setBudgets((prev) => [
-      ...prev,
-      {
-        id: `ORC-${prev.length + 1}`,
-        client: clientName || "Consumidor Final",
-        vehicle: vehicleName || "Sem veículo",
-        date: new Date().toLocaleDateString("pt-BR"),
-        total: totalSale,
-        status: "Em Análise",
-      },
-    ]);
-    showToast("Orçamento salvo com sucesso.");
+  const handleSaveBudget = (data?: { id?: string; client: string; vehicle: string; discount: number; status: string; notes?: string }) => {
+    const client = data?.client ?? clientName ?? "Consumidor Final";
+    const vehicle = data?.vehicle ?? vehicleName ?? "Sem veículo";
+    const discount = data?.discount ?? discountValue ?? 0;
+    const status = data?.status ?? "Em Análise";
+    const subtotal = activeSaleItems.reduce((sum, item) => sum + item.qty * item.price, 0);
+    const total = Math.max(0, subtotal - discount);
+
+    setBudgets((prev) => {
+      const exists = data?.id ? prev.some((b) => b.id === data.id) : false;
+      if (exists) {
+        return prev.map((b) =>
+          b.id === data?.id
+            ? {
+                ...b,
+                client,
+                vehicle,
+                total,
+                status,
+                items: [...activeSaleItems],
+                discountValue: discount,
+              }
+            : b
+        );
+      } else {
+        const newId = data?.id || `ORC-${prev.length + 1}`;
+        return [
+          ...prev,
+          {
+            id: newId,
+            client,
+            vehicle,
+            date: new Date().toLocaleDateString("pt-BR"),
+            total,
+            status,
+            items: [...activeSaleItems],
+            discountValue: discount,
+          },
+        ];
+      }
+    });
+    showToast(data?.id ? `Orçamento ${data.id} atualizado.` : "Orçamento salvo com sucesso.");
   };
 
-  const handleSavePreSale = () => {
+  const handleSavePreSale = (data?: {
+    client: string;
+    clientId?: number | null;
+    provisionalContact?: string;
+    sellerId: number;
+    discount: number;
+    notes: string;
+  }) => {
+    const finalClientName = data?.client || clientName || "Consumidor Final";
+    const discountVal = data !== undefined ? data.discount : discountValue;
+    const finalTotal = Math.max(0, subtotalSale - discountVal);
+    
+    // Find seller name
+    const sellerObj = usuarios.find((u) => u.id === data?.sellerId);
+    const sellerName = sellerObj?.nome || "Vendedor Padrão";
+
     setPreSales((prev) => [
       ...prev,
       {
         id: `PV-${prev.length + 1}`,
-        client: clientName || "Consumidor Final",
-        seller: "Vendas Online",
+        client: finalClientName,
+        seller: sellerName,
         date: new Date().toLocaleDateString("pt-BR"),
-        total: totalSale,
+        total: finalTotal,
         status: "Pendente",
       },
     ]);
-    showToast("Pré-venda registrada.");
+    showToast(`Pré-venda PV-${preSales.length + 1} registrada.`, "success");
     setActiveSaleItems([]);
     setDiscountValue(0);
+    setClientName("");
   };
 
   const handleReceivePreSale = (id: string) => {
