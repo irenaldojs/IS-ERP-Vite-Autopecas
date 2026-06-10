@@ -11,8 +11,10 @@ export type Product = {
 export type SaleItem = {
   id: string;
   code: string;
+  originalCode?: string;
   name: string;
   brand: string;
+  reference?: string;
   qty: number;
   price: number;
 };

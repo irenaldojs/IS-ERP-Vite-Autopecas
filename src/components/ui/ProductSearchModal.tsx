@@ -212,10 +212,12 @@ function AutocompleteInput({
 export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSearchModalProps) {
   const [searchMode, setSearchMode] = useState<"code" | "group_vehicle">("code");
   const [searchCode, setSearchCode] = useState("");
+  const [appliedSearchCode, setAppliedSearchCode] = useState("");
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>("");
   const [appliedGroupId, setAppliedGroupId] = useState<string>("");
   const [appliedVehicleId, setAppliedVehicleId] = useState<string>("");
+  const [hasSearched, setHasSearched] = useState(false);
 
   const groupInputRef = useRef<HTMLInputElement | null>(null);
   const vehicleInputRef = useRef<HTMLInputElement | null>(null);
@@ -236,9 +238,30 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
 
+  const triggerCodeSearch = () => {
+    setAppliedSearchCode(searchCode.trim());
+    setHasSearched(true);
+
+    const code = searchCode.toLowerCase().trim();
+    const results = produtos.filter((prod) => 
+      code ? prod.codigo_original.toLowerCase().includes(code) : false
+    );
+
+    if (results.length > 0) {
+      setSelectedModalProduct(results[0]);
+    } else {
+      setSelectedModalProduct(null);
+    }
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
   const triggerSearch = () => {
     setAppliedGroupId(selectedGroupId);
     setAppliedVehicleId(selectedVehicleId);
+    setHasSearched(true);
 
     // Compute results immediately to focus the first one
     const matchesGroup = (prod: Produto) => selectedGroupId ? prod.grupo_id === Number(selectedGroupId) : true;
@@ -261,20 +284,22 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
   };
 
   // Filter products for modal
-  const modalResults = produtos.filter((prod: Produto) => {
-    if (searchMode === "code") {
-      if (!searchCode.trim()) return true;
-      return prod.codigo_original.toLowerCase().includes(searchCode.toLowerCase().trim());
-    } else {
-      const matchesGroup = appliedGroupId ? prod.grupo_id === Number(appliedGroupId) : true;
-      let matchesVehicle = true;
-      if (appliedVehicleId) {
-        const appList = produtoAplicacaoListas.find((list: ProdutoAplicacaoLista) => list.id === prod.aplicacao_lista_id);
-        matchesVehicle = appList ? appList.aplicaoes.some((app: any) => app.modelo_id === Number(appliedVehicleId)) : false;
-      }
-      return matchesGroup && matchesVehicle;
-    }
-  });
+  const modalResults = !hasSearched
+    ? []
+    : produtos.filter((prod: Produto) => {
+        if (searchMode === "code") {
+          if (!appliedSearchCode) return false;
+          return prod.codigo_original.toLowerCase().includes(appliedSearchCode.toLowerCase());
+        } else {
+          const matchesGroup = appliedGroupId ? prod.grupo_id === Number(appliedGroupId) : true;
+          let matchesVehicle = true;
+          if (appliedVehicleId) {
+            const appList = produtoAplicacaoListas.find((list: ProdutoAplicacaoLista) => list.id === prod.aplicacao_lista_id);
+            matchesVehicle = appList ? appList.aplicaoes.some((app: any) => app.modelo_id === Number(appliedVehicleId)) : false;
+          }
+          return matchesGroup && matchesVehicle;
+        }
+      });
 
   // Ensure activeSelectedProd defaults to first result if current selected is not in results
   const activeSelectedProd = selectedModalProduct && modalResults.some((p: Produto) => p.id === selectedModalProduct.id)
@@ -305,6 +330,11 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
         }
         return;
       }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+        return;
+      }
       if (e.key === "ArrowDown") {
         e.preventDefault();
         const currentIndex = modalResults.findIndex((p: Produto) => p.id === activeSelectedProd?.id);
@@ -319,7 +349,7 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
           setSelectedModalProduct(modalResults[currentIndex - 1]);
           setCurrentImageIndex(0);
         }
-      } else if (e.key === "Enter") {
+      } else if (e.key === "Enter" || e.key === "Insert") {
         if (activeSelectedProd) {
           e.preventDefault();
           onAddProduct(activeSelectedProd);
@@ -348,8 +378,14 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-55 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#0e1626] border border-slate-800 rounded-xl w-full max-w-6xl h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-205">
+    <div 
+      className="fixed inset-0 z-55 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-[#0e1626] border border-slate-800 rounded-xl w-full max-w-6xl h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-205"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header & Photo section */}
         <div className="flex gap-2 border-b border-slate-800 p-2 bg-[#0e1626]/50 items-start justify-between">
           <div className="flex-1 space-y-4">
@@ -367,6 +403,9 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
                   setSearchMode("code");
                   setSelectedModalProduct(null);
                   setCurrentImageIndex(0);
+                  setSearchCode("");
+                  setAppliedSearchCode("");
+                  setHasSearched(false);
                 }}
                 className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   searchMode === "code"
@@ -381,6 +420,11 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
                   setSearchMode("group_vehicle");
                   setSelectedModalProduct(null);
                   setCurrentImageIndex(0);
+                  setSelectedGroupId("");
+                  setSelectedVehicleId("");
+                  setAppliedGroupId("");
+                  setAppliedVehicleId("");
+                  setHasSearched(false);
                 }}
                 className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   searchMode === "group_vehicle"
@@ -397,40 +441,65 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
               {searchMode === "code" ? (
                 <div className="w-full max-w-lg space-y-1">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Código Original</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Digite o código original do produto..."
-                      value={searchCode}
-                      onChange={(e) => setSearchCode(e.target.value)}
-                      className="w-full pl-9 pr-4 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[32px]"
-                      autoFocus
-                    />
-                    <Search className="absolute left-3 top-2 h-3.5 w-3.5 text-slate-500" />
+                  <div className="relative flex gap-2">
+                    <div className="relative flex-grow">
+                      <input
+                        type="text"
+                        placeholder="Digite o código original do produto e pressione Enter..."
+                        value={searchCode}
+                        onChange={(e) => setSearchCode(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            triggerCodeSearch();
+                          }
+                        }}
+                        className="w-full pl-9 pr-4 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[32px]"
+                        autoFocus
+                      />
+                      <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-550" />
+                    </div>
+                    <Button
+                      onClick={triggerCodeSearch}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-[32px] px-4 rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold shrink-0"
+                    >
+                      <Search className="h-3.5 w-3.5" />
+                      Buscar
+                    </Button>
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl">
-                  <AutocompleteInput
-                    label="Grupo"
-                    placeholder="Buscar ou selecionar grupo..."
-                    items={groupItems}
-                    selectedValue={selectedGroupId}
-                    onSelect={(id) => setSelectedGroupId(id)}
-                    onClear={() => setSelectedGroupId("")}
-                    inputRef={groupInputRef}
-                    nextInputRef={vehicleInputRef}
-                  />
-                  <AutocompleteInput
-                    label="Veículo"
-                    placeholder="Buscar ou selecionar veículo..."
-                    items={vehicleItems}
-                    selectedValue={selectedVehicleId}
-                    onSelect={(id) => setSelectedVehicleId(id)}
-                    onClear={() => setSelectedVehicleId("")}
-                    inputRef={vehicleInputRef}
-                    onSubmit={triggerSearch}
-                  />
+                <div className="flex gap-4 items-end w-full max-w-3xl">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+                    <AutocompleteInput
+                      label="Grupo"
+                      placeholder="Buscar ou selecionar grupo..."
+                      items={groupItems}
+                      selectedValue={selectedGroupId}
+                      onSelect={(id) => setSelectedGroupId(id)}
+                      onClear={() => setSelectedGroupId("")}
+                      inputRef={groupInputRef}
+                      nextInputRef={vehicleInputRef}
+                    />
+                    <AutocompleteInput
+                      label="Veículo"
+                      placeholder="Buscar ou selecionar veículo..."
+                      items={vehicleItems}
+                      selectedValue={selectedVehicleId}
+                      onSelect={(id) => setSelectedVehicleId(id)}
+                      onClear={() => setSelectedVehicleId("")}
+                      inputRef={vehicleInputRef}
+                      onSubmit={triggerSearch}
+                    />
+                  </div>
+                  <Button
+                    onClick={triggerSearch}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-[32px] px-4 rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold shrink-0"
+                  >
+                    <Search className="h-3.5 w-3.5" />
+                    Buscar
+                  </Button>
                 </div>
               )}
             </div>
@@ -493,6 +562,7 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
 
             <button
               onClick={onClose}
+              title="Fechar (ESC)"
               className="p-1.5 hover:bg-[#16223f] border border-slate-850 hover:border-slate-700 rounded-lg text-slate-400 hover:text-slate-200 transition-all cursor-pointer"
             >
               <X className="h-4 w-4" />
@@ -510,54 +580,64 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
                 <th className="py-1 px-3">Grupo</th>
                 <th className="py-1 px-3">Marca</th>
                 <th className="py-1 px-3 text-right pr-6">Preço</th>
-                <th className="py-1 px-3 text-center w-28">Ação</th>
+                <th className="py-1 px-3 text-center w-28">Ação (Insert)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-850/30">
-              {modalResults.map((prod: Produto) => {
-                const group = produtoGrupos.find((g: ProdutoGrupo) => g.id === prod.grupo_id);
-                const brand = produtoMarcas.find((m: ProdutoMarca) => m.id === prod.marca_id);
-                const isSelected = activeSelectedProd?.id === prod.id;
-                return (
-                  <tr
-                    key={prod.id}
-                    id={`search-prod-row-${prod.id}`}
-                    onClick={() => {
-                      setSelectedModalProduct(prod);
-                      setCurrentImageIndex(0);
-                    }}
-                    onDoubleClick={() => {
-                      onAddProduct(prod);
-                    }}
-                    className={`hover:bg-[#16223f]/40 cursor-pointer transition-all ${
-                      isSelected ? "bg-indigo-600/25 font-semibold text-white shadow-inner" : ""
-                    }`}
-                  >
-                    <td className={`py-1 px-3 pl-4 font-mono text-slate-400 border-l-4 ${isSelected ? "border-indigo-500" : "border-transparent"}`}>{prod.id}</td>
-                    <td className="py-1 px-3 font-semibold text-slate-200">{prod.codigo_original}</td>
-                    <td className="py-1 px-3 text-slate-300">{group?.descricao || "Sem Grupo"}</td>
-                    <td className="py-1 px-3 text-slate-400">{brand?.nome || "Sem Marca"}</td>
-                    <td className="py-1 px-3 text-right pr-6 font-bold text-slate-100">
-                      R$ {prod.preco.toFixed(2)}
-                    </td>
-                    <td className="py-1 px-3 text-center" onClick={(e) => e.stopPropagation()}>
-                      <Button
-                        onClick={() => onAddProduct(prod)}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] h-6 px-3 rounded-lg cursor-pointer flex items-center justify-center gap-1 mx-auto"
-                      >
-                        <Plus className="h-3 w-3" />
-                        Adicionar
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-              {modalResults.length === 0 && (
+              {!hasSearched ? (
+                <tr>
+                  <td colSpan={6} className="p-10 text-center text-slate-500">
+                    Digite os termos de pesquisa e clique em Buscar ou pressione Enter.
+                  </td>
+                </tr>
+              ) : modalResults.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-10 text-center text-slate-500">
                     Nenhum produto encontrado. Refine os filtros acima.
                   </td>
                 </tr>
+              ) : (
+                modalResults.map((prod: Produto, idx: number) => {
+                  const group = produtoGrupos.find((g: ProdutoGrupo) => g.id === prod.grupo_id);
+                  const brand = produtoMarcas.find((m: ProdutoMarca) => m.id === prod.marca_id);
+                  const isSelected = activeSelectedProd?.id === prod.id;
+                  return (
+                    <tr
+                      key={prod.id}
+                      id={`search-prod-row-${prod.id}`}
+                      onClick={() => {
+                        setSelectedModalProduct(prod);
+                        setCurrentImageIndex(0);
+                      }}
+                      onDoubleClick={() => {
+                        onAddProduct(prod);
+                      }}
+                      className={`hover:bg-[#16223f]/40 cursor-pointer transition-all ${
+                        isSelected
+                          ? "bg-indigo-600/25 font-semibold text-white shadow-inner"
+                          : idx % 2 === 0
+                          ? "bg-[#0f192e]"
+                          : "bg-[#09101f]"
+                      }`}
+                    >
+                      <td className={`py-1 px-3 pl-4 font-mono text-slate-400 border-l-4 ${isSelected ? "border-indigo-500" : "border-transparent"}`}>{prod.id}</td>
+                      <td className="py-1 px-3 font-semibold text-slate-200">{prod.codigo_original}</td>
+                      <td className="py-1 px-3 text-slate-300">{group?.descricao || "Sem Grupo"}</td>
+                      <td className="py-1 px-3 text-slate-400">{brand?.nome || "Sem Marca"}</td>
+                      <td className="py-1 px-3 text-right pr-6 font-bold text-slate-100">
+                        R$ {prod.preco.toFixed(2)}
+                      </td>
+                      <td className="py-1 px-3 text-center" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          onClick={() => onAddProduct(prod)}
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white h-6 w-8 p-0 rounded-lg cursor-pointer flex items-center justify-center mx-auto"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -593,7 +673,12 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
                       </thead>
                       <tbody className="divide-y divide-slate-850/20 text-slate-300">
                         {specs.map((s: any, idx: number) => (
-                          <tr key={idx} className="hover:bg-[#16223f]/10">
+                          <tr
+                            key={idx}
+                            className={`hover:bg-[#16223f]/10 ${
+                              idx % 2 === 0 ? "bg-[#0f192e]" : "bg-[#09101f]"
+                            }`}
+                          >
                             <td className="py-1.5 font-medium text-slate-400">{s.tipo}</td>
                             <td className="py-1.5 font-semibold text-slate-200">{s.valor}</td>
                           </tr>
@@ -667,7 +752,12 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
                               </td>
                             </tr>
                             {groupedApps[brandName].map((app: any, idx: number) => (
-                              <tr key={idx} className="hover:bg-[#16223f]/10 border-b border-slate-850/10 last:border-b-0">
+                              <tr
+                                key={idx}
+                                className={`hover:bg-[#16223f]/10 border-b border-slate-850/10 last:border-b-0 ${
+                                  idx % 2 === 0 ? "bg-[#0f192e]" : "bg-[#09101f]"
+                                }`}
+                              >
                                 <td className="py-1.5 pl-3 font-semibold text-slate-200">{app.modelo}</td>
                                 <td className="py-1.5 text-slate-300">{app.ano}</td>
                                 <td className="py-1.5 text-slate-400 truncate pr-2" title={app.detalhes}>{app.detalhes}</td>

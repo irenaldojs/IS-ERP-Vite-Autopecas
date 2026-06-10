@@ -99,6 +99,17 @@ export default function Orcamento(props: Props) {
     }
   };
 
+  const handleClearList = () => {
+    if (activeSaleItems.length === 0) {
+      showToast("A lista já está vazia!", "info");
+      return;
+    }
+    setActiveSaleItems([]);
+    setSelectedItemCode(null);
+    setCurrentProduct(undefined);
+    showToast("Lista de itens limpa!", "success");
+  };
+
   const handleAddProduct = () => {
     if (!currentProduct) {
       if (productSearchQuery.trim()) {
@@ -397,33 +408,36 @@ export default function Orcamento(props: Props) {
         {/* Resumo da Venda Box */}
         <div className="border border-slate-850 rounded-xl bg-[#0e1626]/40 p-4 flex flex-col justify-between flex-grow">
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">
-              Resumo da Venda
-            </h4>
-            <div className="space-y-2.5">
-              <div className="flex justify-between text-sm">
-                <span className="font-bold text-slate-300">Total Líquido:</span>
-                <span className="font-extrabold text-indigo-400">R$ {totalSale.toFixed(2)}</span>
+            <div className="space-y-3.5">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-bold text-slate-350">Total Líquido:</span>
+                <span className="text-2xl font-black text-indigo-400">R$ {totalSale.toFixed(2)}</span>
               </div>
-              <div className="space-y-2 pt-3 border-t border-slate-850/70">
-                <div className="flex justify-between text-xs text-slate-400">
-                  <span>À vista (5% desc.):</span>
-                  <span className="font-semibold text-slate-200">R$ {cashSaleValue.toFixed(2)}</span>
+              <div className="space-y-3 pt-3 border-t border-slate-850/70">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-slate-400">À vista (5% desc.):</span>
+                  <span className="text-xl font-black text-emerald-400">R$ {cashSaleValue.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-xs text-slate-400">
-                  <span>Parcelas:</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-slate-400">Parcelas:</span>
                   {maxInstallments > 0 ? (
-                    <span className="font-semibold text-slate-200">
-                      Até {maxInstallments}x de R$ {installmentAmount.toFixed(2)}
+                    <span className="text-xs text-slate-350 text-right">
+                      Até <span className="text-slate-200 font-bold text-sm">{maxInstallments}x</span> de <span className="text-indigo-300 font-bold text-base">R$ {installmentAmount.toFixed(2)}</span>
                     </span>
                   ) : (
-                    <span className="font-semibold text-rose-450">Indisponível</span>
+                    <span className="text-sm font-bold text-rose-450">Indisponível</span>
                   )}
                 </div>
               </div>
             </div>
           </div>
           <div className="space-y-2 mt-6">
+            <Button
+              onClick={handleClearList}
+              className="w-full bg-rose-950/25 hover:bg-rose-900/40 border border-rose-800/30 hover:border-rose-700/50 text-rose-350 text-xs font-bold py-2.5 h-auto rounded-lg cursor-pointer transition-colors uppercase tracking-wider"
+            >
+              Limpar Lista
+            </Button>
             <Button
               onClick={handleSaveBudget}
               className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-200 text-xs font-bold py-2.5 h-auto rounded-lg cursor-pointer transition-colors uppercase tracking-wider"
