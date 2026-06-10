@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Save, ClipboardCopy } from "lucide-react";
 import { Orcamento } from "@/types/sales.entities";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 
 interface SaveBudgetModalProps {
   isOpen: boolean;
@@ -58,6 +59,8 @@ export function SaveBudgetModal({
   const [enviarWhatsapp, setEnviarWhatsapp] = useState(false);
 
   const dataValidadeFixa = getThreeDaysFromNow();
+
+  useEscapeKey(isOpen, onClose);
 
   useEffect(() => {
     if (isOpen) {

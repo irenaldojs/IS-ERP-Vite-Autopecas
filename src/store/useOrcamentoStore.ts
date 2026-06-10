@@ -25,6 +25,8 @@ export const useOrcamentoStore = create<OrcamentoState>((set) => ({
     const novoOrcamento: Orcamento = {
       id,
       cliente_nome: cliente,
+      cliente_id: null,
+      telefone: null,
       veiculo_modelo: veiculo,
       data_criacao: new Date().toISOString().split("T")[0],
       items: [],

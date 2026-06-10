@@ -72,6 +72,8 @@ export const useAppStore = create<AppState>((set) => ({
     {
       id: "ORC-1",
       cliente_nome: "João Silva",
+      cliente_id: null,
+      telefone: null,
       veiculo_modelo: "Fiat Uno 1.0 2012",
       data_criacao: "09/06/2026",
       total: 232.40,
@@ -103,6 +105,8 @@ export const useAppStore = create<AppState>((set) => ({
     {
       id: "ORC-2",
       cliente_nome: "Maria Oliveira",
+      cliente_id: null,
+      telefone: null,
       veiculo_modelo: "Chevrolet Onix 1.4 2018",
       data_criacao: "08/06/2026",
       total: 549.00,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, Image, X, Plus, FileText, Car } from "lucide-react";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import {
   produtos,
   produtoGrupos,
@@ -238,6 +239,9 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
 
+  useEscapeKey(isOpen && !isZoomModalOpen, onClose);
+  useEscapeKey(isZoomModalOpen, () => setIsZoomModalOpen(false));
+
   const triggerCodeSearch = () => {
     setAppliedSearchCode(searchCode.trim());
     setHasSearched(true);
@@ -324,15 +328,6 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
     
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isZoomModalOpen) {
-        if (e.key === "Escape") {
-          e.preventDefault();
-          setIsZoomModalOpen(false);
-        }
-        return;
-      }
-      if (e.key === "Escape") {
-        e.preventDefault();
-        onClose();
         return;
       }
       if (e.key === "ArrowDown") {

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { X, Search, FileText, ClipboardList } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { Orcamento } from "@/types/sales.entities";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 
 interface SavedBudgetsModalProps {
   isOpen: boolean;
@@ -15,16 +16,13 @@ export function SavedBudgetsModal({ isOpen, onClose, onSelectBudget }: SavedBudg
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBudget, setSelectedBudget] = useState<Orcamento | null>(null);
 
+  useEscapeKey(isOpen, onClose);
+
   // Keyboard navigation inside search results modal
   useEffect(() => {
     if (!isOpen) return;
     
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        onClose();
-        return;
-      }
       if (e.key === "ArrowDown") {
         e.preventDefault();
         const currentIndex = filteredBudgets.findIndex((b) => b.id === selectedBudget?.id);
@@ -58,7 +56,7 @@ export function SavedBudgetsModal({ isOpen, onClose, onSelectBudget }: SavedBudg
     if (!query) return true;
     return (
       b.id.toLowerCase().includes(query) ||
-      b.cliente_nome.toLowerCase().includes(query) ||
+      (b.cliente_nome?.toLowerCase() || "").includes(query) ||
       b.veiculo_modelo.toLowerCase().includes(query) ||
       b.data_criacao.toLowerCase().includes(query)
     );

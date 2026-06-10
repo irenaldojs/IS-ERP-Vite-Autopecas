@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { X, ClipboardCopy, Search, User, CreditCard, ShieldAlert, Check } from "lucide-react";
+import { X, ClipboardCopy, Search, User, ShieldAlert, Check } from "lucide-react";
 import { Cliente } from "@/types/customers.entities";
 import { Endereco } from "@/types/infrastructure.entities";
 import { clientes, enderecos, usuarios } from "../../../mocks/products.mock";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 
 interface SavePreVendaModalProps {
   isOpen: boolean;
@@ -32,6 +33,8 @@ export function SavePreVendaModal({
   totalAmount,
   onSave,
 }: SavePreVendaModalProps) {
+  useEscapeKey(isOpen, onClose);
+
   // Configurações e Tipo da Venda
   const [tipoVenda, setTipoVenda] = useState<"Balcão" | "Entrega">("Balcão");
 
@@ -171,8 +174,6 @@ export function SavePreVendaModal({
       forma_pagamento: formaPagamento,
     });
   };
-
-  const finalTotal = valorTotalFinal;
 
   // Filtragem de clientes no submodal
   const filteredClientsInModal = clientes.filter((c) => {

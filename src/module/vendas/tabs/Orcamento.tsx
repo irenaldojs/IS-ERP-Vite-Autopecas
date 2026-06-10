@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Plus, Search, FolderOpen } from "lucide-react";
+import { ShoppingCart, Plus, Search, FolderOpen, Trash2, Save } from "lucide-react";
 import { ProductSearchModal } from "@/components/ui/ProductSearchModal";
 import { SavedBudgetsModal } from "@/components/ui/SavedBudgetsModal";
 import { SaveBudgetModal } from "@/components/ui/SaveBudgetModal";
@@ -88,7 +88,7 @@ export default function Orcamento(props: Props) {
   const loadedBudget = loadedBudgetId ? budgets.find((b) => b.id === loadedBudgetId) : null;
 
   const handleSelectBudget = (budget: OrcamentoType) => {
-    setClientName(budget.cliente_nome);
+    setClientName(budget.cliente_nome || "");
     setVehicleName(budget.veiculo_modelo);
     setDiscountValue(budget.desconto_total || 0);
     if (budget.items) {
@@ -340,6 +340,52 @@ export default function Orcamento(props: Props) {
   const maxInstallments = totalSale >= 50 ? Math.min(10, Math.floor(totalSale / 50)) : 0;
   const installmentAmount = maxInstallments > 0 ? totalSale / maxInstallments : 0;
 
+  // Listen for keyboard shortcuts (F3: clear, F4: save, F5: pre-venda)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Avoid triggering shortcuts when writing in input elements
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.tagName === "SELECT" ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+
+      // If any of our modals are open, do not intercept hotkeys (especially Esc which closes modals)
+      const isModalOpen = isSearchModalOpen || isSavedBudgetsModalOpen || isSaveModalOpen || isPreVendaModalOpen;
+      if (isModalOpen) return;
+
+      if (e.key === "F3") {
+        e.preventDefault();
+        handleClearList();
+      } else if (e.key === "F4") {
+        e.preventDefault();
+        setIsSaveModalOpen(true);
+      } else if (e.key === "F5") {
+        e.preventDefault();
+        if (activeSaleItems.length === 0) {
+          showToast("Adicione pelo menos um item à lista!", "error");
+          return;
+        }
+        setIsPreVendaModalOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    isSearchModalOpen,
+    isSavedBudgetsModalOpen,
+    isSaveModalOpen,
+    isPreVendaModalOpen,
+    activeSaleItems,
+    handleClearList,
+    showToast,
+  ]);
+
   return (
     <div className="flex-1 w-full h-full flex flex-col lg:flex-row gap-4 min-h-0 bg-[#070a13]">
       {/* Main List Entry Area */}
@@ -510,7 +556,7 @@ export default function Orcamento(props: Props) {
       {/* Sidebar: Selected Product Image Preview & Checkout Totals */}
       <div className="w-full lg:w-72 flex flex-col gap-4 shrink-0">
         {/* Selected Item Image (Only the Figure) */}
-        <div className="border border-slate-850 rounded-xl bg-[#0e1626]/40 p-3 flex flex-col items-center justify-center aspect-square shrink-0">
+        <div className="border border-slate-850 rounded-xl bg-[#0e1626]/40 p-3 flex flex-col items-center justify-center h-48 shrink-0">
           {activeItem && activeItemImage ? (
             <div className="w-full h-full bg-[#070a13] rounded-lg border border-slate-800 flex items-center justify-center p-2 relative overflow-hidden group">
               <img
@@ -520,10 +566,10 @@ export default function Orcamento(props: Props) {
               />
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center text-center text-slate-500 py-6">
-              <Search className="h-8 w-8 text-slate-700 mb-2 animate-pulse" />
+            <div className="flex flex-col items-center justify-center text-center text-slate-500 py-4">
+              <Search className="h-6 w-6 text-slate-700 mb-1 animate-pulse" />
               <span className="text-xs font-semibold">Sem item selecionado</span>
-              <span className="text-[10px] text-slate-650 mt-1">
+              <span className="text-[10px] text-slate-600 mt-1">
                 Selecione um item para ver a imagem
               </span>
             </div>
@@ -556,31 +602,57 @@ export default function Orcamento(props: Props) {
               </div>
             </div>
           </div>
-          <div className="space-y-2 mt-6">
-            <Button
-              onClick={handleClearList}
-              className="w-full bg-rose-950/25 hover:bg-rose-900/40 border border-rose-800/30 hover:border-rose-700/50 text-rose-350 text-xs font-bold py-2.5 h-auto rounded-lg cursor-pointer transition-colors uppercase tracking-wider"
-            >
-              Limpar Lista
-            </Button>
-            <Button
-              onClick={() => setIsSaveModalOpen(true)}
-              className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-200 text-xs font-bold py-2.5 h-auto rounded-lg cursor-pointer transition-colors uppercase tracking-wider"
-            >
-              Salvar Orçamento
-            </Button>
-            <Button
-              onClick={() => {
-                if (activeSaleItems.length === 0) {
-                  showToast("Adicione pelo menos um item à lista!", "error");
-                  return;
-                }
-                setIsPreVendaModalOpen(true);
-              }}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-550 hover:to-teal-550 text-white text-xs font-bold py-2.5 h-auto rounded-lg shadow-lg shadow-emerald-600/10 cursor-pointer transition-all uppercase tracking-wider"
-            >
-              Vender (Pré-Venda)
-            </Button>
+          <div className="flex gap-2 mt-6 w-full">
+            {/* Limpar Lista */}
+            <div className="relative group flex-1">
+              <Button
+                onClick={handleClearList}
+                className="w-full bg-rose-950/25 hover:bg-rose-900/40 border border-rose-800/30 hover:border-rose-700/50 text-rose-350 text-xs font-bold py-2.5 h-[42px] rounded-lg cursor-pointer transition-colors flex items-center justify-center gap-1.5"
+                title="Limpar Lista"
+              >
+                <Trash2 className="h-4 w-4 shrink-0" />
+                <span className="text-[10px] text-rose-450 font-mono bg-rose-950/50 border border-rose-900/30 px-1 py-0.5 rounded leading-none select-none">F3</span>
+              </Button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-950 border border-slate-800 text-[10px] font-semibold text-slate-200 rounded-md shadow-xl opacity-0 scale-95 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-50 whitespace-nowrap">
+                Limpar Lista
+              </div>
+            </div>
+
+            {/* Salvar Orçamento */}
+            <div className="relative group flex-1">
+              <Button
+                onClick={() => setIsSaveModalOpen(true)}
+                className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-200 text-xs font-bold py-2.5 h-[42px] rounded-lg cursor-pointer transition-colors flex items-center justify-center gap-1.5"
+                title="Salvar Orçamento"
+              >
+                <Save className="h-4 w-4 shrink-0" />
+                <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F4</span>
+              </Button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-950 border border-slate-800 text-[10px] font-semibold text-slate-200 rounded-md shadow-xl opacity-0 scale-95 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-50 whitespace-nowrap">
+                Salvar Orçamento
+              </div>
+            </div>
+
+            {/* Vender (Pré-Venda) */}
+            <div className="relative group flex-1">
+              <Button
+                onClick={() => {
+                  if (activeSaleItems.length === 0) {
+                    showToast("Adicione pelo menos um item à lista!", "error");
+                    return;
+                  }
+                  setIsPreVendaModalOpen(true);
+                }}
+                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-550 hover:to-teal-550 text-white text-xs font-bold py-2.5 h-[42px] rounded-lg shadow-lg shadow-emerald-600/10 cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                title="Vender (Pré-Venda)"
+              >
+                <ShoppingCart className="h-4 w-4 shrink-0" />
+                <span className="text-[10px] text-emerald-100 font-mono bg-emerald-950/45 border border-emerald-800/40 px-1 py-0.5 rounded leading-none select-none">F5</span>
+              </Button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-950 border border-slate-800 text-[10px] font-semibold text-slate-200 rounded-md shadow-xl opacity-0 scale-95 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-50 whitespace-nowrap">
+                Vender (Pré-Venda)
+              </div>
+            </div>
           </div>
         </div>
       </div>
