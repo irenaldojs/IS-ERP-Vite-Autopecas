@@ -52,6 +52,9 @@ type Props = {
     sellerId: number;
     discount: number;
     notes: string;
+    tipo_venda: "Balcão" | "Entrega";
+    faturada: boolean;
+    forma_pagamento: string;
   }) => void;
   showToast: (msg: string, type?: "success" | "info" | "error") => void;
 };

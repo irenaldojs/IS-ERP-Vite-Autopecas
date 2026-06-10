@@ -188,6 +188,9 @@ function App() {
     sellerId: number;
     discount: number;
     notes: string;
+    tipo_venda: "Balcão" | "Entrega";
+    faturada: boolean;
+    forma_pagamento: string;
   }) => {
     const finalClientName = data?.client || clientName || "Consumidor Final";
     const discountVal = data !== undefined ? data.discount : discountValue;
@@ -205,10 +208,14 @@ function App() {
         seller: sellerName,
         date: new Date().toLocaleDateString("pt-BR"),
         total: finalTotal,
-        status: "Pendente",
+        status: data?.faturada ? "Faturado - Pendente" : "Pendente",
+        // Adicionando as informações extras mapeadas no objeto da pré-venda
+        tipo_venda: data?.tipo_venda,
+        forma_pagamento: data?.forma_pagamento,
+        faturada: data?.faturada,
       },
     ]);
-    showToast(`Pré-venda PV-${preSales.length + 1} registrada.`, "success");
+    showToast(`Pré-venda PV-${preSales.length + 1} (${data?.tipo_venda}) registrada via ${data?.forma_pagamento}.`, "success");
     setActiveSaleItems([]);
     setDiscountValue(0);
     setClientName("");
