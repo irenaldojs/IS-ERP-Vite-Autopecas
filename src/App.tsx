@@ -34,9 +34,10 @@ import {
   LayoutGrid,
   Archive,
   Activity,
+  Handshake,
 } from "lucide-react";
 import Orcamento from "@/module/vendas/tabs/Orcamento";
-import Prevendas from "@/module/vendas/tabs/Prevendas";
+import StatusVenda from "@/module/vendas/tabs/StatusVenda";
 import Entregas from "@/module/vendas/tabs/Entregas";
 import Relatorios from "@/module/vendas/tabs/Relatorios";
 import Emissao from "@/module/caixa/tabs/Emissao";
@@ -291,10 +292,10 @@ function App() {
       ),
     },
     {
-      id: "prevendas",
-      label: "Pré-Vendas",
-      icon: ClipboardList,
-      component: <Prevendas app={appProps} />,
+      id: "status-venda",
+      label: "Status",
+      icon: Handshake,
+      component: <StatusVenda app={appProps} />,
     },
     {
       id: "entregas",
@@ -314,8 +315,8 @@ function App() {
     {
       id: "prevendas",
       label: "Pré-Vendas",
-      icon: ClipboardList,
-      component: <Prevendas app={appProps} />,
+      icon: Handshake,
+      component: <StatusVenda app={appProps} />,
     },
     {
       id: "emissao",

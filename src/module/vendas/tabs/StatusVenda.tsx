@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 
-export default function Prevendas(props: any) {
+export default function StatusVenda(props: any) {
   const { preSales, handleReceivePreSale } = props.app;
 
   return (
@@ -11,7 +11,7 @@ export default function Prevendas(props: any) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
           <input
             type="text"
-            placeholder="Buscar pré-venda pendente..."
+            placeholder="Buscar por Status / Venda..."
             className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-355 focus:outline-none focus:border-indigo-500"
           />
         </div>
@@ -30,7 +30,7 @@ export default function Prevendas(props: any) {
                 <th className="p-3">Vendedor</th>
                 <th className="p-3">Data</th>
                 <th className="p-3 text-right">Valor Total</th>
-                <th className="p-3 text-center">Ação</th>
+                <th className="p-3 text-center">Status / Ação</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-850 text-slate-300">
@@ -56,7 +56,7 @@ export default function Prevendas(props: any) {
               {preSales.filter((pv: any) => pv.status === "Pendente").length === 0 && (
                 <tr>
                   <td colSpan={6} className="p-6 text-center text-slate-500 font-semibold">
-                    Nenhuma pré-venda pendente.
+                    Nenhuma venda / pré-venda pendente.
                   </td>
                 </tr>
               )}

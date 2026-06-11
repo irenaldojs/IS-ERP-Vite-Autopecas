@@ -81,7 +81,7 @@ export default function Orcamento(props: Props) {
 
   // Search Modal state
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const [searchModalMode, setSearchModalMode] = useState<"code" | "group_vehicle">("code");
+  const [searchModalMode, setSearchModalMode] = useState<"id" | "group_vehicle" | "code" | "free">("code");
   const [isSavedBudgetsModalOpen, setIsSavedBudgetsModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [loadedBudgetId, setLoadedBudgetId] = useState<string | null>(null);
@@ -289,7 +289,6 @@ export default function Orcamento(props: Props) {
 
     setSelectedItemCode(productToAdd.code);
     showToast(`${productToAdd.name} adicionado ao orçamento!`, "success");
-    setIsSearchModalOpen(false);
   };
 
   // Helper to get product image
@@ -378,6 +377,10 @@ export default function Orcamento(props: Props) {
       } else if (e.key === "F8") {
         e.preventDefault();
         setIsSavedBudgetsModalOpen(true);
+      } else if (e.key === "F9") {
+        e.preventDefault();
+        setSearchModalMode("id");
+        setIsSearchModalOpen(true);
       } else if (e.key === "F10") {
         e.preventDefault();
         setSearchModalMode("group_vehicle");
@@ -385,6 +388,10 @@ export default function Orcamento(props: Props) {
       } else if (e.key === "F11") {
         e.preventDefault();
         setSearchModalMode("code");
+        setIsSearchModalOpen(true);
+      } else if (e.key === "F12") {
+        e.preventDefault();
+        setSearchModalMode("free");
         setIsSearchModalOpen(true);
       }
     };
@@ -457,12 +464,11 @@ export default function Orcamento(props: Props) {
                 setIsSearchModalOpen(true);
               }}
               className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-3 py-2 rounded-lg h-[38px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-              title="Pesquisar Produto (F10/F11)"
+              title="Pesquisar Produto (F9-F12)"
             >
               <Search className="h-4 w-4 shrink-0" />
               <div className="flex gap-1">
-                <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F10</span>
-                <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F11</span>
+                <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F9-F12</span>
               </div>
             </Button>
             <Button

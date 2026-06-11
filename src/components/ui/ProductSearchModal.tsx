@@ -31,7 +31,7 @@ interface ProductSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddProduct: (product: any) => void;
-  initialSearchMode?: "code" | "group_vehicle";
+  initialSearchMode?: "id" | "group_vehicle" | "code" | "free";
 }
 
 interface AutocompleteInputProps {
@@ -44,6 +44,7 @@ interface AutocompleteInputProps {
   inputRef?: React.RefObject<HTMLInputElement | null>;
   nextInputRef?: React.RefObject<HTMLInputElement | null>;
   onSubmit?: () => void;
+  resetTrigger?: number;
 }
 
 function AutocompleteInput({
@@ -56,6 +57,7 @@ function AutocompleteInput({
   inputRef,
   nextInputRef,
   onSubmit,
+  resetTrigger,
 }: AutocompleteInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -73,6 +75,14 @@ function AutocompleteInput({
       setInputValue("");
     }
   }, [selectedValue, items]);
+
+  // Reset internal input value when resetTrigger updates
+  useEffect(() => {
+    if (resetTrigger && resetTrigger > 0) {
+      setInputValue("");
+      onClear();
+    }
+  }, [resetTrigger]);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -212,9 +222,13 @@ function AutocompleteInput({
 }
 
 export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearchMode = "group_vehicle" }: ProductSearchModalProps) {
-  const [searchMode, setSearchMode] = useState<"code" | "group_vehicle">(initialSearchMode);
+  const [searchMode, setSearchMode] = useState<"id" | "group_vehicle" | "code" | "free">(initialSearchMode);
+  const [searchId, setSearchId] = useState("");
+  const [appliedSearchId, setAppliedSearchId] = useState("");
   const [searchCode, setSearchCode] = useState("");
   const [appliedSearchCode, setAppliedSearchCode] = useState("");
+  const [searchFree, setSearchFree] = useState("");
+  const [appliedSearchFree, setAppliedSearchFree] = useState("");
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>("");
   const [appliedGroupId, setAppliedGroupId] = useState<string>("");
@@ -228,8 +242,12 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
   useEffect(() => {
     if (isOpen) {
       setSearchMode(initialSearchMode);
+      setSearchId("");
+      setAppliedSearchId("");
       setSearchCode("");
       setAppliedSearchCode("");
+      setSearchFree("");
+      setAppliedSearchFree("");
       setSelectedGroupId("");
       setSelectedVehicleId("");
       setAppliedGroupId("");
@@ -240,45 +258,71 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
     }
   }, [isOpen, initialSearchMode]);
 
+  const [groupResetTrigger, setGroupResetTrigger] = useState(0);
+
+  const idInputRef = useRef<HTMLInputElement | null>(null);
   const codeInputRef = useRef<HTMLInputElement | null>(null);
   const groupInputRef = useRef<HTMLInputElement | null>(null);
   const vehicleInputRef = useRef<HTMLInputElement | null>(null);
+  const freeInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Automatically focus and select the content of the correct first input when the modal opens or search mode changes
+  const focusInput = (mode: "id" | "group_vehicle" | "code" | "free") => {
+    setTimeout(() => {
+      if (mode === "id") {
+        idInputRef.current?.focus();
+      } else if (mode === "code") {
+        codeInputRef.current?.focus();
+      } else if (mode === "free") {
+        freeInputRef.current?.focus();
+      } else if (mode === "group_vehicle") {
+        groupInputRef.current?.focus();
+      }
+    }, 50);
+  };
+
+  // Automatically focus the correct first input when the modal opens or search mode changes
   useEffect(() => {
     if (isOpen) {
-      const timer = setTimeout(() => {
-        if (searchMode === "code") {
-          const input = codeInputRef.current;
-          if (input) {
-            input.focus();
-            input.select();
-          }
-        } else if (searchMode === "group_vehicle") {
-          const input = groupInputRef.current;
-          if (input) {
-            input.focus();
-            input.select();
-          }
-        }
-      }, 50);
-      return () => clearTimeout(timer);
+      focusInput(searchMode);
     }
   }, [isOpen, searchMode]);
 
-  // Listen for modal-specific hotkeys (F10, F11)
+  // Listen for modal-specific hotkeys (F9, F10, F11, F12)
   useEffect(() => {
     if (!isOpen) return;
 
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (isZoomModalOpen) return;
 
-      if (e.key === "F10") {
+      if (e.key === "F9") {
+        e.preventDefault();
+        setSearchMode("id");
+        setSearchId("");
+        setTimeout(() => {
+          idInputRef.current?.focus();
+        }, 50);
+      } else if (e.key === "F10") {
         e.preventDefault();
         setSearchMode("group_vehicle");
+        setSelectedGroupId("");
+        setGroupResetTrigger((prev) => prev + 1);
+        setTimeout(() => {
+          groupInputRef.current?.focus();
+        }, 50);
       } else if (e.key === "F11") {
         e.preventDefault();
         setSearchMode("code");
+        setSearchCode("");
+        setTimeout(() => {
+          codeInputRef.current?.focus();
+        }, 50);
+      } else if (e.key === "F12") {
+        e.preventDefault();
+        setSearchMode("free");
+        setSearchFree("");
+        setTimeout(() => {
+          freeInputRef.current?.focus();
+        }, 50);
       }
     };
 
@@ -304,6 +348,26 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
   useEscapeKey(isOpen && !isZoomModalOpen, onClose);
   useEscapeKey(isZoomModalOpen, () => setIsZoomModalOpen(false));
 
+  const triggerIdSearch = () => {
+    setAppliedSearchId(searchId.trim());
+    setHasSearched(true);
+
+    const targetId = searchId.trim();
+    const results = produtos.filter((prod) => 
+      targetId ? prod.id.toString() === targetId : false
+    );
+
+    if (results.length > 0) {
+      setSelectedModalProduct(results[0]);
+    } else {
+      setSelectedModalProduct(null);
+    }
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
   const triggerCodeSearch = () => {
     setAppliedSearchCode(searchCode.trim());
     setHasSearched(true);
@@ -312,6 +376,35 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
     const results = produtos.filter((prod) => 
       code ? prod.codigo_original.toLowerCase().includes(code) : false
     );
+
+    if (results.length > 0) {
+      setSelectedModalProduct(results[0]);
+    } else {
+      setSelectedModalProduct(null);
+    }
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
+  const triggerFreeSearch = () => {
+    setAppliedSearchFree(searchFree.trim());
+    setHasSearched(true);
+
+    const text = searchFree.toLowerCase().trim();
+    const results = produtos.filter((prod) => {
+      if (!text) return false;
+      const group = produtoGrupos.find((g) => g.id === prod.grupo_id);
+      const brand = produtoMarcas.find((m) => m.id === prod.marca_id);
+      return (
+        prod.id.toString().includes(text) ||
+        prod.codigo_original.toLowerCase().includes(text) ||
+        (prod.referencia && prod.referencia.toLowerCase().includes(text)) ||
+        (group?.descricao && group.descricao.toLowerCase().includes(text)) ||
+        (brand?.nome && brand.nome.toLowerCase().includes(text))
+      );
+    });
 
     if (results.length > 0) {
       setSelectedModalProduct(results[0]);
@@ -353,9 +446,24 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
   const modalResults = !hasSearched
     ? []
     : produtos.filter((prod: Produto) => {
-        if (searchMode === "code") {
+        if (searchMode === "id") {
+          if (!appliedSearchId) return false;
+          return prod.id.toString() === appliedSearchId;
+        } else if (searchMode === "code") {
           if (!appliedSearchCode) return false;
           return prod.codigo_original.toLowerCase().includes(appliedSearchCode.toLowerCase());
+        } else if (searchMode === "free") {
+          if (!appliedSearchFree) return false;
+          const text = appliedSearchFree.toLowerCase();
+          const group = produtoGrupos.find((g) => g.id === prod.grupo_id);
+          const brand = produtoMarcas.find((m) => m.id === prod.marca_id);
+          return (
+            prod.id.toString().includes(text) ||
+            prod.codigo_original.toLowerCase().includes(text) ||
+            (prod.referencia && prod.referencia.toLowerCase().includes(text)) ||
+            (group?.descricao && group.descricao.toLowerCase().includes(text)) ||
+            (brand?.nome && brand.nome.toLowerCase().includes(text))
+          );
         } else {
           const matchesGroup = appliedGroupId ? prod.grupo_id === Number(appliedGroupId) : true;
           let matchesVehicle = true;
@@ -457,6 +565,23 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
             <div className="flex gap-2.5">
               <button
                 onClick={() => {
+                  setSearchMode("id");
+                  setSelectedModalProduct(null);
+                  setCurrentImageIndex(0);
+                  setSearchId("");
+                  setAppliedSearchId("");
+                  setHasSearched(false);
+                }}
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  searchMode === "id"
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-655/30"
+                    : "bg-[#16223f]/50 border border-slate-800 text-slate-400 hover:bg-[#16223f] hover:text-slate-200"
+                }`}
+              >
+                ID (F9)
+              </button>
+              <button
+                onClick={() => {
                   setSearchMode("group_vehicle");
                   setSelectedModalProduct(null);
                   setCurrentImageIndex(0);
@@ -491,11 +616,59 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
               >
                 Código Original (F11)
               </button>
+              <button
+                onClick={() => {
+                  setSearchMode("free");
+                  setSelectedModalProduct(null);
+                  setCurrentImageIndex(0);
+                  setSearchFree("");
+                  setAppliedSearchFree("");
+                  setHasSearched(false);
+                }}
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  searchMode === "free"
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-655/30"
+                    : "bg-[#16223f]/50 border border-slate-800 text-slate-400 hover:bg-[#16223f] hover:text-slate-200"
+                }`}
+              >
+                Busca Livre (F12)
+              </button>
             </div>
 
             {/* Search inputs based on mode - fixed height container to prevent layout shifting */}
             <div className="h-[58px] flex items-end">
-              {searchMode === "code" ? (
+              {searchMode === "id" ? (
+                <div className="w-full max-w-lg space-y-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">ID do Produto</label>
+                  <div className="relative flex gap-2">
+                    <div className="relative flex-grow">
+                      <input
+                        ref={idInputRef}
+                        type="text"
+                        placeholder="Digite o ID exato do produto e pressione Enter..."
+                        value={searchId}
+                        onChange={(e) => setSearchId(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            triggerIdSearch();
+                          }
+                        }}
+                        className="w-full pl-9 pr-4 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[32px]"
+                      />
+                      <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-550" />
+                    </div>
+                    <Button
+                      onClick={triggerIdSearch}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-[32px] px-4 rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold shrink-0"
+                    >
+                      <Search className="h-3.5 w-3.5" />
+                      Buscar
+                    </Button>
+                  </div>
+                </div>
+              ) : searchMode === "code" ? (
                 <div className="w-full max-w-lg space-y-1">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Código Original</label>
                   <div className="relative flex gap-2">
@@ -526,6 +699,37 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                     </Button>
                   </div>
                 </div>
+              ) : searchMode === "free" ? (
+                <div className="w-full max-w-lg space-y-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Busca Livre</label>
+                  <div className="relative flex gap-2">
+                    <div className="relative flex-grow">
+                      <input
+                        ref={freeInputRef}
+                        type="text"
+                        placeholder="Digite termo de busca (ID, Código, Grupo, Marca, Ref...) e pressione Enter..."
+                        value={searchFree}
+                        onChange={(e) => setSearchFree(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            triggerFreeSearch();
+                          }
+                        }}
+                        className="w-full pl-9 pr-4 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[32px]"
+                      />
+                      <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-550" />
+                    </div>
+                    <Button
+                      onClick={triggerFreeSearch}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-[32px] px-4 rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold shrink-0"
+                    >
+                      <Search className="h-3.5 w-3.5" />
+                      Buscar
+                    </Button>
+                  </div>
+                </div>
               ) : (
                 <div className="flex gap-4 items-end w-full max-w-3xl">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
@@ -538,6 +742,7 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                       onClear={() => setSelectedGroupId("")}
                       inputRef={groupInputRef}
                       nextInputRef={vehicleInputRef}
+                      resetTrigger={groupResetTrigger}
                     />
                     <AutocompleteInput
                       label="Veículo"

@@ -125,9 +125,18 @@
   }
   body {
     @apply bg-background text-foreground;
+    color-scheme: dark;
   }
   html {
     @apply font-sans;
+    color-scheme: dark;
+  }
+  select {
+    color-scheme: dark;
+  }
+  select option {
+    background-color: rgb(7, 10, 19);
+    color: #e2e8f0;
   }
 
   /* Custom scrollbar for Webkit browsers */

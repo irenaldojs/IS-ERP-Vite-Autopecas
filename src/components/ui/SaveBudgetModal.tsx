@@ -54,6 +54,7 @@ export function SaveBudgetModal({
   const [veiculoModelo, setVeiculoModelo] = useState("");
   const [descontoTotal, setDescontoTotal] = useState(0);
   const [status, setStatus] = useState<Orcamento["status"]>("Enviado");
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [observacoes, setObservacoes] = useState("");
   const [overwrite, setOverwrite] = useState(true);
   const [enviarWhatsapp, setEnviarWhatsapp] = useState(false);
@@ -191,19 +192,39 @@ export function SaveBudgetModal({
               />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1 relative">
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Status</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as Orcamento["status"])}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[38px] cursor-pointer"
+              <button
+                type="button"
+                onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500 transition-all h-[38px] flex items-center justify-between cursor-pointer text-xs"
               >
-                <option value="Rascunho">Rascunho</option>
-                <option value="Enviado">Enviado</option>
-                <option value="Aprovado">Aprovado</option>
-                <option value="Recusado">Recusado</option>
-                <option value="Convertido">Convertido</option>
-              </select>
+                <span>{status}</span>
+                <span className="text-slate-500 font-sans">▼</span>
+              </button>
+
+              {isStatusDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setIsStatusDropdownOpen(false)} />
+                  <div className="absolute top-[58px] left-0 w-full bg-[#070a13] border border-slate-800 rounded-lg shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
+                    {(["Rascunho", "Enviado", "Aprovado", "Recusado", "Convertido"] as Orcamento["status"][]).map((opt) => (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => {
+                          setStatus(opt);
+                          setIsStatusDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-indigo-600/10 hover:text-indigo-400 ${
+                          status === opt ? "bg-indigo-650/15 text-indigo-400 font-bold" : "text-slate-350"
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="space-y-1">

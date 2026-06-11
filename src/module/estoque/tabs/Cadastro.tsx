@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 export default function Cadastro() {
+  const [categoria, setCategoria] = useState("Freios");
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   return (
     <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
       {/* Cadastro Form Card */}
@@ -24,14 +27,39 @@ export default function Cadastro() {
               <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Marca</label>
               <input type="text" className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none" placeholder="EX: Cobreq" />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 relative">
               <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Categoria</label>
-              <select className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-400 focus:outline-none">
-                <option>Freios</option>
-                <option>Motor</option>
-                <option>Suspensão</option>
-                <option>Elétrica</option>
-              </select>
+              <button
+                type="button"
+                onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
+                className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none focus:border-indigo-500 transition-all h-[32px] flex items-center justify-between cursor-pointer text-xs"
+              >
+                <span>{categoria}</span>
+                <span className="text-slate-550 font-sans text-[10px]">▼</span>
+              </button>
+
+              {isCategoryDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setIsCategoryDropdownOpen(false)} />
+                  <div className="absolute top-[52px] left-0 w-full bg-[#070a13] border border-slate-800 rounded-lg shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
+                    {["Freios", "Motor", "Suspensão", "Elétrica"].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => {
+                          setCategoria(cat);
+                          setIsCategoryDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-1.5 text-xs transition-colors hover:bg-indigo-600/10 hover:text-indigo-400 ${
+                          categoria === cat ? "bg-indigo-650/15 text-indigo-450 font-bold" : "text-slate-300"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
             <div className="space-y-1">
               <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Preço Custo</label>

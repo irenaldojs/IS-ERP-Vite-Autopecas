@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { X, ClipboardCopy, Search, User, ShieldAlert, Check } from "lucide-react";
+import { X, ClipboardCopy, Search, User, ShieldAlert, Check, Handshake } from "lucide-react";
 import { Cliente } from "@/types/customers.entities";
 import { Endereco } from "@/types/infrastructure.entities";
 import { clientes, enderecos, usuarios } from "../../../mocks/products.mock";
@@ -57,6 +57,9 @@ export function SavePreVendaModal({
   const [whatsappLink, setWhatsappLink] = useState("");
   const [valorTotalFinal, setValorTotalFinal] = useState(totalAmount);
   const [notes, setNotes] = useState("");
+
+  const [isSellerDropdownOpen, setIsSellerDropdownOpen] = useState(false);
+  const [isPaymentDropdownOpen, setIsPaymentDropdownOpen] = useState(false);
 
   // Lista de métodos de pagamento de acordo com o canal
   const getFormasPagamento = () => {
@@ -246,19 +249,41 @@ export function SavePreVendaModal({
             </div>
 
             {/* Seller dropdown */}
-            <div className="flex flex-col gap-1.5 w-full sm:w-64">
+            <div className="flex flex-col gap-1.5 w-full sm:w-64 relative">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Vendedor Responsável</span>
-              <select
-                value={selectedSeller}
-                onChange={(e) => setSelectedSeller(Number(e.target.value))}
-                className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors h-[36px] cursor-pointer text-xs"
+              <button
+                type="button"
+                onClick={() => setIsSellerDropdownOpen(!isSellerDropdownOpen)}
+                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition-all h-[38px] flex items-center justify-between cursor-pointer text-xs"
               >
-                {usuarios.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.nome} ({user.cargo})
-                  </option>
-                ))}
-              </select>
+                <span>
+                  {usuarios.find((u) => u.id === selectedSeller)?.nome || "Selecione..."}
+                </span>
+                <span className="text-slate-500 font-sans">▼</span>
+              </button>
+              
+              {isSellerDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setIsSellerDropdownOpen(false)} />
+                  <div className="absolute top-[58px] left-0 w-full bg-[#070a13] border border-slate-800 rounded-lg shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
+                    {usuarios.map((user) => (
+                      <button
+                        key={user.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedSeller(user.id);
+                          setIsSellerDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-emerald-600/10 hover:text-emerald-400 ${
+                          selectedSeller === user.id ? "bg-emerald-650/15 text-emerald-450 font-bold" : "text-slate-350"
+                        }`}
+                      >
+                        {user.nome} ({user.cargo})
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -362,19 +387,39 @@ export function SavePreVendaModal({
 
           {/* Condições Financeiras & WhatsApp side-by-side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1">
+            <div className="space-y-1 relative">
               <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Método de Pagamento</label>
-              <select
-                value={formaPagamento}
-                onChange={(e) => handleFormaPagamentoChange(e.target.value)}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors h-[38px] cursor-pointer"
+              <button
+                type="button"
+                onClick={() => setIsPaymentDropdownOpen(!isPaymentDropdownOpen)}
+                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition-all h-[38px] flex items-center justify-between cursor-pointer text-xs"
               >
-                {getFormasPagamento().map((forma) => (
-                  <option key={forma} value={forma}>
-                    {forma}
-                  </option>
-                ))}
-              </select>
+                <span>{formaPagamento}</span>
+                <span className="text-slate-500 font-sans">▼</span>
+              </button>
+
+              {isPaymentDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setIsPaymentDropdownOpen(false)} />
+                  <div className="absolute top-[58px] left-0 w-full bg-[#070a13] border border-slate-800 rounded-lg shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
+                    {getFormasPagamento().map((forma) => (
+                      <button
+                        key={forma}
+                        type="button"
+                        onClick={() => {
+                          handleFormaPagamentoChange(forma);
+                          setIsPaymentDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-emerald-600/10 hover:text-emerald-400 ${
+                          formaPagamento === forma ? "bg-emerald-650/15 text-emerald-450 font-bold" : "text-slate-350"
+                        }`}
+                      >
+                        {forma}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -453,9 +498,9 @@ export function SavePreVendaModal({
             <Button
               type="submit"
               disabled={tipoVenda === "Entrega" && !selectedClient}
-              className="bg-gradient-to-r from-emerald-600 to-emerald-750 hover:from-emerald-550 hover:to-emerald-700 text-white text-xs font-bold py-2 rounded-lg flex items-center gap-1.5 cursor-pointer h-[36px] shadow-lg shadow-emerald-650/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+              className="bg-emerald-650 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg flex items-center gap-1.5 cursor-pointer h-[36px] shadow-lg shadow-emerald-950/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
-              <ClipboardCopy className="h-4 w-4" />
+              <Handshake className="h-4 w-4" />
               Emitir Pré-Venda
             </Button>
           </div>
