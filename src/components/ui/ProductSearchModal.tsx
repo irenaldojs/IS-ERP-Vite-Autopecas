@@ -31,6 +31,7 @@ interface ProductSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddProduct: (product: any) => void;
+  initialSearchMode?: "code" | "group_vehicle";
 }
 
 interface AutocompleteInputProps {
@@ -210,8 +211,8 @@ function AutocompleteInput({
   );
 }
 
-export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSearchModalProps) {
-  const [searchMode, setSearchMode] = useState<"code" | "group_vehicle">("code");
+export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearchMode = "group_vehicle" }: ProductSearchModalProps) {
+  const [searchMode, setSearchMode] = useState<"code" | "group_vehicle">(initialSearchMode);
   const [searchCode, setSearchCode] = useState("");
   const [appliedSearchCode, setAppliedSearchCode] = useState("");
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
@@ -220,8 +221,72 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
   const [appliedVehicleId, setAppliedVehicleId] = useState<string>("");
   const [hasSearched, setHasSearched] = useState(false);
 
+  const [selectedModalProduct, setSelectedModalProduct] = useState<any>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setSearchMode(initialSearchMode);
+      setSearchCode("");
+      setAppliedSearchCode("");
+      setSelectedGroupId("");
+      setSelectedVehicleId("");
+      setAppliedGroupId("");
+      setAppliedVehicleId("");
+      setHasSearched(false);
+      setSelectedModalProduct(null);
+      setCurrentImageIndex(0);
+    }
+  }, [isOpen, initialSearchMode]);
+
+  const codeInputRef = useRef<HTMLInputElement | null>(null);
   const groupInputRef = useRef<HTMLInputElement | null>(null);
   const vehicleInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Automatically focus and select the content of the correct first input when the modal opens or search mode changes
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        if (searchMode === "code") {
+          const input = codeInputRef.current;
+          if (input) {
+            input.focus();
+            input.select();
+          }
+        } else if (searchMode === "group_vehicle") {
+          const input = groupInputRef.current;
+          if (input) {
+            input.focus();
+            input.select();
+          }
+        }
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, searchMode]);
+
+  // Listen for modal-specific hotkeys (F10, F11)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (isZoomModalOpen) return;
+
+      if (e.key === "F10") {
+        e.preventDefault();
+        setSearchMode("group_vehicle");
+      } else if (e.key === "F11") {
+        e.preventDefault();
+        setSearchMode("code");
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown, true);
+    return () => {
+      window.removeEventListener("keydown", handleGlobalKeyDown, true);
+    };
+  }, [isOpen, isZoomModalOpen]);
 
   const groupItems = produtoGrupos.map((g: ProdutoGrupo) => ({
     id: g.id.toString(),
@@ -235,9 +300,6 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
       label: brand ? `${brand.nome} ${m.nome}` : m.nome,
     };
   });
-  const [selectedModalProduct, setSelectedModalProduct] = useState<any>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
 
   useEscapeKey(isOpen && !isZoomModalOpen, onClose);
   useEscapeKey(isZoomModalOpen, () => setIsZoomModalOpen(false));
@@ -395,23 +457,6 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
             <div className="flex gap-2.5">
               <button
                 onClick={() => {
-                  setSearchMode("code");
-                  setSelectedModalProduct(null);
-                  setCurrentImageIndex(0);
-                  setSearchCode("");
-                  setAppliedSearchCode("");
-                  setHasSearched(false);
-                }}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  searchMode === "code"
-                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-655/30"
-                    : "bg-[#16223f]/50 border border-slate-800 text-slate-400 hover:bg-[#16223f] hover:text-slate-200"
-                }`}
-              >
-                1 - Código Original
-              </button>
-              <button
-                onClick={() => {
                   setSearchMode("group_vehicle");
                   setSelectedModalProduct(null);
                   setCurrentImageIndex(0);
@@ -427,7 +472,24 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
                     : "bg-[#16223f]/50 border border-slate-800 text-slate-400 hover:bg-[#16223f] hover:text-slate-200"
                 }`}
               >
-                2 - Grupo + Veículo
+                Grupo + Veículo (F10)
+              </button>
+              <button
+                onClick={() => {
+                  setSearchMode("code");
+                  setSelectedModalProduct(null);
+                  setCurrentImageIndex(0);
+                  setSearchCode("");
+                  setAppliedSearchCode("");
+                  setHasSearched(false);
+                }}
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  searchMode === "code"
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-655/30"
+                    : "bg-[#16223f]/50 border border-slate-800 text-slate-400 hover:bg-[#16223f] hover:text-slate-200"
+                }`}
+              >
+                Código Original (F11)
               </button>
             </div>
 
@@ -439,6 +501,7 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
                   <div className="relative flex gap-2">
                     <div className="relative flex-grow">
                       <input
+                        ref={codeInputRef}
                         type="text"
                         placeholder="Digite o código original do produto e pressione Enter..."
                         value={searchCode}
@@ -451,7 +514,6 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct }: ProductSea
                           }
                         }}
                         className="w-full pl-9 pr-4 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[32px]"
-                        autoFocus
                       />
                       <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-550" />
                     </div>

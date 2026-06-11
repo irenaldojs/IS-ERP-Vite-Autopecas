@@ -81,6 +81,7 @@ export default function Orcamento(props: Props) {
 
   // Search Modal state
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [searchModalMode, setSearchModalMode] = useState<"code" | "group_vehicle">("code");
   const [isSavedBudgetsModalOpen, setIsSavedBudgetsModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [loadedBudgetId, setLoadedBudgetId] = useState<string | null>(null);
@@ -340,17 +341,20 @@ export default function Orcamento(props: Props) {
   const maxInstallments = totalSale >= 50 ? Math.min(10, Math.floor(totalSale / 50)) : 0;
   const installmentAmount = maxInstallments > 0 ? totalSale / maxInstallments : 0;
 
-  // Listen for keyboard shortcuts (F3: clear, F4: save, F5: pre-venda)
+  // Listen for keyboard shortcuts (F3: clear, F4: save, F5: pre-venda, F8: saved budgets, F10: group+vehicle, F11: original code)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Avoid triggering shortcuts when writing in input elements
+      // Avoid triggering shortcuts when writing in input elements, except for function keys (F3, F4, etc.)
       const target = e.target as HTMLElement;
-      if (
+      const isInput =
         target.tagName === "INPUT" ||
         target.tagName === "TEXTAREA" ||
         target.tagName === "SELECT" ||
-        target.isContentEditable
-      ) {
+        target.isContentEditable;
+      
+      const isFKey = e.key.startsWith("F") && !isNaN(Number(e.key.substring(1)));
+
+      if (isInput && !isFKey) {
         return;
       }
 
@@ -371,6 +375,17 @@ export default function Orcamento(props: Props) {
           return;
         }
         setIsPreVendaModalOpen(true);
+      } else if (e.key === "F8") {
+        e.preventDefault();
+        setIsSavedBudgetsModalOpen(true);
+      } else if (e.key === "F10") {
+        e.preventDefault();
+        setSearchModalMode("group_vehicle");
+        setIsSearchModalOpen(true);
+      } else if (e.key === "F11") {
+        e.preventDefault();
+        setSearchModalMode("code");
+        setIsSearchModalOpen(true);
       }
     };
 
@@ -384,6 +399,7 @@ export default function Orcamento(props: Props) {
     activeSaleItems,
     handleClearList,
     showToast,
+    setSearchModalMode,
   ]);
 
   return (
@@ -436,18 +452,26 @@ export default function Orcamento(props: Props) {
               <Plus className="h-5 w-5" />
             </Button>
             <Button
-              onClick={() => setIsSearchModalOpen(true)}
-              className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-4 py-2 rounded-lg h-[38px] flex items-center justify-center cursor-pointer transition-colors"
-              title="Pesquisar Produto"
+              onClick={() => {
+                setSearchModalMode("code");
+                setIsSearchModalOpen(true);
+              }}
+              className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-3 py-2 rounded-lg h-[38px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+              title="Pesquisar Produto (F10/F11)"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-4 w-4 shrink-0" />
+              <div className="flex gap-1">
+                <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F10</span>
+                <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F11</span>
+              </div>
             </Button>
             <Button
               onClick={() => setIsSavedBudgetsModalOpen(true)}
-              className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-4 py-2 rounded-lg h-[38px] flex items-center justify-center cursor-pointer transition-colors"
-              title="Procurar Orçamentos Salvos"
+              className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-3 py-2 rounded-lg h-[38px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+              title="Procurar Orçamentos Salvos (F8)"
             >
-              <FolderOpen className="h-4 w-4" />
+              <FolderOpen className="h-4 w-4 shrink-0" />
+              <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F8</span>
             </Button>
           </div>
         </div>
@@ -662,6 +686,7 @@ export default function Orcamento(props: Props) {
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
         onAddProduct={handleAddProductFromModal}
+        initialSearchMode={searchModalMode}
       />
 
       {/* Saved Budgets Modal */}
