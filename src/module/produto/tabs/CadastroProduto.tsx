@@ -3,6 +3,149 @@ import { Button } from "@fluentui/react-components";
 import { ProductService } from "@/services/product.service";
 import { Produto, ProdutoGrupo, ProdutoFabricante } from "@/types/products.entities";
 
+function AutocompleteSelect<T>({
+  label,
+  placeholder,
+  items,
+  getLabel,
+  getValue,
+  value,
+  onChange,
+  required
+}: {
+  label: string;
+  placeholder: string;
+  items: T[];
+  getLabel: (item: T) => string;
+  getValue: (item: T) => number;
+  value: number | "";
+  onChange: (value: number | "") => void;
+  required?: boolean;
+}) {
+  const [search, setSearch] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+  useEffect(() => {
+    const selectedItem = items.find(item => getValue(item) === value);
+    if (selectedItem) {
+      setSearch(getLabel(selectedItem));
+    } else {
+      setSearch("");
+    }
+  }, [value, items]);
+
+  const filteredItems = items.filter(item =>
+    getLabel(item).toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Reset highlight index when filter results change or search field is updated
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [search]);
+
+  const handleSelect = (item: T) => {
+    onChange(getValue(item));
+    setSearch(getLabel(item));
+    setIsOpen(false);
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setIsOpen(false);
+      const selectedItem = items.find(item => getValue(item) === value);
+      if (selectedItem) {
+        setSearch(getLabel(selectedItem));
+      } else {
+        setSearch("");
+        onChange("");
+      }
+    }, 200);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isOpen) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        setIsOpen(true);
+      }
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex(prev => 
+        filteredItems.length > 0 ? (prev + 1) % filteredItems.length : -1
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex(prev => 
+        filteredItems.length > 0 ? (prev - 1 + filteredItems.length) % filteredItems.length : -1
+      );
+    } else if (e.key === "Enter") {
+      if (highlightedIndex >= 0 && highlightedIndex < filteredItems.length) {
+        e.preventDefault();
+        handleSelect(filteredItems[highlightedIndex]);
+      }
+    } else if (e.key === "Escape") {
+      setIsOpen(false);
+    }
+  };
+
+  return (
+    <div className="space-y-1 relative">
+      <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">{label}</label>
+      <div className="relative">
+        <input
+          type="text"
+          required={required}
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setIsOpen(true);
+            if (e.target.value === "") {
+              onChange("");
+            }
+          }}
+          onFocus={() => setIsOpen(true)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors"
+        />
+        {isOpen && filteredItems.length > 0 && (
+          <div className="absolute top-full left-0 z-50 w-full mt-1 max-h-48 overflow-y-auto bg-[#070a13] border border-slate-800 rounded-lg shadow-xl divide-y divide-slate-900 scrollbar-thin">
+            {filteredItems.map((item, index) => {
+              const itemId = getValue(item);
+              const isSelected = itemId === value;
+              const isHighlighted = index === highlightedIndex;
+              return (
+                <button
+                  key={itemId}
+                  type="button"
+                  onMouseDown={() => handleSelect(item)}
+                  className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-indigo-950/30 hover:text-indigo-400 ${
+                    isSelected ? "bg-indigo-950/20 text-indigo-450 font-semibold" : ""
+                  } ${
+                    isHighlighted ? "bg-indigo-900/40 text-indigo-305 outline-none border-l-2 border-indigo-500" : "text-slate-300"
+                  }`}
+                >
+                  {getLabel(item)}
+                </button>
+              );
+            })}
+          </div>
+        )}
+        {isOpen && filteredItems.length === 0 && (
+          <div className="absolute top-full left-0 z-50 w-full mt-1 bg-[#070a13] border border-slate-800 rounded-lg p-3 text-center text-[10px] text-slate-500 shadow-xl">
+            Nenhuma sugestão encontrada
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
 export default function CadastroProduto() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [grupos, setGrupos] = useState<ProdutoGrupo[]>([]);
@@ -232,38 +375,26 @@ export default function CadastroProduto() {
 
               {/* Relações e Referências */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Grupo *</label>
-                  <select
-                    required
-                    value={grupoId}
-                    onChange={(e) => setGrupoId(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
-                  >
-                    <option value="">Selecione um Grupo</option>
-                    {grupos.map((g) => (
-                      <option key={g.id} value={g.id}>
-                        {g.descricao}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Fabricante / Marca *</label>
-                  <select
-                    required
-                    value={marcaId}
-                    onChange={(e) => setMarcaId(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
-                  >
-                    <option value="">Selecione uma Marca</option>
-                    {fabricantes.map((f) => (
-                      <option key={f.id} value={f.id}>
-                        {f.nome}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <AutocompleteSelect
+                  label="Grupo *"
+                  placeholder="Selecione ou digite um Grupo"
+                  items={grupos}
+                  getLabel={(g) => g.descricao}
+                  getValue={(g) => g.id}
+                  value={grupoId}
+                  onChange={setGrupoId}
+                  required
+                />
+                <AutocompleteSelect
+                  label="Fabricante / Marca *"
+                  placeholder="Selecione ou digite uma Marca"
+                  items={fabricantes}
+                  getLabel={(f) => f.nome}
+                  getValue={(f) => f.id}
+                  value={marcaId}
+                  onChange={setMarcaId}
+                  required
+                />
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Código Referência</label>
                   <input

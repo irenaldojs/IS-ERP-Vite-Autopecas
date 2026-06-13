@@ -138,3 +138,43 @@ pub fn listar_fabricantes(app_handle: AppHandle) -> Result<Vec<ProdutoFabricante
     }
     Ok(list)
 }
+
+#[tauri::command]
+pub fn atualizar_categoria(app_handle: AppHandle, id: i64, descricao: String) -> Result<(), String> {
+    let conn = get_connection(&app_handle)?;
+    conn.execute(
+        "UPDATE produto_categoria SET descricao = ?1 WHERE id = ?2",
+        params![descricao, id],
+    )
+    .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn atualizar_grupo(
+    app_handle: AppHandle,
+    id: i64,
+    categoria_id: i64,
+    grupo_parent_id: Option<i64>,
+    descricao: Option<String>,
+) -> Result<(), String> {
+    let conn = get_connection(&app_handle)?;
+    conn.execute(
+        "UPDATE produto_grupo SET categoria_id = ?1, grupo_parent_id = ?2, descricao = ?3 WHERE id = ?4",
+        params![categoria_id, grupo_parent_id, descricao, id],
+    )
+    .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn atualizar_fabricante(app_handle: AppHandle, id: i64, nome: String) -> Result<(), String> {
+    let conn = get_connection(&app_handle)?;
+    conn.execute(
+        "UPDATE produto_fabricante SET nome = ?1 WHERE id = ?2",
+        params![nome, id],
+    )
+    .map_err(|e| e.to_string())?;
+    Ok(())
+}
+

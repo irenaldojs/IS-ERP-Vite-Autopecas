@@ -26,10 +26,13 @@ pub fn run() {
             commands::listar_produtos,
             commands::criar_categoria,
             commands::listar_categorias,
+            commands::atualizar_categoria,
             commands::criar_grupo,
             commands::listar_grupos,
+            commands::atualizar_grupo,
             commands::criar_fabricante,
             commands::listar_fabricantes,
+            commands::atualizar_fabricante,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

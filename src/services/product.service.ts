@@ -37,6 +37,10 @@ export const ProductService = {
     return await invoke<ProdutoCategoria[]>('listar_categorias');
   },
 
+  async atualizarCategoria(id: number, descricao: string): Promise<void> {
+    return await invoke<void>('atualizar_categoria', { id, descricao });
+  },
+
   async criarGrupo(categoriaId: number, grupoParentId: number | null = null, descricao: string | null = null): Promise<number> {
     return await invoke<number>('criar_grupo', { categoriaId, grupoParentId, descricao });
   },
@@ -45,11 +49,19 @@ export const ProductService = {
     return await invoke<ProdutoGrupo[]>('listar_grupos');
   },
 
+  async atualizarGrupo(id: number, categoriaId: number, grupoParentId: number | null, descricao: string | null): Promise<void> {
+    return await invoke<void>('atualizar_grupo', { id, categoriaId, grupoParentId, descricao });
+  },
+
   async criarFabricante(nome: string): Promise<number> {
     return await invoke<number>('criar_fabricante', { nome });
   },
 
   async listarFabricantes(): Promise<ProdutoFabricante[]> {
     return await invoke<ProdutoFabricante[]>('listar_fabricantes');
+  },
+
+  async atualizarFabricante(id: number, nome: string): Promise<void> {
+    return await invoke<void>('atualizar_fabricante', { id, nome });
   }
 };
