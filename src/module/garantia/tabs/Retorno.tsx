@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@fluentui/react-components";
 
 export default function Retorno() {
   return (
@@ -32,7 +32,7 @@ export default function Retorno() {
                   <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">Procedente</span>
                 </td>
                 <td className="p-3 text-center">
-                  <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">Gerar Crédito Cliente</Button>
+                  <Button appearance="primary" size="small">Gerar Crédito Cliente</Button>
                 </td>
               </tr>
               <tr className="hover:bg-[#16223f]/10">
@@ -44,7 +44,7 @@ export default function Retorno() {
                   <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">Rejeitado</span>
                 </td>
                 <td className="p-3 text-center">
-                  <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider">Marcar Reenvio</Button>
+                  <Button appearance="primary" size="small">Marcar Reenvio</Button>
                 </td>
               </tr>
             </tbody>

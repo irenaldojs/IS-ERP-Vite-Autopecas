@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@fluentui/react-components";
 
 export default function Balanco() {
   return (
@@ -6,7 +6,7 @@ export default function Balanco() {
       {/* Action Row */}
       <div className="flex justify-between items-center shrink-0">
         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Inventário e Balanço de Estoque</h4>
-        <Button className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg cursor-pointer">Iniciar Novo Balanço</Button>
+        <Button appearance="primary">Iniciar Novo Balanço</Button>
       </div>
 
       {/* Active Balance Tasks */}

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@fluentui/react-components";
 import { Printer } from "lucide-react";
 
 export default function Emissao(props: any) {
@@ -10,7 +10,7 @@ export default function Emissao(props: any) {
       <div className="flex justify-between items-center shrink-0">
         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Notas Fiscais Emitidas (NFC-e / NF-e)</h4>
         <div className="flex gap-2">
-          <Button className="bg-[#16223f]/40 border border-slate-800 text-slate-300 text-xs font-semibold py-1 px-2.5 h-auto rounded-lg cursor-pointer">Ver Inutilizações</Button>
+          <Button size="small">Ver Inutilizações</Button>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@fluentui/react-components";
 import { X, Save, ClipboardCopy } from "lucide-react";
 import { Orcamento } from "@/types/sales.entities";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
@@ -80,7 +80,6 @@ export function SaveBudgetModal({
   if (!isOpen) return null;
 
   const handleNumericChange = (val: string, setter: (v: string) => void) => {
-    // Restringe para aceitar apenas números via regex
     if (/^\d*$/.test(val)) {
       setter(val);
     }
@@ -106,25 +105,25 @@ export function SaveBudgetModal({
 
   return (
     <div 
-      className="fixed inset-0 z-55 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-55 bg-black/60 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div 
-        className="bg-[#0e1626] border border-slate-800 rounded-xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-205"
+        className="bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex justify-between items-center border-b border-slate-800 p-4 bg-[#0e1626]/50">
+        <div className="flex justify-between items-center border-b border-[var(--colorNeutralStroke1)] p-4 bg-[var(--colorNeutralBackground2)]">
           <div>
-            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <ClipboardCopy className="h-5 w-5 text-indigo-400" />
+            <h3 className="text-sm font-bold text-[var(--colorNeutralForeground1)] flex items-center gap-2">
+              <ClipboardCopy className="h-5 w-5 text-[var(--colorBrandStroke1)]" />
               Salvar Orçamento
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">Defina as informações finais para salvar este orçamento.</p>
+            <p className="text-xs text-[var(--colorNeutralForeground3)] mt-0.5 font-sans">Defina as informações finais para salvar este orçamento.</p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-[#16223f] border border-slate-850 hover:border-slate-700 rounded-lg text-slate-400 hover:text-slate-200 transition-all cursor-pointer"
+            className="p-1.5 hover:bg-[var(--colorNeutralBackground3Hover)] border border-[var(--colorNeutralStroke1)] rounded text-[var(--colorNeutralForeground2)] hover:text-[var(--colorNeutralForeground1)] transition-all cursor-pointer focus:outline-none"
           >
             <X className="h-4 w-4" />
           </button>
@@ -134,79 +133,79 @@ export function SaveBudgetModal({
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2 space-y-1">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Cliente</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Cliente</label>
               <input
                 type="text"
                 required
                 placeholder="Nome do cliente..."
                 value={clienteNome}
                 onChange={(e) => setClienteNome(e.target.value)}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[38px]"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[38px]"
               />
             </div>
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">ID Cliente</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">ID Cliente</label>
               <input
                 type="text"
                 placeholder="Ex: 42..."
                 value={clienteIdStr}
                 onChange={(e) => handleNumericChange(e.target.value, setClienteIdStr)}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[38px]"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[38px]"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Veículo</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Veículo</label>
               <input
                 type="text"
                 placeholder="Ex: Fiat Uno 1.0 2012..."
                 value={veiculoModelo}
                 onChange={(e) => setVeiculoModelo(e.target.value)}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[38px]"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[38px]"
               />
             </div>
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Telefone</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Telefone</label>
               <input
                 type="text"
                 placeholder="Ex: 11999999999..."
                 value={telefoneStr}
                 onChange={(e) => handleNumericChange(e.target.value, setTelefoneStr)}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[38px]"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[38px]"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Desconto (R$)</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Desconto (R$)</label>
               <input
                 type="number"
                 min="0"
                 step="0.01"
                 value={descontoTotal}
                 onChange={(e) => setDescontoTotal(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[38px]"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[38px]"
               />
             </div>
 
             <div className="space-y-1 relative">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Status</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Status</label>
               <button
                 type="button"
                 onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500 transition-all h-[38px] flex items-center justify-between cursor-pointer text-xs"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-all h-[38px] flex items-center justify-between cursor-pointer text-xs"
               >
                 <span>{status}</span>
-                <span className="text-slate-500 font-sans">▼</span>
+                <span className="text-[var(--colorNeutralForeground3)] font-sans">▼</span>
               </button>
 
               {isStatusDropdownOpen && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setIsStatusDropdownOpen(false)} />
-                  <div className="absolute top-[58px] left-0 w-full bg-[#070a13] border border-slate-800 rounded-lg shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
+                  <div className="absolute top-[58px] left-0 w-full bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
                     {(["Rascunho", "Enviado", "Aprovado", "Recusado", "Convertido"] as Orcamento["status"][]).map((opt) => (
                       <button
                         key={opt}
@@ -215,8 +214,8 @@ export function SaveBudgetModal({
                           setStatus(opt);
                           setIsStatusDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-indigo-600/10 hover:text-indigo-400 ${
-                          status === opt ? "bg-indigo-650/15 text-indigo-400 font-bold" : "text-slate-350"
+                        className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-[var(--colorSubtleBackgroundHover)] hover:text-[var(--colorNeutralForeground1)] ${
+                          status === opt ? "bg-[var(--colorSubtleBackgroundSelected)] text-[var(--colorNeutralForeground1Selected)] font-bold" : "text-[var(--colorNeutralForeground2)]"
                         }`}
                       >
                         {opt}
@@ -228,82 +227,83 @@ export function SaveBudgetModal({
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Validade</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Validade</label>
               <input
                 type="date"
                 value={dataValidadeFixa}
                 disabled
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-400 focus:outline-none opacity-60 pointer-events-none cursor-not-allowed h-[38px]"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground3)] focus:outline-none opacity-60 pointer-events-none cursor-not-allowed h-[38px]"
               />
             </div>
           </div>
 
           {existingId && (
-            <div className="flex items-center gap-2.5 bg-indigo-950/20 p-2.5 rounded-lg border border-indigo-900/30">
+            <div className="flex items-center gap-2.5 bg-[var(--colorNeutralBackground4Hover)] p-2.5 rounded border border-[var(--colorNeutralStroke1)]">
               <input
                 id="overwrite-checkbox"
                 type="checkbox"
                 checked={overwrite}
                 onChange={(e) => setOverwrite(e.target.checked)}
-                className="h-4 w-4 bg-[#070a13] border-slate-700 rounded text-indigo-550 focus:ring-indigo-500 cursor-pointer"
+                className="h-4 w-4 bg-[var(--colorNeutralBackground1)] border-[var(--colorNeutralStroke1)] rounded text-[var(--colorBrandBackground)] focus:ring-[var(--colorBrandBackground)] cursor-pointer"
               />
-              <label htmlFor="overwrite-checkbox" className="text-xs text-slate-350 font-bold cursor-pointer select-none">
-                Atualizar/Sobrescrever orçamento original <span className="text-indigo-400 font-bold font-mono">({existingId})</span>
+              <label htmlFor="overwrite-checkbox" className="text-xs text-[var(--colorNeutralForeground2)] font-bold cursor-pointer select-none">
+                Atualizar/Sobrescrever orçamento original <span className="text-[var(--colorBrandStroke1)] font-bold font-mono">({existingId})</span>
               </label>
             </div>
           )}
 
           <div className="space-y-1">
-            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Observações</label>
+            <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Observações</label>
             <textarea
               placeholder="Alguma observação importante sobre esta venda..."
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
               rows={3}
-              className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors resize-none"
             />
           </div>
 
           {/* Totals Summary */}
-          <div className="bg-[#070a13]/60 p-3 rounded-lg border border-slate-800 flex justify-between items-center text-xs">
+          <div className="bg-[var(--colorNeutralBackground1)] p-3 rounded border border-[var(--colorNeutralStroke1)] flex justify-between items-center text-xs">
             <div>
-              <span className="text-slate-500 block text-[10px] uppercase font-bold">Total Final</span>
-              <span className="text-indigo-400 font-black text-base">R$ {finalTotal.toFixed(2)}</span>
+              <span className="text-[var(--colorNeutralForeground3)] block text-[10px] uppercase font-bold">Total Final</span>
+              <span className="text-[var(--colorBrandStroke1)] font-black text-base">R$ {finalTotal.toFixed(2)}</span>
             </div>
             {descontoTotal > 0 && (
               <div className="text-right">
-                <span className="text-slate-500 block text-[10px] uppercase font-bold">Subtotal: R$ {totalAmount.toFixed(2)}</span>
-                <span className="text-emerald-400 font-bold">Desconto: -R$ {descontoTotal.toFixed(2)}</span>
+                <span className="text-[var(--colorNeutralForeground3)] block text-[10px] uppercase font-bold">Subtotal: R$ {totalAmount.toFixed(2)}</span>
+                <span className="text-[var(--colorPaletteGreenForeground1)] font-bold">Desconto: -R$ {descontoTotal.toFixed(2)}</span>
               </div>
             )}
           </div>
 
           {/* Footer Actions */}
-          <div className="flex gap-2 pt-2 border-t border-slate-800/60 justify-end">
+          <div className="flex gap-2 pt-2 border-t border-[var(--colorNeutralStroke1)] justify-end">
             <Button
               type="button"
               onClick={onClose}
-              className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-300 text-xs py-2 rounded-lg cursor-pointer h-[36px]"
+              style={{ height: "36px" }}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               onClick={() => setEnviarWhatsapp(true)}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg flex items-center gap-1.5 cursor-pointer h-[36px]"
+              style={{ height: "36px", color: "var(--colorPaletteGreenForeground1)" }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="h-4 w-4 shrink-0" viewBox="0 0 16 16">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="h-4 w-4 shrink-0 mr-1 inline-block align-middle" viewBox="0 0 16 16">
                 <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
               </svg>
-              Enviar
+              Enviar WhatsApp
             </Button>
             <Button
               type="submit"
               onClick={() => setEnviarWhatsapp(false)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-lg flex items-center gap-1.5 cursor-pointer h-[36px]"
+              appearance="primary"
+              style={{ height: "36px" }}
             >
-              <Save className="h-4 w-4" />
-              Salvar
+              <Save className="h-4 w-4 mr-1 inline-block align-middle" />
+              Salvar Orçamento
             </Button>
           </div>
         </form>

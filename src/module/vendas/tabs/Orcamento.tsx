@@ -1,6 +1,23 @@
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { ShoppingCart, Plus, Search, FolderOpen, Trash2, Save } from "lucide-react";
+import {
+  Button,
+  Input,
+  Table,
+  TableHeader,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from "@fluentui/react-components";
+import {
+  CartRegular,
+  AddRegular,
+  SearchRegular,
+  FolderOpenRegular,
+  DeleteRegular,
+  SaveRegular,
+  DismissRegular,
+} from "@fluentui/react-icons";
 import { ProductSearchModal } from "@/components/ui/ProductSearchModal";
 import { SavedBudgetsModal } from "@/components/ui/SavedBudgetsModal";
 import { SaveBudgetModal } from "@/components/ui/SaveBudgetModal";
@@ -410,20 +427,20 @@ export default function Orcamento(props: Props) {
   ]);
 
   return (
-    <div className="flex-1 w-full h-full flex flex-col lg:flex-row gap-4 min-h-0 bg-[#070a13]">
+    <div className="flex-1 w-full h-full flex flex-col lg:flex-row gap-4 min-h-0 bg-[var(--colorNeutralBackground1)] text-[var(--colorNeutralForeground1)]">
       {/* Main List Entry Area */}
-      <div className="flex-grow border border-slate-850 rounded-xl bg-[#0e1626]/10 flex flex-col min-h-0">
+      <div className="flex-grow border border-[var(--colorNeutralStroke1)] rounded bg-[var(--colorNeutralBackground1)] flex flex-col min-h-0">
         {/* Product ID Input & Add Button */}
-        <div className="p-2 border-b border-slate-850/60 bg-[#0e1626]/30 flex gap-4 shrink-0 rounded-t-xl items-end">
+        <div className="p-2 border-b border-[var(--colorNeutralStroke1)] bg-[var(--colorNeutralBackground2)] flex gap-4 shrink-0 rounded-t items-end">
           <div className="flex-grow space-y-1">
             <div className="flex items-center gap-3">
-              <input
+              <Input
                 ref={inputIdRef}
                 type="text"
                 value={productSearchQuery}
-                onChange={(e) => {
-                  setProductSearchQuery(e.target.value);
-                  if (e.target.value === "") setCurrentProduct(undefined);
+                onChange={(_, data) => {
+                  setProductSearchQuery(data.value);
+                  if (data.value === "") setCurrentProduct(undefined);
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -435,171 +452,200 @@ export default function Orcamento(props: Props) {
                   }
                 }}
                 placeholder="ID..."
-                className="w-24 px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors shrink-0 text-center"
+                style={{ width: "96px" }}
+                contentBefore={<SearchRegular />}
               />
-              <div className="text-sm font-semibold text-slate-300 whitespace-nowrap truncate flex-1 flex items-center justify-between h-[38px] px-3 bg-[#070a13]/50 border border-slate-800/50 rounded-lg">
-                <span className="truncate">
-                  {currentProduct ? `${currentProduct.originalCode ? currentProduct.originalCode + ' - ' : ''}${currentProduct.name} - ${currentProduct.brand}` : "Aguardando código..."}
-                </span>
-                {loadedBudgetId && (
-                  <span className="text-[10px] font-mono font-bold bg-indigo-950 text-indigo-400 border border-indigo-900/40 px-2 py-0.5 rounded ml-2 shrink-0 select-none">
+              <Input
+                readOnly
+                value={currentProduct ? `${currentProduct.originalCode ? currentProduct.originalCode + ' - ' : ''}${currentProduct.name} - ${currentProduct.brand}` : "Aguardando código..."}
+                contentAfter={loadedBudgetId ? (
+                  <span className="text-[10px] font-mono font-bold bg-[var(--colorSubtleBackgroundSelected)] text-[var(--colorNeutralForeground1Selected)] border border-[var(--colorNeutralStroke1)] px-2 py-0.5 rounded ml-2 shrink-0 select-none">
                     Editando: {loadedBudgetId}
                   </span>
-                )}
-              </div>
+                ) : undefined}
+                style={{ flexGrow: 1 }}
+              />
             </div>
           </div>
           <div className="flex gap-2 shrink-0">
             <Button
               ref={addBtnRef}
               onClick={handleAddProduct}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg h-[38px] flex items-center justify-center cursor-pointer font-bold"
+              appearance="primary"
+              style={{ height: "32px", fontWeight: "bold" }}
               title="Adicionar Produto"
-            >
-              <Plus className="h-5 w-5" />
-            </Button>
+              icon={<AddRegular />}
+            />
             <Button
               onClick={() => {
                 setSearchModalMode("code");
                 setIsSearchModalOpen(true);
               }}
-              className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-3 py-2 rounded-lg h-[38px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+              style={{ height: "32px" }}
               title="Pesquisar Produto (F9-F12)"
+              icon={<SearchRegular />}
             >
-              <Search className="h-4 w-4 shrink-0" />
-              <div className="flex gap-1">
-                <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F9-F12</span>
-              </div>
+              Pesquisar
+              <span className="text-[10px] text-[var(--colorNeutralForeground4)] font-mono bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] px-1 py-0.5 rounded leading-none select-none ml-1.5">F9-F12</span>
             </Button>
             <Button
               onClick={() => setIsSavedBudgetsModalOpen(true)}
-              className="bg-[#16223f] hover:bg-[#1a2849] border border-slate-700 text-slate-300 px-3 py-2 rounded-lg h-[38px] flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+              style={{ height: "32px" }}
               title="Procurar Orçamentos Salvos (F8)"
+              icon={<FolderOpenRegular />}
             >
-              <FolderOpen className="h-4 w-4 shrink-0" />
-              <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F8</span>
+              Carregar
+              <span className="text-[10px] text-[var(--colorNeutralForeground4)] font-mono bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] px-1 py-0.5 rounded leading-none select-none ml-1.5">F8</span>
             </Button>
           </div>
         </div>
 
         {/* Cart Items Table */}
-        <div className="flex-grow overflow-y-auto min-h-0">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="border-b border-slate-850/60 text-slate-500 font-semibold bg-[#0e1626]/10">
-                <th className="py-1.5 px-2 pl-4 w-[72px]">Código</th>
-                <th className="py-1.5 px-2">Cód. Original</th>
-                <th className="py-1.5 px-2">Descrição da Peça</th>
-                <th className="py-1.5 px-2">Referência</th>
-                <th className="py-1.5 px-2">Marca</th>
-                <th className="py-1.5 px-2 text-center w-20">Qtd</th>
-                <th className="py-1.5 px-2 text-right w-24">Unitário</th>
-                <th className="py-1.5 px-2 text-right pr-4 w-24">Total</th>
-                <th className="py-1.5 px-2 text-center w-12">Ação</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-850/50 text-slate-355">
+        <div className="flex-grow overflow-y-auto min-h-0 bg-[var(--colorNeutralBackground1)]">
+          <Table size="extra-small" aria-label="Itens do orçamento">
+            <TableHeader>
+              <TableRow style={{ borderBottom: "1px solid var(--colorNeutralStroke1)" }}>
+                <TableHeaderCell style={{ width: "72px", paddingLeft: "16px" }}>Código</TableHeaderCell>
+                <TableHeaderCell>Cód. Original</TableHeaderCell>
+                <TableHeaderCell>Descrição da Peça</TableHeaderCell>
+                <TableHeaderCell>Referência</TableHeaderCell>
+                <TableHeaderCell>Marca</TableHeaderCell>
+                <TableHeaderCell style={{ width: "80px", textAlign: "center" }}>Qtd</TableHeaderCell>
+                <TableHeaderCell style={{ width: "96px", textAlign: "right" }}>Unitário</TableHeaderCell>
+                <TableHeaderCell style={{ width: "96px", textAlign: "right", paddingRight: "16px" }}>Total</TableHeaderCell>
+                <TableHeaderCell style={{ width: "48px", textAlign: "center" }}>Ação</TableHeaderCell>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {activeSaleItems.map((item, index) => (
-                <tr 
-                  key={item.codigo_produto} 
-                  className={`group hover:bg-[#16223f]/50 focus-within:bg-indigo-650/20 cursor-pointer transition-all ${
-                    selectedItemCode === item.codigo_produto 
-                      ? "bg-[#1d2d54]/60 hover:bg-[#1d2d54]" 
-                      : index % 2 === 0 ? "bg-[#0f192e]" : "bg-[#09101f]"
+                <TableRow
+                  key={item.codigo_produto}
+                  style={{ cursor: "pointer" }}
+                  className={`${
+                    selectedItemCode === item.codigo_produto
+                      ? "bg-[var(--colorSubtleBackgroundSelected)] font-semibold text-[var(--colorNeutralForeground1Selected)]"
+                      : index % 2 === 0
+                      ? "bg-[var(--colorNeutralBackground1)]"
+                      : "bg-[var(--colorNeutralBackground2)]"
                   }`}
                   onClick={() => {
                     setSelectedItemCode(item.codigo_produto);
                     document.getElementById(`qty-input-${index}`)?.focus();
                   }}
                 >
-                  <td className="py-1 px-2 pl-4 font-mono text-slate-450 border-l-4 border-transparent group-focus-within:border-indigo-500 w-[72px] truncate select-all">{item.codigo_produto}</td>
-                  <td className="py-1 px-2 font-mono text-slate-450">-</td>
-                  <td className="py-1 px-2 font-semibold text-slate-200">{item.nome_produto}</td>
-                  <td className="py-1 px-2 text-slate-400">-</td>
-                  <td className="py-1 px-2 text-slate-400">{item.marca_produto}</td>
-                  <td className="py-1 px-2 text-center font-bold text-slate-200">
-                    <input
+                  <TableCell style={{ paddingLeft: "16px" }}>
+                    <span className="font-mono text-[var(--colorNeutralForeground3)] select-all">{item.codigo_produto}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-mono text-[var(--colorNeutralForeground3)]">-</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-semibold text-[var(--colorNeutralForeground1)]">{item.nome_produto}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-[var(--colorNeutralForeground3)]">-</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-[var(--colorNeutralForeground3)]">{item.marca_produto}</span>
+                  </TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
+                    <Input
                       id={`qty-input-${index}`}
                       type="number"
-                      min="1"
-                      className="w-14 bg-[#070a13] border border-slate-700 rounded px-1.5 py-0.5 text-center text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                      value={item.quantidade}
+                      size="small"
+                      min={1}
+                      style={{ width: "56px" }}
+                      value={item.quantidade.toString()}
                       onFocus={(e) => {
                         e.target.select();
                         setSelectedItemCode(item.codigo_produto);
                       }}
-                      onChange={(e) => {
-                        const val = e.target.value === "" ? 0 : parseInt(e.target.value);
+                      onChange={(_, data) => {
+                        const val = data.value === "" ? 0 : parseInt(data.value);
                         setActiveSaleItems((prev: OrcamentoItem[]) =>
-                          prev.map((i) => (i.codigo_produto === item.codigo_produto ? { ...i, quantidade: val, subtotal: val * i.preco_unitario } : i))
+                          prev.map((i) =>
+                            i.codigo_produto === item.codigo_produto
+                              ? { ...i, quantidade: val, subtotal: val * i.preco_unitario }
+                              : i
+                          )
                         );
                       }}
                       onKeyDown={(e) => {
-                        if (e.key === 'ArrowDown') {
+                        if (e.key === "ArrowDown") {
                           e.preventDefault();
                           document.getElementById(`qty-input-${index + 1}`)?.focus();
-                        } else if (e.key === 'ArrowUp') {
+                        } else if (e.key === "ArrowUp") {
                           e.preventDefault();
                           document.getElementById(`qty-input-${index - 1}`)?.focus();
                         }
                       }}
                       onClick={(e) => e.stopPropagation()}
                     />
-                  </td>
-                  <td className="py-1 px-2 text-right font-semibold text-slate-200">
-                    R$ {item.preco_unitario.toFixed(2)}
-                  </td>
-                  <td className="py-1 px-2 text-right pr-4 font-bold text-slate-200">R$ {item.subtotal.toFixed(2)}</td>
-                  <td className="py-1 px-2 text-center">
-                    <button
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right" }}>
+                    <span className="font-semibold text-[var(--colorNeutralForeground1)]">
+                      R$ {item.preco_unitario.toFixed(2)}
+                    </span>
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right", paddingRight: "16px" }}>
+                    <span className="font-bold text-[var(--colorNeutralForeground1)]">
+                      R$ {item.subtotal.toFixed(2)}
+                    </span>
+                  </TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
+                    <Button
+                      size="small"
+                      icon={<DismissRegular />}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setActiveSaleItems((prev: OrcamentoItem[]) => prev.filter((i) => i.codigo_produto !== item.codigo_produto));
+                        setActiveSaleItems((prev: OrcamentoItem[]) =>
+                          prev.filter((i) => i.codigo_produto !== item.codigo_produto)
+                        );
                         if (selectedItemCode === item.codigo_produto) {
                           setSelectedItemCode(null);
                         }
                         showToast(`${item.nome_produto} removido!`, "info");
                       }}
-                      className="p-0.5 hover:bg-[#16223f] border border-transparent hover:border-slate-800 rounded text-red-400 hover:text-red-300 transition-colors cursor-pointer"
+                      style={{ color: "var(--colorPaletteRedForeground1)" }}
                       title="Remover Item"
-                    >
-                      <Plus className="h-3.5 w-3.5 rotate-45" />
-                    </button>
-                  </td>
-                </tr>
+                    />
+                  </TableCell>
+                </TableRow>
               ))}
               {activeSaleItems.length === 0 && (
-                <tr>
-                  <td colSpan={9} className="p-10 text-center text-slate-500">
-                    <div className="flex flex-col items-center justify-center space-y-2">
-                      <ShoppingCart className="h-8 w-8 text-slate-700" />
-                      <span className="text-xs font-semibold">Tabela limpa. Insira o ID do produto acima.</span>
+                <TableRow>
+                  <TableCell colSpan={9} style={{ textAlign: "center", padding: "40px" }}>
+                    <div className="flex flex-col items-center justify-center space-y-2 py-8">
+                      <CartRegular className="h-8 w-8 text-[var(--colorNeutralForeground4)] opacity-40 animate-pulse" />
+                      <span className="text-xs font-semibold text-[var(--colorNeutralForeground4)]">
+                        Tabela limpa. Insira o ID do produto acima ou faça uma Pesquisa Avançada.
+                      </span>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
 
       {/* Sidebar: Selected Product Image Preview & Checkout Totals */}
       <div className="w-full lg:w-72 flex flex-col gap-4 shrink-0">
-        {/* Selected Item Image (Only the Figure) */}
-        <div className="border border-slate-850 rounded-xl bg-[#0e1626]/40 p-3 flex flex-col items-center justify-center h-48 shrink-0">
+        {/* Selected Item Image */}
+        <div className="border border-[var(--colorNeutralStroke1)] rounded bg-[var(--colorNeutralBackground2)] p-3 flex flex-col items-center justify-center h-48 shrink-0">
           {activeItem && activeItemImage ? (
-            <div className="w-full h-full bg-[#070a13] rounded-lg border border-slate-800 flex items-center justify-center p-2 relative overflow-hidden group">
+            <div className="w-full h-full bg-[var(--colorNeutralBackground1)] rounded border border-[var(--colorNeutralStroke1)] flex items-center justify-center p-2 relative overflow-hidden group">
               <img
                 src={activeItemImage}
                 alt={activeItem.name}
-                className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center text-center text-slate-500 py-4">
-              <Search className="h-6 w-6 text-slate-700 mb-1 animate-pulse" />
+            <div className="flex flex-col items-center justify-center text-center text-[var(--colorNeutralForeground3)] py-4">
+              <SearchRegular className="h-6 w-6 text-[var(--colorNeutralForeground4)] mb-1 opacity-50" />
               <span className="text-xs font-semibold">Sem item selecionado</span>
-              <span className="text-[10px] text-slate-600 mt-1">
+              <span className="text-[10px] text-[var(--colorNeutralForeground4)] mt-1">
                 Selecione um item para ver a imagem
               </span>
             </div>
@@ -607,81 +653,85 @@ export default function Orcamento(props: Props) {
         </div>
 
         {/* Resumo da Venda Box */}
-        <div className="border border-slate-850 rounded-xl bg-[#0e1626]/40 p-4 flex flex-col justify-between flex-grow">
+        <div className="border border-[var(--colorNeutralStroke1)] rounded bg-[var(--colorNeutralBackground2)] p-4 flex flex-col justify-between flex-grow">
           <div className="space-y-4">
             <div className="space-y-3.5">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-bold text-slate-350">Total Líquido:</span>
-                <span className="text-2xl font-black text-indigo-400">R$ {totalSale.toFixed(2)}</span>
+                <span className="text-xs font-bold text-[var(--colorNeutralForeground3)] uppercase">Total Líquido:</span>
+                <span className="text-2xl font-black text-[var(--colorBrandStroke1)]">R$ {totalSale.toFixed(2)}</span>
               </div>
-              <div className="space-y-3 pt-3 border-t border-slate-850/70">
+              <div className="space-y-3 pt-3 border-t border-[var(--colorNeutralStroke1)]/30">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-slate-400">À vista (5% desc.):</span>
-                  <span className="text-xl font-black text-emerald-400">R$ {cashSaleValue.toFixed(2)}</span>
+                  <span className="text-xs font-bold text-[var(--colorNeutralForeground3)]">À vista (5% desc.):</span>
+                  <span className="text-xl font-black text-[var(--colorPaletteGreenForeground1)]">R$ {cashSaleValue.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-slate-400">Parcelas:</span>
+                  <span className="text-xs font-bold text-[var(--colorNeutralForeground3)]">Parcelas:</span>
                   {maxInstallments > 0 ? (
-                    <span className="text-xs text-slate-350 text-right">
-                      Até <span className="text-slate-200 font-bold text-sm">{maxInstallments}x</span> de <span className="text-indigo-300 font-bold text-base">R$ {installmentAmount.toFixed(2)}</span>
+                    <span className="text-xs text-[var(--colorNeutralForeground2)] text-right">
+                      Até <span className="text-[var(--colorNeutralForeground1)] font-bold text-sm">{maxInstallments}x</span> de <span className="text-[var(--colorBrandStroke1)] font-bold text-base">R$ {installmentAmount.toFixed(2)}</span>
                     </span>
                   ) : (
-                    <span className="text-sm font-bold text-rose-450">Indisponível</span>
+                    <span className="text-sm font-bold text-[var(--colorPaletteRedForeground1)]">Indisponível</span>
                   )}
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex gap-2 mt-6 w-full">
-            {/* Limpar Lista */}
-            <div className="relative group flex-1">
-              <Button
-                onClick={handleClearList}
-                className="w-full bg-rose-950/25 hover:bg-rose-900/40 border border-rose-800/30 hover:border-rose-700/50 text-rose-350 text-xs font-bold py-2.5 h-[42px] rounded-lg cursor-pointer transition-colors flex items-center justify-center gap-1.5"
-                title="Limpar Lista"
-              >
-                <Trash2 className="h-4 w-4 shrink-0" />
-                <span className="text-[10px] text-rose-450 font-mono bg-rose-950/50 border border-rose-900/30 px-1 py-0.5 rounded leading-none select-none">F3</span>
-              </Button>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-950 border border-slate-800 text-[10px] font-semibold text-slate-200 rounded-md shadow-xl opacity-0 scale-95 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-50 whitespace-nowrap">
-                Limpar Lista
+          <div className="flex flex-col gap-2 mt-6 w-full">
+            {/* Vender (Pré-Venda) - Botão de Ação Primária em Destaque */}
+            <Button
+              onClick={() => {
+                if (activeSaleItems.length === 0) {
+                  showToast("Adicione pelo menos um item à lista!", "error");
+                  return;
+                }
+                setIsPreVendaModalOpen(true);
+              }}
+              appearance="primary"
+              style={{
+                width: "100%",
+                height: "42px",
+                backgroundColor: "var(--colorPaletteGreenBackground3)",
+                borderColor: "var(--colorPaletteGreenBorder2)",
+                color: "var(--colorPaletteGreenForeground1)",
+                fontWeight: "bold"
+              }}
+              title="Vender (Pré-Venda)"
+              icon={<CartRegular />}
+            >
+              <div className="flex justify-between items-center w-full">
+                <span>Fechar Venda</span>
+                <span className="text-[9px] font-mono bg-[var(--colorPaletteGreenBackground1)] border border-[var(--colorPaletteGreenBorder1)] text-[var(--colorPaletteGreenForeground1)] px-1.5 py-0.5 rounded leading-none select-none ml-2">F5</span>
               </div>
-            </div>
+            </Button>
 
-            {/* Salvar Orçamento */}
-            <div className="relative group flex-1">
+            <div className="flex gap-2 w-full">
+              {/* Salvar Orçamento */}
               <Button
                 onClick={() => setIsSaveModalOpen(true)}
-                className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-200 text-xs font-bold py-2.5 h-[42px] rounded-lg cursor-pointer transition-colors flex items-center justify-center gap-1.5"
+                style={{ flex: 1, height: "38px" }}
                 title="Salvar Orçamento"
+                icon={<SaveRegular />}
               >
-                <Save className="h-4 w-4 shrink-0" />
-                <span className="text-[10px] text-slate-400 font-mono bg-slate-900/50 border border-slate-800/50 px-1 py-0.5 rounded leading-none select-none">F4</span>
+                <div className="flex justify-between items-center w-full">
+                  <span>Salvar</span>
+                  <span className="text-[9px] text-[var(--colorNeutralForeground4)] font-mono bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] px-1 py-0.5 rounded leading-none select-none ml-1.5">F4</span>
+                </div>
               </Button>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-950 border border-slate-800 text-[10px] font-semibold text-slate-200 rounded-md shadow-xl opacity-0 scale-95 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-50 whitespace-nowrap">
-                Salvar Orçamento
-              </div>
-            </div>
 
-            {/* Vender (Pré-Venda) */}
-            <div className="relative group flex-1">
+              {/* Limpar Lista */}
               <Button
-                onClick={() => {
-                  if (activeSaleItems.length === 0) {
-                    showToast("Adicione pelo menos um item à lista!", "error");
-                    return;
-                  }
-                  setIsPreVendaModalOpen(true);
-                }}
-                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-550 hover:to-teal-550 text-white text-xs font-bold py-2.5 h-[42px] rounded-lg shadow-lg shadow-emerald-600/10 cursor-pointer transition-all flex items-center justify-center gap-1.5"
-                title="Vender (Pré-Venda)"
+                onClick={handleClearList}
+                style={{ flex: 1, height: "38px", color: "var(--colorPaletteRedForeground1)" }}
+                title="Limpar Lista"
+                icon={<DeleteRegular />}
               >
-                <ShoppingCart className="h-4 w-4 shrink-0" />
-                <span className="text-[10px] text-emerald-100 font-mono bg-emerald-950/45 border border-emerald-800/40 px-1 py-0.5 rounded leading-none select-none">F5</span>
+                <div className="flex justify-between items-center w-full">
+                  <span>Limpar</span>
+                  <span className="text-[9px] text-[var(--colorPaletteRedForeground2)] font-mono bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] px-1 py-0.5 rounded leading-none select-none ml-1.5">F3</span>
+                </div>
               </Button>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-950 border border-slate-800 text-[10px] font-semibold text-slate-200 rounded-md shadow-xl opacity-0 scale-95 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 transition-all duration-200 z-50 whitespace-nowrap">
-                Vender (Pré-Venda)
-              </div>
             </div>
           </div>
         </div>

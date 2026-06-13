@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@fluentui/react-components";
 import { FileUp } from "lucide-react";
 
 export default function Entrada() {
@@ -19,7 +19,7 @@ export default function Entrada() {
             <h4 className="text-xs font-bold text-slate-200">Entrada Manual</h4>
             <p className="text-[10px] text-slate-500">Lance notas de fornecedores sem XML</p>
           </div>
-          <Button className="w-full bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-205 text-[10px] py-1.5 h-auto rounded-lg cursor-pointer mt-3">Nova Entrada Manual</Button>
+          <Button style={{ marginTop: "12px", width: "100%" }}>Nova Entrada Manual</Button>
         </div>
       </div>
 

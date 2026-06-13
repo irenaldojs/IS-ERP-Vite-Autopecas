@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@fluentui/react-components";
 import { Search, Image, X, Plus, FileText, Car } from "lucide-react";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import {
@@ -165,7 +165,7 @@ function AutocompleteInput({
 
   return (
     <div ref={containerRef} className="space-y-1 relative w-full">
-      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+      <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">
         {label}
       </label>
       <div className="relative">
@@ -181,7 +181,7 @@ function AutocompleteInput({
               setIsOpen(true);
             }
           }}
-          className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[32px] pr-8"
+          className="w-full px-3 py-1.5 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[32px] pr-8"
         />
         {inputValue && (
           <button
@@ -191,7 +191,7 @@ function AutocompleteInput({
               onClear();
               setIsOpen(false);
             }}
-            className="absolute right-2.5 top-2 text-slate-550 hover:text-slate-300 cursor-pointer"
+            className="absolute right-2.5 top-2 text-[var(--colorNeutralForeground3)] hover:text-[var(--colorNeutralForeground1)] cursor-pointer"
           >
             <X className="h-3 w-3" />
           </button>
@@ -199,7 +199,7 @@ function AutocompleteInput({
       </div>
 
       {showDropdown && (
-        <ul className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-[#0e1626] border border-slate-800 rounded-lg shadow-xl z-50 divide-y divide-slate-850/50">
+        <ul className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded shadow-xl z-50 divide-y divide-[var(--colorNeutralStroke1)]/30">
           {filteredItems.map((item, idx) => {
             const isActive = idx === activeIndex;
             return (
@@ -208,7 +208,9 @@ function AutocompleteInput({
                 onClick={() => handleSelectItem(item)}
                 onMouseEnter={() => setActiveIndex(idx)}
                 className={`px-3 py-2 text-xs cursor-pointer transition-colors ${
-                  isActive ? "bg-indigo-600 text-white font-semibold" : "text-slate-300 hover:bg-[#16223f]/50"
+                  isActive 
+                    ? "bg-[var(--colorSubtleBackgroundSelected)] text-[var(--colorNeutralForeground1Selected)] font-semibold" 
+                    : "text-[var(--colorNeutralForeground1)] hover:bg-[var(--colorSubtleBackgroundHover)]"
                 }`}
               >
                 {item.label}
@@ -426,8 +428,10 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
     const matchesGroup = (prod: Produto) => selectedGroupId ? prod.grupo_id === Number(selectedGroupId) : true;
     const matchesVehicle = (prod: Produto) => {
       if (!selectedVehicleId) return true;
+      const targetModel = carroModelos.find((m) => m.id.toString() === selectedVehicleId);
+      if (!targetModel) return false;
       const appList = produtoAplicacaoListas.find((list: ProdutoAplicacaoLista) => list.id === prod.aplicacao_lista_id);
-      return appList ? appList.aplicaoes.some((app: any) => app.modelo_id === Number(selectedVehicleId)) : false;
+      return appList ? appList.aplicaoes.some((app: any) => app.modelo === targetModel.nome) : false;
     };
     const results = produtos.filter((prod) => matchesGroup(prod) && matchesVehicle(prod));
     
@@ -468,8 +472,13 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
           const matchesGroup = appliedGroupId ? prod.grupo_id === Number(appliedGroupId) : true;
           let matchesVehicle = true;
           if (appliedVehicleId) {
-            const appList = produtoAplicacaoListas.find((list: ProdutoAplicacaoLista) => list.id === prod.aplicacao_lista_id);
-            matchesVehicle = appList ? appList.aplicaoes.some((app: any) => app.modelo_id === Number(appliedVehicleId)) : false;
+            const targetModel = carroModelos.find((m) => m.id.toString() === appliedVehicleId);
+            if (!targetModel) {
+              matchesVehicle = false;
+            } else {
+              const appList = produtoAplicacaoListas.find((list: ProdutoAplicacaoLista) => list.id === prod.aplicacao_lista_id);
+              matchesVehicle = appList ? appList.aplicaoes.some((app: any) => app.modelo === targetModel.nome) : false;
+            }
           }
           return matchesGroup && matchesVehicle;
         }
@@ -544,25 +553,25 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
 
   return (
     <div 
-      className="fixed inset-0 z-55 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-55 bg-black/60 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div 
-        className="bg-[#0e1626] border border-slate-800 rounded-xl w-full max-w-6xl h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-205"
+        className="bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded w-full max-w-6xl h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header & Photo section */}
-        <div className="flex gap-2 border-b border-slate-800 p-2 bg-[#0e1626]/50 items-start justify-between">
+        <div className="flex gap-4 border-b border-[var(--colorNeutralStroke1)] p-3 bg-[var(--colorNeutralBackground2)] items-start justify-between">
           <div className="flex-1 space-y-4">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-base font-bold text-slate-100">Pesquisa Avançada de Produtos</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Selecione o modo de pesquisa, filtre os produtos e adicione-os.</p>
+                <h3 className="text-sm font-bold text-[var(--colorNeutralForeground1)]">Pesquisa Avançada de Produtos</h3>
+                <p className="text-xs text-[var(--colorNeutralForeground3)] mt-0.5 font-sans">Selecione o modo de pesquisa, filtre os produtos e adicione-os.</p>
               </div>
             </div>
 
             {/* Tab switch buttons */}
-            <div className="flex gap-2.5">
+            <div className="flex gap-2">
               <button
                 onClick={() => {
                   setSearchMode("id");
@@ -572,10 +581,10 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                   setAppliedSearchId("");
                   setHasSearched(false);
                 }}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   searchMode === "id"
-                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-655/30"
-                    : "bg-[#16223f]/50 border border-slate-800 text-slate-400 hover:bg-[#16223f] hover:text-slate-200"
+                    ? "bg-[var(--colorBrandBackground)] text-white shadow-sm font-bold"
+                    : "bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground2)] hover:bg-[var(--colorNeutralBackground3Hover)] hover:text-[var(--colorNeutralForeground1)]"
                 }`}
               >
                 ID (F9)
@@ -591,10 +600,10 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                   setAppliedVehicleId("");
                   setHasSearched(false);
                 }}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   searchMode === "group_vehicle"
-                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-655/30"
-                    : "bg-[#16223f]/50 border border-slate-800 text-slate-400 hover:bg-[#16223f] hover:text-slate-200"
+                    ? "bg-[var(--colorBrandBackground)] text-white shadow-sm font-bold"
+                    : "bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground2)] hover:bg-[var(--colorNeutralBackground3Hover)] hover:text-[var(--colorNeutralForeground1)]"
                 }`}
               >
                 Grupo + Veículo (F10)
@@ -608,10 +617,10 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                   setAppliedSearchCode("");
                   setHasSearched(false);
                 }}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   searchMode === "code"
-                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-655/30"
-                    : "bg-[#16223f]/50 border border-slate-800 text-slate-400 hover:bg-[#16223f] hover:text-slate-200"
+                    ? "bg-[var(--colorBrandBackground)] text-white shadow-sm font-bold"
+                    : "bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground2)] hover:bg-[var(--colorNeutralBackground3Hover)] hover:text-[var(--colorNeutralForeground1)]"
                 }`}
               >
                 Código Original (F11)
@@ -625,21 +634,21 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                   setAppliedSearchFree("");
                   setHasSearched(false);
                 }}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   searchMode === "free"
-                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-655/30"
-                    : "bg-[#16223f]/50 border border-slate-800 text-slate-400 hover:bg-[#16223f] hover:text-slate-200"
+                    ? "bg-[var(--colorBrandBackground)] text-white shadow-sm font-bold"
+                    : "bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground2)] hover:bg-[var(--colorNeutralBackground3Hover)] hover:text-[var(--colorNeutralForeground1)]"
                 }`}
               >
                 Busca Livre (F12)
               </button>
             </div>
 
-            {/* Search inputs based on mode - fixed height container to prevent layout shifting */}
-            <div className="h-[58px] flex items-end">
+            {/* Search inputs based on mode */}
+            <div className="h-[52px] flex items-end">
               {searchMode === "id" ? (
                 <div className="w-full max-w-lg space-y-1">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">ID do Produto</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">ID do Produto</label>
                   <div className="relative flex gap-2">
                     <div className="relative flex-grow">
                       <input
@@ -655,22 +664,23 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                             triggerIdSearch();
                           }
                         }}
-                        className="w-full pl-9 pr-4 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[32px]"
+                        className="w-full pl-9 pr-4 py-1.5 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[32px]"
                       />
-                      <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-550" />
+                      <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[var(--colorNeutralForeground3)]" />
                     </div>
                     <Button
                       onClick={triggerIdSearch}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-[32px] px-4 rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold shrink-0"
+                      appearance="primary"
+                      style={{ height: "32px" }}
                     >
-                      <Search className="h-3.5 w-3.5" />
+                      <Search className="h-3.5 w-3.5 mr-1" />
                       Buscar
                     </Button>
                   </div>
                 </div>
               ) : searchMode === "code" ? (
                 <div className="w-full max-w-lg space-y-1">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Código Original</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Código Original</label>
                   <div className="relative flex gap-2">
                     <div className="relative flex-grow">
                       <input
@@ -686,22 +696,23 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                             triggerCodeSearch();
                           }
                         }}
-                        className="w-full pl-9 pr-4 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[32px]"
+                        className="w-full pl-9 pr-4 py-1.5 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[32px]"
                       />
-                      <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-550" />
+                      <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[var(--colorNeutralForeground3)]" />
                     </div>
                     <Button
                       onClick={triggerCodeSearch}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-[32px] px-4 rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold shrink-0"
+                      appearance="primary"
+                      style={{ height: "32px" }}
                     >
-                      <Search className="h-3.5 w-3.5" />
+                      <Search className="h-3.5 w-3.5 mr-1" />
                       Buscar
                     </Button>
                   </div>
                 </div>
               ) : searchMode === "free" ? (
                 <div className="w-full max-w-lg space-y-1">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Busca Livre</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Busca Livre</label>
                   <div className="relative flex gap-2">
                     <div className="relative flex-grow">
                       <input
@@ -717,15 +728,16 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                             triggerFreeSearch();
                           }
                         }}
-                        className="w-full pl-9 pr-4 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors h-[32px]"
+                        className="w-full pl-9 pr-4 py-1.5 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[32px]"
                       />
-                      <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-550" />
+                      <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[var(--colorNeutralForeground3)]" />
                     </div>
                     <Button
                       onClick={triggerFreeSearch}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-[32px] px-4 rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold shrink-0"
+                      appearance="primary"
+                      style={{ height: "32px" }}
                     >
-                      <Search className="h-3.5 w-3.5" />
+                      <Search className="h-3.5 w-3.5 mr-1" />
                       Buscar
                     </Button>
                   </div>
@@ -757,9 +769,10 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                   </div>
                   <Button
                     onClick={triggerSearch}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs h-[32px] px-4 rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold shrink-0"
+                    appearance="primary"
+                    style={{ height: "32px" }}
                   >
-                    <Search className="h-3.5 w-3.5" />
+                    <Search className="h-3.5 w-3.5 mr-1" />
                     Buscar
                   </Button>
                 </div>
@@ -768,64 +781,64 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
           </div>
 
           <div className="flex gap-4 items-start shrink-0">
-              <div 
-                onClick={() => {
-                  if (activeSelectedProductImages.length > 0) {
-                    setIsZoomModalOpen(true);
-                  }
-                }}
-                className={`w-56 h-56 bg-[#070a13] border border-slate-800 rounded-lg flex items-center justify-center overflow-hidden relative shadow-inner group ${
-                  activeSelectedProductImages.length > 0 ? "cursor-zoom-in" : ""
-                }`}
-              >
-                {activeSelectedProductImages.length > 0 ? (
-                  <>
-                    <img
-                      src={activeSelectedProductImages[currentImageIndex]}
-                      alt={`Foto do produto ${currentImageIndex + 1}`}
-                      className="w-full h-full object-cover transition-all duration-300 hover:scale-102"
-                    />
-                    
-                    {/* Carousel Overlay Navigation Arrows */}
-                    {activeSelectedProductImages.length > 1 && (
-                      <div className="absolute inset-0 flex items-center justify-between px-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCurrentImageIndex((prev) => 
-                              prev === 0 ? activeSelectedProductImages.length - 1 : prev - 1
-                            );
-                          }}
-                          className="w-6 h-6 rounded-full bg-slate-900/80 border border-slate-700 text-white flex items-center justify-center hover:bg-indigo-600 transition-colors cursor-pointer text-xs font-bold"
-                        >
-                          &lt;
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCurrentImageIndex((prev) => 
-                              prev === activeSelectedProductImages.length - 1 ? 0 : prev + 1
-                            );
-                          }}
-                          className="w-6 h-6 rounded-full bg-slate-900/80 border border-slate-700 text-white flex items-center justify-center hover:bg-indigo-600 transition-colors cursor-pointer text-xs font-bold"
-                        >
-                          &gt;
-                        </button>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center justify-center text-slate-550 text-[10px]">
-                    <Image className="h-7 w-7 mb-1 opacity-40" />
-                    <span>Sem foto</span>
-                  </div>
-                )}
-              </div>
+            <div 
+              onClick={() => {
+                if (activeSelectedProductImages.length > 0) {
+                  setIsZoomModalOpen(true);
+                }
+              }}
+              className={`w-52 h-52 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded flex items-center justify-center overflow-hidden relative shadow-inner group ${
+                activeSelectedProductImages.length > 0 ? "cursor-zoom-in" : ""
+              }`}
+            >
+              {activeSelectedProductImages.length > 0 ? (
+                <>
+                  <img
+                    src={activeSelectedProductImages[currentImageIndex]}
+                    alt={`Foto do produto ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover transition-all duration-300 hover:scale-102"
+                  />
+                  
+                  {/* Carousel Overlay Navigation Arrows */}
+                  {activeSelectedProductImages.length > 1 && (
+                    <div className="absolute inset-0 flex items-center justify-between px-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentImageIndex((prev) => 
+                            prev === 0 ? activeSelectedProductImages.length - 1 : prev - 1
+                          );
+                        }}
+                        className="w-6 h-6 rounded-full bg-[var(--colorNeutralBackground6)] border border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground6)] flex items-center justify-center hover:bg-[var(--colorBrandBackground)] transition-colors cursor-pointer text-xs font-bold"
+                      >
+                        &lt;
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentImageIndex((prev) => 
+                            prev === activeSelectedProductImages.length - 1 ? 0 : prev + 1
+                          );
+                        }}
+                        className="w-6 h-6 rounded-full bg-[var(--colorNeutralBackground6)] border border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground6)] flex items-center justify-center hover:bg-[var(--colorBrandBackground)] transition-colors cursor-pointer text-xs font-bold"
+                      >
+                        &gt;
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-[var(--colorNeutralForeground3)] text-[10px]">
+                  <Image className="h-7 w-7 mb-1 opacity-40" />
+                  <span>Sem foto</span>
+                </div>
+              )}
+            </div>
 
             <button
               onClick={onClose}
               title="Fechar (ESC)"
-              className="p-1.5 hover:bg-[#16223f] border border-slate-850 hover:border-slate-700 rounded-lg text-slate-400 hover:text-slate-200 transition-all cursor-pointer"
+              className="p-1.5 hover:bg-[var(--colorNeutralBackground3Hover)] border border-[var(--colorNeutralStroke1)] rounded text-[var(--colorNeutralForeground2)] hover:text-[var(--colorNeutralForeground1)] transition-all cursor-pointer focus:outline-none"
             >
               <X className="h-4 w-4" />
             </button>
@@ -833,28 +846,28 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
         </div>
 
         {/* Results Table (Middle) */}
-        <div className="flex-grow overflow-y-auto min-h-0 bg-[#070a13]/20">
+        <div className="flex-grow overflow-y-auto min-h-0 bg-[var(--colorNeutralBackground1)]">
           <table className="w-full text-left border-collapse text-xs">
-            <thead className="sticky top-0 bg-[#0e1626] z-10">
-              <tr className="border-b border-slate-800 text-slate-400 font-bold bg-[#0e1626]">
-                <th className="py-1 px-3 pl-4">ID</th>
-                <th className="py-1 px-3">Código Original</th>
-                <th className="py-1 px-3">Grupo</th>
-                <th className="py-1 px-3">Marca</th>
-                <th className="py-1 px-3 text-right pr-6">Preço</th>
-                <th className="py-1 px-3 text-center w-28">Ação (Insert)</th>
+            <thead className="sticky top-0 bg-[var(--colorNeutralBackground2)] z-10">
+              <tr className="border-b border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground2)] font-bold bg-[var(--colorNeutralBackground2)]">
+                <th className="py-2 px-3 pl-4">ID</th>
+                <th className="py-2 px-3">Código Original</th>
+                <th className="py-2 px-3">Grupo</th>
+                <th className="py-2 px-3">Marca</th>
+                <th className="py-2 px-3 text-right pr-6">Preço</th>
+                <th className="py-2 px-3 text-center w-28">Ação (Insert)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-850/30">
+            <tbody className="divide-y divide-[var(--colorNeutralStroke1)]/20">
               {!hasSearched ? (
                 <tr>
-                  <td colSpan={6} className="p-10 text-center text-slate-500">
+                  <td colSpan={6} className="p-10 text-center text-[var(--colorNeutralForeground3)]">
                     Digite os termos de pesquisa e clique em Buscar ou pressione Enter.
                   </td>
                 </tr>
               ) : modalResults.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-10 text-center text-slate-500">
+                  <td colSpan={6} className="p-10 text-center text-[var(--colorNeutralForeground3)]">
                     Nenhum produto encontrado. Refine os filtros acima.
                   </td>
                 </tr>
@@ -874,25 +887,26 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                       onDoubleClick={() => {
                         onAddProduct(prod);
                       }}
-                      className={`hover:bg-[#16223f]/40 cursor-pointer transition-all ${
+                      className={`hover:bg-[var(--colorSubtleBackgroundHover)] cursor-pointer transition-all ${
                         isSelected
-                          ? "bg-indigo-600/25 font-semibold text-white shadow-inner"
+                          ? "bg-[var(--colorSubtleBackgroundSelected)] font-semibold text-[var(--colorNeutralForeground1Selected)] shadow-inner"
                           : idx % 2 === 0
-                          ? "bg-[#0f192e]"
-                          : "bg-[#09101f]"
+                          ? "bg-[var(--colorNeutralBackground1)]"
+                          : "bg-[var(--colorNeutralBackground2)]"
                       }`}
                     >
-                      <td className={`py-1 px-3 pl-4 font-mono text-slate-400 border-l-4 ${isSelected ? "border-indigo-500" : "border-transparent"}`}>{prod.id}</td>
-                      <td className="py-1 px-3 font-semibold text-slate-200">{prod.codigo_original}</td>
-                      <td className="py-1 px-3 text-slate-300">{group?.descricao || "Sem Grupo"}</td>
-                      <td className="py-1 px-3 text-slate-400">{brand?.nome || "Sem Marca"}</td>
-                      <td className="py-1 px-3 text-right pr-6 font-bold text-slate-100">
+                      <td className={`py-1.5 px-3 pl-4 font-mono text-[var(--colorNeutralForeground3)] border-l-4 ${isSelected ? "border-[var(--colorBrandStroke1)]" : "border-transparent"}`}>{prod.id}</td>
+                      <td className="py-1.5 px-3 font-semibold text-[var(--colorNeutralForeground1)]">{prod.codigo_original}</td>
+                      <td className="py-1.5 px-3 text-[var(--colorNeutralForeground2)]">{group?.descricao || "Sem Grupo"}</td>
+                      <td className="py-1.5 px-3 text-[var(--colorNeutralForeground3)]">{brand?.nome || "Sem Marca"}</td>
+                      <td className="py-1.5 px-3 text-right pr-6 font-bold text-[var(--colorNeutralForeground1)]">
                         R$ {prod.preco.toFixed(2)}
                       </td>
-                      <td className="py-1 px-3 text-center" onClick={(e) => e.stopPropagation()}>
+                      <td className="py-1.5 px-3 text-center" onClick={(e) => e.stopPropagation()}>
                         <Button
                           onClick={() => onAddProduct(prod)}
-                          className="bg-indigo-600 hover:bg-indigo-700 text-white h-6 w-8 p-0 rounded-lg cursor-pointer flex items-center justify-center mx-auto"
+                          appearance="primary"
+                          style={{ height: "24px", minWidth: "32px", padding: "0" }}
                         >
                           <Plus className="h-3.5 w-3.5" />
                         </Button>
@@ -906,10 +920,10 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
         </div>
 
         {/* Specifications & Applications grids (Bottom) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 p-2 bg-[#0e1626] border-t border-slate-800 h-64 shrink-0 min-h-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 p-2 bg-[var(--colorNeutralBackground3)] border-t border-[var(--colorNeutralStroke1)] h-64 shrink-0 min-h-0">
           {/* Technical Specifications */}
-          <div className="md:col-span-1 flex flex-col min-h-0 border border-slate-800/80 rounded-xl bg-[#070a13]/30 p-2">
-            <div className="flex items-center gap-1.5 mb-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
+          <div className="md:col-span-1 flex flex-col min-h-0 border border-[var(--colorNeutralStroke1)] rounded bg-[var(--colorNeutralBackground1)] p-2">
+            <div className="flex items-center gap-1.5 mb-2 text-[var(--colorBrandStroke1)] font-bold text-xs uppercase tracking-wider">
               <FileText className="h-3.5 w-3.5" />
               <span>Especificações Técnicas</span>
             </div>
@@ -928,33 +942,33 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                   return specs.length > 0 ? (
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-slate-800 text-slate-500 font-semibold text-[10px] uppercase">
+                        <tr className="border-b border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground3)] font-semibold text-[10px] uppercase">
                           <th className="pb-1.5">Tipo</th>
                           <th className="pb-1.5">Especificação</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-850/20 text-slate-300">
+                      <tbody className="divide-y divide-[var(--colorNeutralStroke1)]/10 text-[var(--colorNeutralForeground2)]">
                         {specs.map((s: any, idx: number) => (
                           <tr
                             key={idx}
-                            className={`hover:bg-[#16223f]/10 ${
-                              idx % 2 === 0 ? "bg-[#0f192e]" : "bg-[#09101f]"
+                            className={`hover:bg-[var(--colorSubtleBackgroundHover)] ${
+                              idx % 2 === 0 ? "bg-[var(--colorNeutralBackground1)]" : "bg-[var(--colorNeutralBackground2)]"
                             }`}
                           >
-                            <td className="py-1.5 font-medium text-slate-400">{s.tipo}</td>
-                            <td className="py-1.5 font-semibold text-slate-200">{s.valor}</td>
+                            <td className="py-1.5 font-medium text-[var(--colorNeutralForeground3)]">{s.tipo}</td>
+                            <td className="py-1.5 font-semibold text-[var(--colorNeutralForeground1)]">{s.valor}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   ) : (
-                    <div className="h-full flex items-center justify-center text-slate-550 italic">
+                    <div className="h-full flex items-center justify-center text-[var(--colorNeutralForeground3)] italic">
                       Nenhuma especificação disponível para este produto.
                     </div>
                   );
                 })()
               ) : (
-                <div className="h-full flex items-center justify-center text-slate-550">
+                <div className="h-full flex items-center justify-center text-[var(--colorNeutralForeground3)]">
                   Selecione um produto para visualizar as especificações.
                 </div>
               )}
@@ -962,8 +976,8 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
           </div>
 
           {/* Vehicle Applications */}
-          <div className="md:col-span-2 flex flex-col min-h-0 border border-slate-800/80 rounded-xl bg-[#070a13]/30 p-2">
-            <div className="flex items-center gap-1.5 mb-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
+          <div className="md:col-span-2 flex flex-col min-h-0 border border-[var(--colorNeutralStroke1)] rounded bg-[var(--colorNeutralBackground1)] p-2">
+            <div className="flex items-center gap-1.5 mb-2 text-[var(--colorBrandStroke1)] font-bold text-xs uppercase tracking-wider">
               <Car className="h-3.5 w-3.5" />
               <span>Aplicações de Veículos</span>
             </div>
@@ -973,11 +987,11 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                   const appsList = produtoAplicacaoListas.find((list: ProdutoAplicacaoLista) => list.id === activeSelectedProd.aplicacao_lista_id);
                   const applications = appsList
                     ? appsList.aplicaoes.map((app: any) => {
-                        const model = carroModelos.find((m: CarroModelo) => m.id === app.modelo_id);
+                        const model = carroModelos.find((m: CarroModelo) => m.nome === app.modelo);
                         const brand = model ? carroMontadoras.find((b: CarroMontadora) => b.id === model.montadora_id) : null;
                         return {
                           brandName: brand ? brand.nome : "Outros",
-                          modelo: model ? model.nome : "Desconhecido",
+                          modelo: app.modelo,
                           ano: app.ano,
                           detalhes: app.detalhes,
                         };
@@ -998,31 +1012,31 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                   return applications.length > 0 ? (
                     <table className="w-full text-left border-collapse table-fixed">
                       <thead>
-                        <tr className="border-b border-slate-800 text-slate-500 font-semibold text-[10px] uppercase">
+                        <tr className="border-b border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground3)] font-semibold text-[10px] uppercase">
                           <th className="pb-1.5 w-1/4">Modelo</th>
                           <th className="pb-1.5 w-1/4">Ano</th>
                           <th className="pb-1.5 w-1/2">Detalhes</th>
                         </tr>
                       </thead>
-                      <tbody className="text-slate-300">
+                      <tbody className="text-[var(--colorNeutralForeground2)]">
                         {brandKeys.map((brandName) => (
                           <React.Fragment key={brandName}>
                             {/* Brand Header Row */}
-                            <tr className="bg-[#16223f]/30 font-bold border-y border-slate-800/50">
-                              <td colSpan={3} className="py-1 px-2 text-indigo-400 text-[11px] uppercase tracking-wider">
+                            <tr className="bg-[var(--colorNeutralBackground3)] font-bold border-y border-[var(--colorNeutralStroke1)]">
+                              <td colSpan={3} className="py-1 px-2 text-[var(--colorBrandStroke1)] text-[11px] uppercase tracking-wider">
                                 {brandName}
                               </td>
                             </tr>
                             {groupedApps[brandName].map((app: any, idx: number) => (
                               <tr
                                 key={idx}
-                                className={`hover:bg-[#16223f]/10 border-b border-slate-850/10 last:border-b-0 ${
-                                  idx % 2 === 0 ? "bg-[#0f192e]" : "bg-[#09101f]"
+                                className={`hover:bg-[var(--colorSubtleBackgroundHover)] border-b border-[var(--colorNeutralStroke1)]/10 last:border-b-0 ${
+                                  idx % 2 === 0 ? "bg-[var(--colorNeutralBackground1)]" : "bg-[var(--colorNeutralBackground2)]"
                                 }`}
                               >
-                                <td className="py-1.5 pl-3 font-semibold text-slate-200">{app.modelo}</td>
-                                <td className="py-1.5 text-slate-300">{app.ano}</td>
-                                <td className="py-1.5 text-slate-400 truncate pr-2" title={app.detalhes}>{app.detalhes}</td>
+                                <td className="py-1.5 pl-3 font-semibold text-[var(--colorNeutralForeground1)]">{app.modelo}</td>
+                                <td className="py-1.5 text-[var(--colorNeutralForeground2)]">{app.ano}</td>
+                                <td className="py-1.5 text-[var(--colorNeutralForeground3)] truncate pr-2" title={app.detalhes}>{app.detalhes}</td>
                               </tr>
                             ))}
                           </React.Fragment>
@@ -1030,20 +1044,19 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
                       </tbody>
                     </table>
                   ) : (
-                    <div className="h-full flex items-center justify-center text-slate-550 italic">
+                    <div className="h-full flex items-center justify-center text-[var(--colorNeutralForeground3)] italic">
                       Nenhuma aplicação registrada para este produto.
                     </div>
                   );
                 })()
               ) : (
-                <div className="h-full flex items-center justify-center text-slate-550">
+                <div className="h-full flex items-center justify-center text-[var(--colorNeutralForeground3)]">
                   Selecione um produto para visualizar as aplicações.
                 </div>
               )}
             </div>
           </div>
         </div>
-
 
       </div>
 
@@ -1054,16 +1067,16 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
           onClick={() => setIsZoomModalOpen(false)}
         >
           <div 
-            className="bg-[#0e1626] border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative flex flex-col items-center justify-center p-2"
+            className="bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded overflow-hidden shadow-2xl relative flex flex-col items-center justify-center p-2"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setIsZoomModalOpen(false)}
-              className="absolute top-3 right-3 z-70 p-1.5 bg-black/60 hover:bg-indigo-600 border border-slate-700 hover:border-indigo-500 rounded-full text-slate-300 hover:text-white transition-all cursor-pointer shadow-md"
+              className="absolute top-3 right-3 z-70 p-1.5 bg-black/60 hover:bg-[var(--colorBrandBackground)] border border-[var(--colorNeutralStroke1)] hover:border-transparent rounded-full text-white transition-all cursor-pointer shadow-md"
             >
               <X className="h-4 w-4" />
             </button>
-            <div className="w-[600px] h-[600px] max-w-[90vw] max-h-[90vh] flex items-center justify-center overflow-hidden rounded-lg bg-[#070a13]">
+            <div className="w-[600px] h-[600px] max-w-[90vw] max-h-[90vh] flex items-center justify-center overflow-hidden rounded bg-[var(--colorNeutralBackground1)]">
               <img
                 src={activeSelectedProductImages[currentImageIndex]}
                 alt="Imagem ampliada"

@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useLocation, useNavigate, Routes, Route, Navigate } from "react-router-dom";
+import { FluentProvider, webDarkTheme, webLightTheme } from "@fluentui/react-components";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ModuleCard } from "@/components/dashboard/ModuleCard";
 import { ModuleTabContainer } from "@/components/layout/ModuleTabContainer";
@@ -48,8 +49,13 @@ import Balanco from "@/module/estoque/tabs/Balanco";
 import ListaEstoque from "@/module/estoque/tabs/Lista";
 import Pendentes from "@/module/garantia/tabs/Pendentes";
 import Enviadas from "@/module/garantia/tabs/Enviadas";
-import Retorno from "@/module/garantia/tabs/Retorno";
 import Arquivo from "@/module/garantia/tabs/Arquivo";
+import Retorno from "@/module/garantia/tabs/Retorno";
+import CadastroProduto from "@/module/produto/tabs/CadastroProduto";
+import Categorias from "@/module/produto/tabs/Categorias";
+import Grupos from "@/module/produto/tabs/Grupos";
+import Fabricantes from "@/module/produto/tabs/Fabricantes";
+
 
 function App() {
   const location = useLocation();
@@ -59,6 +65,18 @@ function App() {
   const vendasActiveTabId = activeModule === "vendas" ? pathSegments[1] || "orcamento" : "orcamento";
 
   const isCaixaMaximized = useAppStore((state) => state.isCaixaMaximized);
+  const theme = useAppStore((state) => state.theme);
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.style.colorScheme = "dark";
+    } else {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.style.colorScheme = "light";
+    }
+  }, [theme]);
+
   const clientName = useAppStore((state) => state.clientName);
   const setClientName = useAppStore((state) => state.setClientName);
   const vehicleName = useAppStore((state) => state.vehicleName);
@@ -265,7 +283,7 @@ function App() {
 
   const vendasTabs = [
     {
-      id: "lista",
+      id: "orcamento",
       label: "Orçamento",
       icon: ClipboardList,
       component: (
@@ -386,6 +404,34 @@ function App() {
     },
   ];
 
+  const produtoTabs = [
+    {
+      id: "cadastro-produto",
+      label: "Produtos",
+      icon: Box,
+      component: <CadastroProduto />,
+    },
+    {
+      id: "categorias",
+      label: "Categorias",
+      icon: List,
+      component: <Categorias />,
+    },
+    {
+      id: "grupos",
+      label: "Grupos",
+      icon: ClipboardList,
+      component: <Grupos />,
+    },
+    {
+      id: "fabricantes",
+      label: "Fabricantes",
+      icon: Sliders,
+      component: <Fabricantes />,
+    },
+  ];
+
+
   const createPlaceholderTab = (title: string) => (
     <div className="flex-1 rounded-xl border border-slate-850 bg-[#0e1626]/20 p-6 text-slate-300">
       <h3 className="text-sm font-bold text-slate-100">{title}</h3>
@@ -422,152 +468,169 @@ function App() {
   ];
 
   return (
-    <DashboardLayout activeModule={activeModule} onSelectModule={handleSelectModule} onHomeClick={handleHomeClick}>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-              {[
-                { id: "vendas", label: "Vendas", icon: ShoppingCart },
-                { id: "caixa", label: "Caixa", icon: Wallet },
-                { id: "estoque", label: "Estoque", icon: Box },
-                { id: "garantia", label: "Garantia", icon: ShieldCheck },
-                { id: "entregas", label: "Entregas", icon: Truck },
-                { id: "financas", label: "Finanças", icon: DollarSign },
-                { id: "faturamento", label: "Faturamento", icon: Receipt },
-                { id: "gerencia", label: "Gerência", icon: BarChart3 },
-              ].map((module) => (
-                <ModuleCard
-                  key={module.id}
-                  title={module.label}
-                  icon={module.icon}
-                  onClick={() => handleSelectModule(module.id)}
-                  description={`Acesse o módulo de ${module.label.toLowerCase()}.`}
+    <FluentProvider theme={theme === "dark" ? webDarkTheme : webLightTheme} style={{ height: "100%", width: "100%", display: "flex", flexDirection: "column" }}>
+      <DashboardLayout activeModule={activeModule} onSelectModule={handleSelectModule} onHomeClick={handleHomeClick}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+                {[
+                  { id: "vendas", label: "Vendas", icon: ShoppingCart },
+                  { id: "caixa", label: "Caixa", icon: Wallet },
+                  { id: "produto", label: "Produtos", icon: Box },
+                  { id: "estoque", label: "Estoque", icon: Archive },
+                  { id: "garantia", label: "Garantia", icon: ShieldCheck },
+                  { id: "entregas", label: "Entregas", icon: Truck },
+                  { id: "financas", label: "Finanças", icon: DollarSign },
+                  { id: "faturamento", label: "Faturamento", icon: Receipt },
+                  { id: "gerencia", label: "Gerência", icon: BarChart3 },
+                ].map((module) => (
+                  <ModuleCard
+                    key={module.id}
+                    title={module.label}
+                    icon={module.icon}
+                    onClick={() => handleSelectModule(module.id)}
+                    description={`Acesse o módulo de ${module.label.toLowerCase()}.`}
+                  />
+                ))}
+              </div>
+            }
+          />
+
+          <Route
+            path="/vendas/*"
+            element={
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <ModuleTabContainer
+                  tabs={vendasTabs}
+                  activeTabId={vendasActiveTabId}
+                  onTabChange={handleVendasTabChange}
+                  title="Vendas"
+                  icon={ShoppingCart}
                 />
-              ))}
-            </div>
-          }
-        />
+              </div>
+            }
+          />
 
-        <Route
-          path="/vendas/*"
-          element={
-            <div className="flex-1 flex flex-col min-h-0 h-full">
-              <ModuleTabContainer
-                tabs={vendasTabs}
-                activeTabId={vendasActiveTabId}
-                onTabChange={handleVendasTabChange}
-                title="Vendas"
-                icon={ShoppingCart}
-              />
-            </div>
-          }
-        />
+          <Route
+            path="/caixa/*"
+            element={
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <ModuleTabContainer
+                  tabs={caixaTabs}
+                  defaultTabId="prevendas"
+                  title="Caixa"
+                  icon={Wallet}
+                  isMaximized={isCaixaMaximized}
+                  onMaximizeToggle={() => setIsCaixaMaximized(!isCaixaMaximized)}
+                />
+              </div>
+            }
+          />
 
-        <Route
-          path="/caixa/*"
-          element={
-            <div className="flex-1 flex flex-col min-h-0 h-full">
-              <ModuleTabContainer
-                tabs={caixaTabs}
-                defaultTabId="prevendas"
-                title="Caixa"
-                icon={Wallet}
-                isMaximized={isCaixaMaximized}
-                onMaximizeToggle={() => setIsCaixaMaximized(!isCaixaMaximized)}
-              />
-            </div>
-          }
-        />
+          <Route
+            path="/produto/*"
+            element={
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <ModuleTabContainer
+                  tabs={produtoTabs}
+                  defaultTabId="cadastro-produto"
+                  title="Produtos"
+                  icon={Box}
+                />
+              </div>
+            }
+          />
 
-        <Route
-          path="/estoque/*"
-          element={
-            <div className="flex-1 flex flex-col min-h-0 h-full">
-              <ModuleTabContainer
-                tabs={estoqueTabs}
-                defaultTabId="entrada"
-                title="Estoque"
-                icon={Box}
-              />
-            </div>
-          }
-        />
+          <Route
+            path="/estoque/*"
+            element={
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <ModuleTabContainer
+                  tabs={estoqueTabs}
+                  defaultTabId="entrada"
+                  title="Estoque"
+                  icon={Box}
+                />
+              </div>
+            }
+          />
 
-        <Route
-          path="/garantia/*"
-          element={
-            <div className="flex-1 flex flex-col min-h-0 h-full">
-              <ModuleTabContainer
-                tabs={garantiaTabs}
-                defaultTabId="pendentes"
-                title="Garantia"
-                icon={ShieldCheck}
-              />
-            </div>
-          }
-        />
+          <Route
+            path="/garantia/*"
+            element={
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <ModuleTabContainer
+                  tabs={garantiaTabs}
+                  defaultTabId="pendentes"
+                  title="Garantia"
+                  icon={ShieldCheck}
+                />
+              </div>
+            }
+          />
 
-        <Route
-          path="/entregas/*"
-          element={
-            <div className="flex-1 flex flex-col min-h-0 h-full">
-              <ModuleTabContainer
-                tabs={entregasTabs}
-                defaultTabId="baias"
-                title="Entregas"
-                icon={Truck}
-              />
-            </div>
-          }
-        />
+          <Route
+            path="/entregas/*"
+            element={
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <ModuleTabContainer
+                  tabs={entregasTabs}
+                  defaultTabId="baias"
+                  title="Entregas"
+                  icon={Truck}
+                />
+              </div>
+            }
+          />
 
-        <Route
-          path="/financas/*"
-          element={
-            <div className="flex-1 flex flex-col min-h-0 h-full">
-              <ModuleTabContainer
-                tabs={financasTabs}
-                defaultTabId="receber"
-                title="Finanças"
-                icon={DollarSign}
-              />
-            </div>
-          }
-        />
+          <Route
+            path="/financas/*"
+            element={
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <ModuleTabContainer
+                  tabs={financasTabs}
+                  defaultTabId="receber"
+                  title="Finanças"
+                  icon={DollarSign}
+                />
+              </div>
+            }
+          />
 
-        <Route
-          path="/faturamento/*"
-          element={
-            <div className="flex-1 flex flex-col min-h-0 h-full">
-              <ModuleTabContainer
-                tabs={faturamentoTabs}
-                defaultTabId="fiscal"
-                title="Faturamento"
-                icon={Receipt}
-              />
-            </div>
-          }
-        />
+          <Route
+            path="/faturamento/*"
+            element={
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <ModuleTabContainer
+                  tabs={faturamentoTabs}
+                  defaultTabId="fiscal"
+                  title="Faturamento"
+                  icon={Receipt}
+                />
+              </div>
+            }
+          />
 
-        <Route
-          path="/gerencia/*"
-          element={
-            <div className="flex-1 flex flex-col min-h-0 h-full">
-              <ModuleTabContainer
-                tabs={gerenciaTabs}
-                defaultTabId="dashboard"
-                title="Gerência"
-                icon={BarChart3}
-              />
-            </div>
-          }
-        />
+          <Route
+            path="/gerencia/*"
+            element={
+              <div className="flex-1 flex flex-col min-h-0 h-full">
+                <ModuleTabContainer
+                  tabs={gerenciaTabs}
+                  defaultTabId="dashboard"
+                  title="Gerência"
+                  icon={BarChart3}
+                />
+              </div>
+            }
+          />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </DashboardLayout>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </DashboardLayout>
+    </FluentProvider>
   );
 }
 

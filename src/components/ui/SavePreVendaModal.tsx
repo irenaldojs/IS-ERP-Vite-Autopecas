@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@fluentui/react-components";
 import { X, ClipboardCopy, Search, User, ShieldAlert, Check, Handshake } from "lucide-react";
 import { Cliente } from "@/types/customers.entities";
 import { Endereco } from "@/types/infrastructure.entities";
@@ -190,25 +190,25 @@ export function SavePreVendaModal({
 
   return (
     <div 
-      className="fixed inset-0 z-55 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-55 bg-black/60 flex items-center justify-center p-4 overflow-y-auto"
       onClick={onClose}
     >
       <div 
-        className="bg-[#0e1626] border border-slate-800 rounded-xl w-full max-w-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200 my-8 relative"
+        className="bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded w-full max-w-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200 my-8 relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex justify-between items-center border-b border-slate-800 p-4 bg-[#0e1626]/50">
+        <div className="flex justify-between items-center border-b border-[var(--colorNeutralStroke1)] p-4 bg-[var(--colorNeutralBackground2)]">
           <div>
-            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <ClipboardCopy className="h-5 w-5 text-emerald-450" />
+            <h3 className="text-sm font-bold text-[var(--colorNeutralForeground1)] flex items-center gap-2">
+              <ClipboardCopy className="h-5 w-5 text-[var(--colorBrandStroke1)]" />
               Emitir Pré-Venda
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">Defina o tipo, cliente e condições comerciais para emitir a pré-venda.</p>
+            <p className="text-xs text-[var(--colorNeutralForeground3)] mt-0.5 font-sans">Defina o tipo, cliente e condições comerciais para emitir a pré-venda.</p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-[#16223f] border border-slate-850 hover:border-slate-700 rounded-lg text-slate-400 hover:text-slate-200 transition-all cursor-pointer"
+            className="p-1.5 hover:bg-[var(--colorNeutralBackground3Hover)] border border-[var(--colorNeutralStroke1)] rounded text-[var(--colorNeutralForeground2)] hover:text-[var(--colorNeutralForeground1)] transition-all cursor-pointer focus:outline-none"
           >
             <X className="h-4 w-4" />
           </button>
@@ -218,18 +218,18 @@ export function SavePreVendaModal({
         <form onSubmit={handleSubmit} className="p-4 space-y-4 text-xs">
           
           {/* Top Row: Tipo de Retirada/Entrega (Tabbar) & Vendedor */}
-          <div className="flex flex-col sm:flex-row gap-4 items-end justify-between border-b border-slate-800/50 pb-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-end justify-between border-b border-[var(--colorNeutralStroke1)]/40 pb-4">
             {/* Tabbar for tipoVenda */}
             <div className="flex flex-col gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Tipo de Atendimento</span>
-              <div className="flex bg-[#070a13] p-1 rounded-lg border border-slate-800 w-fit">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Tipo de Atendimento</span>
+              <div className="flex bg-[var(--colorNeutralBackground1)] p-1 rounded border border-[var(--colorNeutralStroke1)] w-fit">
                 <button
                   type="button"
                   onClick={() => setTipoVenda("Balcão")}
-                  className={`px-5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-5 py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
                     tipoVenda === "Balcão"
-                      ? "bg-emerald-650 text-white shadow-md shadow-emerald-950/20"
-                      : "text-slate-400 hover:text-slate-200 hover:bg-[#16223f]/30"
+                      ? "bg-[var(--colorBrandBackground)] text-white shadow-sm"
+                      : "text-[var(--colorNeutralForeground2)] hover:text-[var(--colorNeutralForeground1)] hover:bg-[var(--colorNeutralBackground3Hover)]"
                   }`}
                 >
                   Balcão
@@ -237,10 +237,10 @@ export function SavePreVendaModal({
                 <button
                   type="button"
                   onClick={() => setTipoVenda("Entrega")}
-                  className={`px-5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-5 py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
                     tipoVenda === "Entrega"
-                      ? "bg-emerald-650 text-white shadow-md shadow-emerald-950/20"
-                      : "text-slate-400 hover:text-slate-200 hover:bg-[#16223f]/30"
+                      ? "bg-[var(--colorBrandBackground)] text-white shadow-sm"
+                      : "text-[var(--colorNeutralForeground2)] hover:text-[var(--colorNeutralForeground1)] hover:bg-[var(--colorNeutralBackground3Hover)]"
                   }`}
                 >
                   Entrega
@@ -250,22 +250,22 @@ export function SavePreVendaModal({
 
             {/* Seller dropdown */}
             <div className="flex flex-col gap-1.5 w-full sm:w-64 relative">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Vendedor Responsável</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Vendedor Responsável</span>
               <button
                 type="button"
                 onClick={() => setIsSellerDropdownOpen(!isSellerDropdownOpen)}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition-all h-[38px] flex items-center justify-between cursor-pointer text-xs"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-all h-[38px] flex items-center justify-between cursor-pointer text-xs"
               >
                 <span>
                   {usuarios.find((u) => u.id === selectedSeller)?.nome || "Selecione..."}
                 </span>
-                <span className="text-slate-500 font-sans">▼</span>
+                <span className="text-[var(--colorNeutralForeground3)] font-sans">▼</span>
               </button>
               
               {isSellerDropdownOpen && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setIsSellerDropdownOpen(false)} />
-                  <div className="absolute top-[58px] left-0 w-full bg-[#070a13] border border-slate-800 rounded-lg shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
+                  <div className="absolute top-[58px] left-0 w-full bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
                     {usuarios.map((user) => (
                       <button
                         key={user.id}
@@ -274,8 +274,8 @@ export function SavePreVendaModal({
                           setSelectedSeller(user.id);
                           setIsSellerDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-emerald-600/10 hover:text-emerald-400 ${
-                          selectedSeller === user.id ? "bg-emerald-650/15 text-emerald-450 font-bold" : "text-slate-350"
+                        className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-[var(--colorSubtleBackgroundHover)] hover:text-[var(--colorNeutralForeground1)] ${
+                          selectedSeller === user.id ? "bg-[var(--colorSubtleBackgroundSelected)] text-[var(--colorNeutralForeground1Selected)] font-bold" : "text-[var(--colorNeutralForeground2)]"
                         }`}
                       >
                         {user.nome} ({user.cargo})
@@ -293,19 +293,19 @@ export function SavePreVendaModal({
               
               {/* Digitar código diretamente */}
               <div className="space-y-1 w-[90px] shrink-0">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Código</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Código</label>
                 <input
                   type="text"
                   placeholder="ID"
                   value={clienteIdInput}
                   onChange={(e) => handleClienteIdChange(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors h-[38px] text-right font-mono font-bold"
+                  className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[38px] text-right font-mono font-bold"
                 />
               </div>
 
               {/* Nome do Cliente */}
               <div className="space-y-1 flex-1">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Cliente / Razão Social</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Cliente / Razão Social</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -313,7 +313,7 @@ export function SavePreVendaModal({
                     placeholder="Nome do cliente provisório ou use a busca..."
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
-                    className={`flex-1 px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors h-[38px] ${
+                    className={`flex-1 px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[38px] ${
                       selectedClient ? "opacity-75 font-semibold" : ""
                     }`}
                   />
@@ -322,10 +322,10 @@ export function SavePreVendaModal({
                   <Button
                     type="button"
                     onClick={() => setIsClientModalOpen(true)}
-                    className="bg-emerald-650 hover:bg-emerald-700 text-white font-bold h-[38px] px-3.5 flex items-center justify-center gap-1 rounded-lg cursor-pointer"
-                    title="Buscar Cliente"
+                    appearance="primary"
+                    style={{ height: "38px" }}
                   >
-                    <Search className="h-4 w-4" />
+                    <Search className="h-4 w-4 mr-1 inline-block align-middle" />
                     Buscar
                   </Button>
                 </div>
@@ -334,35 +334,35 @@ export function SavePreVendaModal({
 
             {/* Informações detalhadas do cliente selecionado */}
             {selectedClient && (
-              <div className="bg-[#070a13]/55 border border-slate-800 rounded-lg p-3.5 space-y-3">
+              <div className="bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded p-3.5 space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Dados Cadastrais */}
                   <div className="space-y-1.5">
-                    <div className="flex items-center gap-1 text-emerald-450 font-bold text-[10px] uppercase tracking-wider">
+                    <div className="flex items-center gap-1 text-[var(--colorBrandStroke1)] font-bold text-[10px] uppercase tracking-wider">
                       <User className="h-3.5 w-3.5" />
                       Dados Cadastrais
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-[11px]">
                       <div>
-                        <span className="text-slate-555 block text-[9px] uppercase">CPF/CNPJ</span>
-                        <span className="text-slate-300 font-mono font-semibold">{selectedClient.cpf_cnpj}</span>
+                        <span className="text-[var(--colorNeutralForeground3)] block text-[9px] uppercase">CPF/CNPJ</span>
+                        <span className="text-[var(--colorNeutralForeground1)] font-mono font-semibold">{selectedClient.cpf_cnpj}</span>
                       </div>
                       <div>
-                        <span className="text-slate-300 block text-[9px] uppercase">Telefone</span>
-                        <span className="text-slate-300">{selectedClient.telefone || "-"}</span>
+                        <span className="text-[var(--colorNeutralForeground3)] block text-[9px] uppercase">Telefone</span>
+                        <span className="text-[var(--colorNeutralForeground1)]">{selectedClient.telefone || "-"}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Situação Financeira (Simplificada) */}
-                  <div className="space-y-1.5 border-l border-slate-800/60 pl-0 md:pl-4 flex flex-col justify-center">
-                    <span className="text-slate-300 block text-[9px] uppercase font-bold tracking-wider">Situação Financeira</span>
+                  <div className="space-y-1.5 border-l border-[var(--colorNeutralStroke1)]/45 pl-0 md:pl-4 flex flex-col justify-center">
+                    <span className="text-[var(--colorNeutralForeground3)] block text-[9px] uppercase font-bold tracking-wider">Situação Financeira</span>
                     {selectedClient.bloqueado_por_atraso ? (
-                      <span className="flex items-center gap-1 text-xs font-bold text-rose-450 bg-rose-950/20 px-2 py-0.5 rounded border border-rose-900/35 uppercase w-fit">
+                      <span className="flex items-center gap-1 text-xs font-bold text-[var(--colorPaletteRedForeground1)] bg-[var(--colorPaletteRedBackground1)] px-2 py-0.5 rounded border border-[var(--colorPaletteRedBorder1)] uppercase w-fit">
                         <ShieldAlert className="h-3.5 w-3.5 mr-0.5" /> Bloqueado para Compra
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 text-xs font-bold text-emerald-450 bg-emerald-950/20 px-2 py-0.5 rounded border border-emerald-900/35 uppercase w-fit">
+                      <span className="flex items-center gap-1 text-xs font-bold text-[var(--colorPaletteGreenForeground1)] bg-[var(--colorPaletteGreenBackground1)] px-2 py-0.5 rounded border border-[var(--colorPaletteGreenBorder1)] uppercase w-fit">
                         <Check className="h-3.5 w-3.5 mr-0.5" /> Liberado para Compra
                       </span>
                     )}
@@ -371,12 +371,12 @@ export function SavePreVendaModal({
 
                 {/* Endereço de Entrega */}
                 {clientAddress && (
-                  <div className="text-[11px] pt-2 border-t border-slate-800/50">
-                    <span className="text-slate-300 block text-[9px] uppercase font-bold tracking-wider">Endereço de Entrega</span>
-                    <span className="text-slate-200 font-medium block mt-0.5">
+                  <div className="text-[11px] pt-2 border-t border-[var(--colorNeutralStroke1)]/45">
+                    <span className="text-[var(--colorNeutralForeground3)] block text-[9px] uppercase font-bold tracking-wider">Endereço de Entrega</span>
+                    <span className="text-[var(--colorNeutralForeground1)] font-medium block mt-0.5">
                       {clientAddress.rua}, {clientAddress.numero} - {clientAddress.bairro}
                     </span>
-                    <span className="text-slate-400">
+                    <span className="text-[var(--colorNeutralForeground3)]">
                       {clientAddress.cidade}/{clientAddress.estado} - CEP: {clientAddress.cep}
                     </span>
                   </div>
@@ -388,20 +388,20 @@ export function SavePreVendaModal({
           {/* Condições Financeiras & WhatsApp side-by-side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1 relative">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Método de Pagamento</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Método de Pagamento</label>
               <button
                 type="button"
                 onClick={() => setIsPaymentDropdownOpen(!isPaymentDropdownOpen)}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition-all h-[38px] flex items-center justify-between cursor-pointer text-xs"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-all h-[38px] flex items-center justify-between cursor-pointer text-xs"
               >
                 <span>{formaPagamento}</span>
-                <span className="text-slate-500 font-sans">▼</span>
+                <span className="text-[var(--colorNeutralForeground3)] font-sans">▼</span>
               </button>
 
               {isPaymentDropdownOpen && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setIsPaymentDropdownOpen(false)} />
-                  <div className="absolute top-[58px] left-0 w-full bg-[#070a13] border border-slate-800 rounded-lg shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
+                  <div className="absolute top-[58px] left-0 w-full bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded shadow-2xl z-20 py-1 max-h-48 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-100">
                     {getFormasPagamento().map((forma) => (
                       <button
                         key={forma}
@@ -410,8 +410,8 @@ export function SavePreVendaModal({
                           handleFormaPagamentoChange(forma);
                           setIsPaymentDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-emerald-600/10 hover:text-emerald-400 ${
-                          formaPagamento === forma ? "bg-emerald-650/15 text-emerald-450 font-bold" : "text-slate-350"
+                        className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-[var(--colorSubtleBackgroundHover)] hover:text-[var(--colorNeutralForeground1)] ${
+                          formaPagamento === forma ? "bg-[var(--colorSubtleBackgroundSelected)] text-[var(--colorNeutralForeground1Selected)] font-bold" : "text-[var(--colorNeutralForeground2)]"
                         }`}
                       >
                         {forma}
@@ -423,7 +423,7 @@ export function SavePreVendaModal({
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">WhatsApp (Link de Pagamento)</label>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">WhatsApp (Link de Pagamento)</label>
               <input
                 type="text"
                 placeholder="Ex: 11999999999..."
@@ -433,53 +433,53 @@ export function SavePreVendaModal({
                     setWhatsappLink(e.target.value);
                   }
                 }}
-                className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors h-[38px]"
+                className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors h-[38px]"
               />
             </div>
           </div>
 
-          {/* Observações - Full Width with default height */}
+          {/* Observações */}
           <div className="space-y-1">
-            <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Observações de Retirada / Entrega</label>
+            <label className="block text-[10px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)]">Observações de Retirada / Entrega</label>
             <textarea
               placeholder="Ex: Cliente aguarda aprovação de orçamento, observações de rota de frete..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              rows={4}
-              className="w-full px-3 py-2 bg-[#070a13] border border-slate-800 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors resize-none text-xs"
+              rows={3}
+              className="w-full px-3 py-2 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] transition-colors resize-none text-xs"
             />
           </div>
 
           {/* Totals Summary */}
-          <div className="bg-[#070a13]/60 p-4 rounded-lg border border-slate-800 flex justify-between items-center h-[76px]">
+          <div className="bg-[var(--colorNeutralBackground1)] p-4 rounded border border-[var(--colorNeutralStroke1)] flex justify-between items-center h-[76px]">
             <div className="space-y-1">
               {(formaPagamento === "À Vista" || formaPagamento === "Link Pix") ? (
                 <div>
-                  <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-0.5">Valor da Nota (À Vista - Editável)</label>
+                  <label className="block text-[9px] font-bold uppercase tracking-wider text-[var(--colorNeutralForeground3)] mb-0.5">Valor da Nota (À Vista - Editável)</label>
                   <input
                     type="number"
                     step="0.01"
                     min="0"
                     value={valorTotalFinal}
                     onChange={(e) => setValorTotalFinal(Number(e.target.value))}
-                    className="w-40 px-2.5 py-1 bg-[#070a13] border border-slate-700 rounded text-sm font-bold text-slate-200 focus:outline-none focus:border-emerald-500 h-[32px]"
+                    className="w-40 px-2.5 py-1 bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] rounded text-sm font-bold text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] h-[32px]"
                   />
                 </div>
               ) : (
                 <div>
-                  <span className="text-slate-300 block text-[9px] uppercase font-bold tracking-wider">Valor da Nota</span>
-                  <span className="text-slate-300 font-bold text-sm">R$ {totalAmount.toFixed(2)}</span>
+                  <span className="text-[var(--colorNeutralForeground3)] block text-[9px] uppercase font-bold tracking-wider">Valor da Nota</span>
+                  <span className="text-[var(--colorNeutralForeground1)] font-bold text-sm">R$ {totalAmount.toFixed(2)}</span>
                 </div>
               )}
             </div>
 
             <div className="text-right">
-              <span className="text-slate-300 block text-[9px] uppercase font-bold tracking-wider">Total Líquido</span>
-              <span className="text-emerald-455 font-black text-3xl">
+              <span className="text-[var(--colorNeutralForeground3)] block text-[9px] uppercase font-bold tracking-wider">Total Líquido</span>
+              <span className="text-[var(--colorBrandStroke1)] font-black text-3xl">
                 R$ {valorTotalFinal.toFixed(2)}
               </span>
               {totalAmount - valorTotalFinal > 0 && (
-                <span className="text-[10px] text-emerald-500 block font-bold mt-0.5">
+                <span className="text-[10px] text-[var(--colorPaletteGreenForeground1)] block font-bold mt-0.5">
                   Desconto: -R$ {(totalAmount - valorTotalFinal).toFixed(2)} ({((totalAmount - valorTotalFinal) / totalAmount * 100).toFixed(1)}%)
                 </span>
               )}
@@ -487,20 +487,21 @@ export function SavePreVendaModal({
           </div>
 
           {/* Footer Actions */}
-          <div className="flex gap-2 pt-2 border-t border-slate-800/60 justify-end">
+          <div className="flex gap-2 pt-2 border-t border-[var(--colorNeutralStroke1)] justify-end">
             <Button
               type="button"
               onClick={onClose}
-              className="bg-[#16223f]/50 hover:bg-[#16223f] border border-slate-800 text-slate-300 text-xs py-2 rounded-lg cursor-pointer h-[36px]"
+              style={{ height: "36px" }}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={tipoVenda === "Entrega" && !selectedClient}
-              className="bg-emerald-650 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg flex items-center gap-1.5 cursor-pointer h-[36px] shadow-lg shadow-emerald-950/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+              appearance="primary"
+              style={{ height: "36px" }}
             >
-              <Handshake className="h-4 w-4" />
+              <Handshake className="h-4 w-4 mr-1 inline-block align-middle" />
               Emitir Pré-Venda
             </Button>
           </div>
@@ -508,66 +509,66 @@ export function SavePreVendaModal({
 
         {/* 3 - Submodal de Busca de Cliente */}
         {isClientModalOpen && (
-          <div className="absolute inset-0 z-65 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-[#0e1626] border border-slate-800 rounded-xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85%] animate-in fade-in zoom-in duration-150">
+          <div className="absolute inset-0 z-65 bg-black/80 flex items-center justify-center p-4">
+            <div className="bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85%] animate-in fade-in zoom-in duration-150">
               {/* Modal Header */}
-              <div className="flex justify-between items-center border-b border-slate-800 p-4 bg-[#0e1626]/50">
+              <div className="flex justify-between items-center border-b border-[var(--colorNeutralStroke1)] p-4 bg-[var(--colorNeutralBackground2)]">
                 <div>
-                  <h4 className="text-xs font-bold text-slate-100 uppercase tracking-wider">Buscar Cliente Cadastrado</h4>
-                  <p className="text-[10px] text-slate-400 mt-0.5">Filtre a pesquisa por Nome, ID ou CPF/CNPJ.</p>
+                  <h4 className="text-xs font-bold text-[var(--colorNeutralForeground1)] uppercase tracking-wider">Buscar Cliente Cadastrado</h4>
+                  <p className="text-[10px] text-[var(--colorNeutralForeground3)] mt-0.5 font-sans">Filtre a pesquisa por Nome, ID ou CPF/CNPJ.</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsClientModalOpen(false)}
-                  className="p-1 hover:bg-[#16223f] border border-slate-800 rounded-lg text-slate-400"
+                  className="p-1 hover:bg-[var(--colorNeutralBackground3Hover)] border border-[var(--colorNeutralStroke1)] rounded text-[var(--colorNeutralForeground2)]"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
               {/* Modal Search Input */}
-              <div className="p-3 border-b border-slate-800 bg-[#0e1626]/20">
+              <div className="p-3 border-b border-[var(--colorNeutralStroke1)] bg-[var(--colorNeutralBackground1)]">
                 <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-550" />
+                  <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-[var(--colorNeutralForeground3)]" />
                   <input
                     type="text"
                     placeholder="Pesquisar..."
                     value={modalSearchText}
                     onChange={(e) => setModalSearchText(e.target.value)}
-                    className="w-full pl-8 pr-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500 h-[34px]"
+                    className="w-full pl-8 pr-3 py-1.5 bg-[var(--colorNeutralBackground3)] border border-[var(--colorNeutralStroke1)] rounded text-xs text-[var(--colorNeutralForeground1)] focus:outline-none focus:border-[var(--colorBrandStroke1)] h-[34px]"
                     autoFocus
                   />
                 </div>
               </div>
 
               {/* Modal Clients List */}
-              <div className="flex-1 overflow-y-auto divide-y divide-slate-850/50 max-h-[300px]">
+              <div className="flex-1 overflow-y-auto divide-y divide-[var(--colorNeutralStroke1)]/20 max-h-[300px] bg-[var(--colorNeutralBackground1)]">
                 {filteredClientsInModal.map((client) => (
                   <div
                     key={client.id}
                     onClick={() => handleSelectClientFromModal(client)}
-                    className="p-3 hover:bg-[#16223f]/50 cursor-pointer flex justify-between items-center transition-colors"
+                    className="p-3 hover:bg-[var(--colorSubtleBackgroundHover)] cursor-pointer flex justify-between items-center transition-colors"
                   >
                     <div>
-                      <div className="font-bold text-slate-200">
-                        <span className="text-[10px] font-mono text-emerald-450 font-bold mr-1">#{client.id}</span>
+                      <div className="font-bold text-[var(--colorNeutralForeground1)]">
+                        <span className="text-[10px] font-mono text-[var(--colorBrandStroke1)] font-bold mr-1">#{client.id}</span>
                         {client.nome}
                       </div>
-                      <div className="text-[10px] text-slate-550 mt-0.5">
+                      <div className="text-[10px] text-[var(--colorNeutralForeground3)] mt-0.5">
                         {client.tipo_pessoa === "Física" ? "CPF: " : "CNPJ: "} {client.cpf_cnpj}
                       </div>
                     </div>
                     <div className="flex gap-1.5 items-center">
                       {client.bloqueado_por_atraso ? (
-                        <span className="text-[8px] bg-red-950/60 text-red-400 border border-red-900/30 px-1.5 py-0.5 rounded font-extrabold uppercase">Bloqueado</span>
+                        <span className="text-[8px] bg-[var(--colorPaletteRedBackground1)] text-[var(--colorPaletteRedForeground1)] border border-[var(--colorPaletteRedBorder1)] px-1.5 py-0.5 rounded font-extrabold uppercase">Bloqueado</span>
                       ) : (
-                        <span className="text-[8px] bg-emerald-950/60 text-emerald-400 border border-emerald-900/30 px-1.5 py-0.5 rounded font-extrabold uppercase">Liberado</span>
+                        <span className="text-[8px] bg-[var(--colorPaletteGreenBackground1)] text-[var(--colorPaletteGreenForeground1)] border border-[var(--colorPaletteGreenBorder1)] px-1.5 py-0.5 rounded font-extrabold uppercase">Liberado</span>
                       )}
                     </div>
                   </div>
                 ))}
                 {filteredClientsInModal.length === 0 && (
-                  <div className="p-8 text-center text-slate-555 italic">Nenhum cliente correspondente encontrado.</div>
+                  <div className="p-8 text-center text-[var(--colorNeutralForeground3)] italic">Nenhum cliente correspondente encontrado.</div>
                 )}
               </div>
             </div>

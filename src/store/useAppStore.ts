@@ -48,6 +48,7 @@ interface AppState {
   cashInflow: number;
   currentBalance: number;
   isCaixaMaximized: boolean;
+  theme: "light" | "dark";
   setClientName: (value: string) => void;
   setVehicleName: (value: string) => void;
   setProductSearchQuery: (value: string) => void;
@@ -58,6 +59,7 @@ interface AppState {
   setPreSales: (value: PreSale[] | ((prev: PreSale[]) => PreSale[])) => void;
   setInvoices: (value: Invoice[] | ((prev: Invoice[]) => Invoice[])) => void;
   setIsCaixaMaximized: (value: boolean) => void;
+  setTheme: (value: "light" | "dark") => void;
   receivePreSale: (id: string) => void;
 }
 
@@ -133,6 +135,7 @@ export const useAppStore = create<AppState>((set) => ({
   cashInflow: 4640,
   currentBalance: 8880,
   isCaixaMaximized: false,
+  theme: "dark",
   setClientName: (value) => set({ clientName: value }),
   setVehicleName: (value) => set({ vehicleName: value }),
   setProductSearchQuery: (value) => set({ productSearchQuery: value }),
@@ -149,6 +152,7 @@ export const useAppStore = create<AppState>((set) => ({
   setInvoices: (value) =>
     set((state) => ({ invoices: typeof value === "function" ? value(state.invoices) : value })),
   setIsCaixaMaximized: (value) => set({ isCaixaMaximized: value }),
+  setTheme: (value) => set({ theme: value }),
   receivePreSale: (id) =>
     set((state) => ({
       preSales: state.preSales.map((sale) =>

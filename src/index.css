@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
 @custom-variant dark (&:is(.dark *));
@@ -49,23 +48,23 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
+    --background: oklch(0.975 0.005 240); /* Softer slate light gray */
+    --foreground: oklch(0.25 0.01 240);
+    --card: oklch(0.99 0.003 240);
+    --card-foreground: oklch(0.25 0.01 240);
+    --popover: oklch(0.99 0.003 240);
+    --popover-foreground: oklch(0.25 0.01 240);
     --primary: oklch(0.205 0 0);
     --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
+    --secondary: oklch(0.93 0.01 240);
     --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
+    --muted: oklch(0.93 0.01 240);
     --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
+    --accent: oklch(0.93 0.01 240);
     --accent-foreground: oklch(0.205 0 0);
     --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
+    --border: oklch(0.89 0.01 240);
+    --input: oklch(0.89 0.01 240);
     --ring: oklch(0.708 0 0);
     --chart-1: oklch(0.87 0 0);
     --chart-2: oklch(0.556 0 0);
@@ -73,14 +72,29 @@
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar: oklch(0.96 0.005 240);
+    --sidebar-foreground: oklch(0.25 0.01 240);
     --sidebar-primary: oklch(0.205 0 0);
     --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent: oklch(0.93 0.01 240);
     --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-border: oklch(0.89 0.01 240);
     --sidebar-ring: oklch(0.708 0 0);
+
+    /* Fluent UI Light Theme customization for eye comfort */
+    --colorNeutralBackground1: #f8fafc; /* Slate 50 - very soft primary background */
+    --colorNeutralBackground2: #f1f5f9; /* Slate 100 - secondary background */
+    --colorNeutralBackground3: #e2e8f0; /* Slate 200 - tertiary background */
+    --colorNeutralBackground4: #cbd5e1; /* Slate 300 */
+    --colorNeutralBackground5: #e2e8f0;
+    --colorNeutralBackground6: #ffffff;
+    
+    --colorNeutralBackground1Hover: #f1f5f9;
+    --colorNeutralBackground1Selected: #e2e8f0;
+    --colorNeutralBackground2Hover: #e2e8f0;
+    --colorNeutralBackground2Selected: #cbd5e1;
+    --colorNeutralBackground3Hover: #cbd5e1;
+    --colorNeutralBackground3Selected: #94a3b8;
 }
 
 .dark {

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@fluentui/react-components";
 import { Search } from "lucide-react";
 
 export default function StatusVenda(props: any) {
@@ -46,7 +46,8 @@ export default function StatusVenda(props: any) {
                     <td className="p-3 text-center">
                       <Button
                         onClick={() => handleReceivePreSale(pv.id)}
-                        className="bg-indigo-650 hover:bg-indigo-555 text-white text-[10px] py-1 px-2.5 h-auto rounded cursor-pointer font-bold uppercase tracking-wider active:scale-95 transition-all"
+                        appearance="primary"
+                        size="small"
                       >
                         Receber e Emitir
                       </Button>

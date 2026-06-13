@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@fluentui/react-components";
 
 export default function Cadastro() {
   const [categoria, setCategoria] = useState("Freios");
@@ -71,7 +71,7 @@ export default function Cadastro() {
             </div>
           </div>
 
-          <Button type="button" className="bg-indigo-655 hover:bg-indigo-555 text-white font-bold py-2 px-4 h-auto rounded-lg cursor-pointer uppercase tracking-wider">Salvar Produto</Button>
+          <Button type="button" appearance="primary">Salvar Produto</Button>
         </form>
       </div>
     </div>

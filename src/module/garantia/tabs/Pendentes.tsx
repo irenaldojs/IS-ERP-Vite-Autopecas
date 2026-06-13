@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Button } from "@fluentui/react-components";
+import { AddRegular } from "@fluentui/react-icons";
 
 export default function Pendentes() {
   return (
@@ -11,8 +11,8 @@ export default function Pendentes() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
           <input type="text" placeholder="Buscar garantia pendente..." className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-355 focus:outline-none" />
         </div>
-        <Button className="bg-indigo-650 hover:bg-indigo-555 text-white text-xs font-semibold py-1.5 px-3 h-auto rounded-lg flex items-center gap-1.5 cursor-pointer">
-          <Plus className="h-3.5 w-3.5" /> Abrir Chamado
+        <Button appearance="primary" icon={<AddRegular />}>
+          Abrir Chamado
         </Button>
       </div>
 
