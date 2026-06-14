@@ -30,7 +30,7 @@ export interface ProdutoAplicacaoLista {
 export interface Imagem {
   /** Repositório de mídias físicas/URLs em nuvem */
   id: number;
-  url_imagem: string;
+  caminho_imagem: string;
 }
 
 export interface ProdutoImagem {

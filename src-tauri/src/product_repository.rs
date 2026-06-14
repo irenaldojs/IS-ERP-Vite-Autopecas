@@ -1,11 +1,61 @@
 use rusqlite::{params, Connection, Result};
 use crate::models::*;
 use chrono::Utc;
+use tauri::Manager;
+
+fn process_and_save_image(
+    app_handle: &tauri::AppHandle,
+    produto_id: i64,
+    image_index: usize,
+    caminho_imagem: &str,
+) -> Result<String, String> {
+    if !caminho_imagem.starts_with("http://") && !caminho_imagem.starts_with("https://") {
+        if let Some(pos) = caminho_imagem.find("images/products/") {
+            return Ok(caminho_imagem[pos..].to_string());
+        }
+        return Ok(caminho_imagem.to_string());
+    }
+
+    let client = reqwest::blocking::Client::builder()
+        .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+        .build()
+        .map_err(|e| e.to_string())?;
+    
+    let bytes = client.get(caminho_imagem)
+        .send()
+        .map_err(|e| e.to_string())?
+        .bytes()
+        .map_err(|e| e.to_string())?;
+
+    let img = image::load_from_memory(&bytes).map_err(|e| e.to_string())?;
+
+    let img_150 = img.resize_exact(150, 150, image::imageops::FilterType::Lanczos3);
+    let img_600 = img.resize_exact(600, 600, image::imageops::FilterType::Lanczos3);
+
+    let app_data_dir = app_handle
+        .path()
+        .app_data_dir()
+        .map_err(|e| e.to_string())?;
+    
+    let product_dir = app_data_dir.join("images").join("products").join(produto_id.to_string());
+    std::fs::create_dir_all(&product_dir).map_err(|e| e.to_string())?;
+
+    let filename_150 = format!("{}_150_150.webP", image_index);
+    let filename_600 = format!("{}_600_600.webP", image_index);
+
+    let path_150 = product_dir.join(&filename_150);
+    let path_600 = product_dir.join(&filename_600);
+
+    img_150.save_with_format(&path_150, image::ImageFormat::WebP).map_err(|e| e.to_string())?;
+    img_600.save_with_format(&path_600, image::ImageFormat::WebP).map_err(|e| e.to_string())?;
+
+    Ok(format!("images/products/{}/{}", produto_id, filename_600))
+}
 
 pub struct ProductRepository;
 
 impl ProductRepository {
-    pub fn insert_produto(conn: &mut Connection, produto: Produto) -> Result<i64, String> {
+    pub fn insert_produto(conn: &mut Connection, app_handle: &tauri::AppHandle, produto: Produto) -> Result<i64, String> {
         let now = Utc::now().to_rfc3339();
         
         let tx = conn.transaction().map_err(|e| e.to_string())?;
@@ -163,14 +213,15 @@ impl ProductRepository {
 
         // 9. Inserir Imagens
         if let Some(imgs) = produto.imagens {
-            for img in imgs {
-                let img_id = if let Some(id) = img.id {
-                    id
-                } else {
-                    tx.execute("INSERT INTO imagem (url_imagem) VALUES (?1)", params![img.url_imagem])
-                        .map_err(|e| e.to_string())?;
-                    tx.last_insert_rowid()
-                };
+            for (idx, img) in imgs.into_iter().enumerate() {
+                let image_index = idx + 1;
+                let saved_path = process_and_save_image(app_handle, produto_id, image_index, &img.caminho_imagem)?;
+
+                tx.execute(
+                    "INSERT INTO imagem (caminho_imagem) VALUES (?1)",
+                    params![saved_path],
+                ).map_err(|e| e.to_string())?;
+                let img_id = tx.last_insert_rowid();
 
                 tx.execute(
                     "INSERT INTO produto_imagem (produto_id, imagem_id) VALUES (?1, ?2)",
@@ -184,7 +235,7 @@ impl ProductRepository {
         Ok(produto_id)
     }
 
-    pub fn update_produto(conn: &mut Connection, produto: Produto) -> Result<(), String> {
+    pub fn update_produto(conn: &mut Connection, app_handle: &tauri::AppHandle, produto: Produto) -> Result<(), String> {
         let id = produto.id.ok_or_else(|| "ID do produto é obrigatório para atualização".to_string())?;
         let now = Utc::now().to_rfc3339();
 
@@ -358,13 +409,21 @@ impl ProductRepository {
         // 8. Atualizar Imagens
         tx.execute("DELETE FROM produto_imagem WHERE produto_id = ?1", params![id]).map_err(|e| e.to_string())?;
         if let Some(imgs) = produto.imagens {
-            for img in imgs {
-                let img_id = if let Some(img_id) = img.id {
-                    img_id
-                } else {
-                    tx.execute("INSERT INTO imagem (url_imagem) VALUES (?1)", params![img.url_imagem])
-                        .map_err(|e| e.to_string())?;
-                    tx.last_insert_rowid()
+            for (idx, img) in imgs.into_iter().enumerate() {
+                let image_index = idx + 1;
+                let saved_path = process_and_save_image(app_handle, id, image_index, &img.caminho_imagem)?;
+
+                let img_id: i64 = match tx.query_row(
+                    "SELECT id FROM imagem WHERE caminho_imagem = ?1",
+                    params![saved_path],
+                    |row| row.get(0),
+                ) {
+                    Ok(img_id) => img_id,
+                    Err(_) => {
+                        tx.execute("INSERT INTO imagem (caminho_imagem) VALUES (?1)", params![saved_path])
+                            .map_err(|e| e.to_string())?;
+                        tx.last_insert_rowid()
+                    }
                 };
 
                 tx.execute(
@@ -404,7 +463,7 @@ impl ProductRepository {
         Ok(())
     }
 
-    pub fn get_produto_by_id(conn: &Connection, id: i64) -> Result<Option<Produto>, String> {
+    pub fn get_produto_by_id(conn: &Connection, app_handle: &tauri::AppHandle, id: i64) -> Result<Option<Produto>, String> {
         let mut stmt = conn
             .prepare(
                 "SELECT 
@@ -655,18 +714,25 @@ impl ProductRepository {
         // Carregar imagens
         let mut img_stmt = conn
             .prepare(
-                "SELECT i.id, i.url_imagem
+                "SELECT i.id, i.caminho_imagem
                  FROM produto_imagem pi
                  JOIN imagem i ON pi.imagem_id = i.id
                  WHERE pi.produto_id = ?1",
             )
             .map_err(|e| e.to_string())?;
 
+        let app_data_dir = app_handle.path().app_data_dir().unwrap_or_default();
         let imgs_iter = img_stmt
             .query_map(params![id], |row| {
+                let db_path: String = row.get(1)?;
+                let resolved_path = if db_path.starts_with("http://") || db_path.starts_with("https://") {
+                    db_path
+                } else {
+                    app_data_dir.join(&db_path).to_string_lossy().to_string()
+                };
                 Ok(Imagem {
                     id: Some(row.get(0)?),
-                    url_imagem: row.get(1)?,
+                    caminho_imagem: resolved_path,
                 })
             })
             .map_err(|e| e.to_string())?;
@@ -680,7 +746,7 @@ impl ProductRepository {
         Ok(Some(produto))
     }
 
-    pub fn list_produtos(conn: &Connection, query_search: Option<String>) -> Result<Vec<Produto>, String> {
+    pub fn list_produtos(conn: &Connection, _app_handle: &tauri::AppHandle, query_search: Option<String>) -> Result<Vec<Produto>, String> {
         let sql = if let Some(ref search) = query_search {
             format!(
                 "SELECT 

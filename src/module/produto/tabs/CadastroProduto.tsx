@@ -3,6 +3,7 @@ import { Button } from "@fluentui/react-components";
 import { ProductService } from "@/services/product.service";
 import { Produto, ProdutoGrupo, ProdutoFabricante, ProdutoAplicacao, Imagem } from "@/types/products.entities";
 import { carroMontadoras } from "../../../../mocks/products.mock";
+import { convertFileSrc } from '@tauri-apps/api/core';
 
 function AutocompleteSelect<T>({
   label,
@@ -323,7 +324,7 @@ export default function CadastroProduto() {
     }
     const novaImg: Imagem = {
       id: 0,
-      url_imagem: novaImagemUrl.trim(),
+      caminho_imagem: novaImagemUrl.trim(),
     };
     setImagens([...imagens, novaImg]);
     setNovaImagemUrl("");
@@ -904,28 +905,33 @@ export default function CadastroProduto() {
                       </div>
                     ) : (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                        {imagens.map((img, index) => (
-                          <div key={index} className="relative group border border-slate-200 dark:border-slate-80 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 p-2 flex flex-col items-center">
-                            <img
-                              src={img.url_imagem}
-                              alt={`Produto ${index + 1}`}
-                              className="h-24 object-contain mb-2 rounded bg-white w-full"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = "https://placehold.co/150x100?text=Sem+Imagem";
-                              }}
-                            />
-                            <div className="w-full text-center truncate text-[9px] text-slate-450 dark:text-slate-500 mb-1 px-1" title={img.url_imagem}>
-                              {img.url_imagem}
+                        {imagens.map((img, index) => {
+                          const imgSrc = img.caminho_imagem.startsWith("http")
+                            ? img.caminho_imagem
+                            : convertFileSrc(img.caminho_imagem.replace("_600_600.webP", "_150_150.webP"));
+                          return (
+                            <div key={index} className="relative group border border-slate-200 dark:border-slate-80 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 p-2 flex flex-col items-center">
+                              <img
+                                src={imgSrc}
+                                alt={`Produto ${index + 1}`}
+                                className="h-24 object-contain mb-2 rounded bg-white w-full"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = "https://placehold.co/150x100?text=Sem+Imagem";
+                                }}
+                              />
+                              <div className="w-full text-center truncate text-[9px] text-slate-450 dark:text-slate-500 mb-1 px-1" title={img.caminho_imagem}>
+                                {img.caminho_imagem.substring(img.caminho_imagem.lastIndexOf('/') + 1)}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removerImagem(index)}
+                                className="text-[10px] text-rose-600 hover:text-rose-500 dark:text-rose-500 font-bold py-1 px-2 border border-rose-200 dark:border-rose-950/40 rounded bg-rose-50/50 dark:bg-rose-950/10 cursor-pointer"
+                              >
+                                Remover
+                              </button>
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => removerImagem(index)}
-                              className="text-[10px] text-rose-600 hover:text-rose-500 dark:text-rose-500 font-bold py-1 px-2 border border-rose-200 dark:border-rose-950/40 rounded bg-rose-50/50 dark:bg-rose-950/10 cursor-pointer"
-                            >
-                              Remover
-                            </button>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
                   </div>

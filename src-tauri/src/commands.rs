@@ -18,7 +18,7 @@ where
 pub fn criar_produto(app_handle: AppHandle, produto: Produto) -> Result<i64, String> {
     handle_db_op(&app_handle, "criar_produto", Some("INSERT INTO produto / TRANSACTION"), || {
         let mut conn = get_connection(&app_handle)?;
-        ProductRepository::insert_produto(&mut conn, produto)
+        ProductRepository::insert_produto(&mut conn, &app_handle, produto)
     })
 }
 
@@ -26,7 +26,7 @@ pub fn criar_produto(app_handle: AppHandle, produto: Produto) -> Result<i64, Str
 pub fn atualizar_produto(app_handle: AppHandle, produto: Produto) -> Result<(), String> {
     handle_db_op(&app_handle, "atualizar_produto", Some("UPDATE produto / TRANSACTION"), || {
         let mut conn = get_connection(&app_handle)?;
-        ProductRepository::update_produto(&mut conn, produto)
+        ProductRepository::update_produto(&mut conn, &app_handle, produto)
     })
 }
 
@@ -42,7 +42,7 @@ pub fn deletar_produto(app_handle: AppHandle, id: i64) -> Result<(), String> {
 pub fn buscar_produto(app_handle: AppHandle, id: i64) -> Result<Option<Produto>, String> {
     handle_db_op(&app_handle, "buscar_produto", Some("SELECT FROM produto WHERE id = ?"), || {
         let conn = get_connection(&app_handle)?;
-        ProductRepository::get_produto_by_id(&conn, id)
+        ProductRepository::get_produto_by_id(&conn, &app_handle, id)
     })
 }
 
@@ -50,7 +50,7 @@ pub fn buscar_produto(app_handle: AppHandle, id: i64) -> Result<Option<Produto>,
 pub fn listar_produtos(app_handle: AppHandle, query_search: Option<String>) -> Result<Vec<Produto>, String> {
     handle_db_op(&app_handle, "listar_produtos", Some("SELECT FROM produto WHERE ..."), || {
         let conn = get_connection(&app_handle)?;
-        ProductRepository::list_produtos(&conn, query_search)
+        ProductRepository::list_produtos(&conn, &app_handle, query_search)
     })
 }
 

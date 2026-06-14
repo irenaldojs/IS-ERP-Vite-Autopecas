@@ -9,6 +9,7 @@ import {
   TableBody,
   TableCell,
 } from "@fluentui/react-components";
+import { convertFileSrc } from '@tauri-apps/api/core';
 import {
   CartRegular,
   AddRegular,
@@ -315,7 +316,9 @@ export default function Orcamento(props: Props) {
     const relation = produtoImagens.find((pi) => pi.produto_id === prodId);
     if (relation) {
       const img = imagens.find((im) => im.id === relation.imagem_id);
-      return img?.url_imagem;
+      if (img) {
+        return img.caminho_imagem.startsWith("http") ? img.caminho_imagem : convertFileSrc(img.caminho_imagem);
+      }
     }
     return undefined;
   };

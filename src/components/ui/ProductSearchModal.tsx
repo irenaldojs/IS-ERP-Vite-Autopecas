@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@fluentui/react-components";
 import { Search, Image, X, Plus, FileText, Car } from "lucide-react";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { convertFileSrc } from '@tauri-apps/api/core';
 import {
   produtos,
   produtoGrupos,
@@ -495,7 +496,7 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
           .filter((pi: ProdutoImagem) => pi.produto_id === activeSelectedProd.id)
           .map((pi: ProdutoImagem) => imagens.find((i: Imagem) => i.id === pi.imagem_id))
           .filter((i: any): i is Imagem => !!i)
-          .map((i: Imagem) => i.url_imagem);
+          .map((i: Imagem) => i.caminho_imagem.startsWith("http") ? i.caminho_imagem : convertFileSrc(i.caminho_imagem));
         
         return dbImages;
       })()

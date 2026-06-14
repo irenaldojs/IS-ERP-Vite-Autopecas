@@ -34,7 +34,7 @@ pub struct ProdutoAplicacao {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Imagem {
     pub id: Option<i64>,
-    pub url_imagem: String,
+    pub caminho_imagem: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -82,7 +82,7 @@ pub fn init_db(app_handle: &AppHandle) -> Result<(), String> {
         r#"
         CREATE TABLE IF NOT EXISTS imagem (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            url_imagem TEXT NOT NULL
+            caminho_imagem TEXT NOT NULL
         );
         "#,
         r#"
@@ -221,6 +221,34 @@ pub fn init_db(app_handle: &AppHandle) -> Result<(), String> {
  
     // Executar migração incremental para montadora_id na tabela produto_aplicacao caso não exista
     let _ = conn.execute("ALTER TABLE produto_aplicacao ADD COLUMN montadora_id INTEGER NOT NULL DEFAULT 0 REFERENCES carro_montadora(id) ON DELETE CASCADE;", []);
+
+    // Migração incremental para reconstruir a tabela imagem sem url_imagem (removendo constraint NOT NULL)
+    if let Ok(mut stmt) = conn.prepare("PRAGMA table_info(imagem)") {
+        let mut has_url_imagem = false;
+        if let Ok(mut rows) = stmt.query([]) {
+            while let Ok(Some(row)) = rows.next() {
+                let name: String = row.get(1).unwrap_or_default();
+                if name == "url_imagem" {
+                    has_url_imagem = true;
+                    break;
+                }
+            }
+        }
+        if has_url_imagem {
+            let migration_steps = vec![
+                "PRAGMA foreign_keys = OFF;",
+                "CREATE TABLE IF NOT EXISTS imagem_new (id INTEGER PRIMARY KEY AUTOINCREMENT, caminho_imagem TEXT NOT NULL);",
+                "INSERT INTO imagem_new (id, caminho_imagem) SELECT id, COALESCE(caminho_imagem, url_imagem) FROM imagem;",
+                "DROP TABLE imagem;",
+                "ALTER TABLE imagem_new RENAME TO imagem;",
+                "PRAGMA foreign_keys = ON;",
+            ];
+            for step in migration_steps {
+                let _ = conn.execute(step, []);
+            }
+        }
+    }
+
 
     // Seed montadoras com IDs explícitos correspondentes aos mocks
     let seed_montadoras = vec![

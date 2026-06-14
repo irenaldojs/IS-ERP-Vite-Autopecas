@@ -164,20 +164,18 @@ export const produtoEspecificacoes: ProdutoEspecificacao[] = [
 ];
 
 export const imagens: Imagem[] = [
-  { id: 1, url_imagem: "https://apolloautopecas.com.br/wp-content/uploads/2024/11/filtro_ARL4154_03-300x300.webp" },
-  { id: 2, url_imagem: "https://http2.mlstatic.com/D_NQ_NP_802387-MLB52519108388_112022-O.webp" },
-  { id: 3, url_imagem: "https://i0.wp.com/grubaterias.com.br/wp-content/uploads/2020/03/bateria-de-carro-moura-agm-start-stop-1.jpg?resize=300%2C300&quality=89&ssl=1" },
-  { id: 4, url_imagem: "https://http2.mlstatic.com/D_NQ_NP_632729-MLB106540127854_022026-O.webp" },
-  { id: 5, url_imagem: "https://cdn.awsli.com.br/300x300/506/506650/produto/89384787/0d570cc8af.jpg" },
-  { id: 6, url_imagem: "https://cdn.awsli.com.br/300x300/2592/2592224/produto/394704801/radiador-ford-fusion-2-5-2010-a-2012-automatico-notus-nt2857116-8zbtb142rh.jpg" },
-  { id: 7, url_imagem: "https://belzag.com/wp-content/uploads/2025/02/DSC4340-scaled-1-300x300.jpg.webp" },
-  { id: 8, url_imagem: "https://images.tcdn.com.br/img/img_prod/659062/90_retrovisor_corsa_2003_2004_2005_2006_2007_2008_2009_2010_2011_2012_montana_2003_2004_2005_2006_2007__51737_2_0ef36a401d5b3fa37715cb6eeac6f7a3.jpg" },
-  { id: 9, url_imagem: "https://cdn.awsli.com.br/300x300/2648/2648682/produto/24189396164ac760332.jpg" },
-  { id: 10, url_imagem: "https://images.tcdn.com.br/img/img_prod/681755/90_alternador_mercruiser_gasolina_619_1_74028c752d6ec08613a3568df994e170.png" },
-
-  { id: 11, url_imagem: "https://www.migliorinipecas.com/wp-content/uploads/2022/04/migliorini-auto-pecas-e-acessorios-produto-parachoques-2-300x300.png" },
-
-  { id: 12, url_imagem: "https://images.tcdn.com.br/img/img_prod/673340/90_cin573_mola_suspensao_dianteira_com_ar_fiat_punto_1_6_16v_1_8_c_ar_s_t_a_07_em_diante_cindumel_41552_1_e5e5a8d0334d2a6743d09bfbe7df4359.jpg" },
+  { id: 1, caminho_imagem: "https://apolloautopecas.com.br/wp-content/uploads/2024/11/filtro_ARL4154_03-300x300.webp" },
+  { id: 2, caminho_imagem: "https://http2.mlstatic.com/D_NQ_NP_802387-MLB52519108388_112022-O.webp" },
+  { id: 3, caminho_imagem: "https://i0.wp.com/grubaterias.com.br/wp-content/uploads/2020/03/bateria-de-carro-moura-agm-start-stop-1.jpg?resize=300%2C300&quality=89&ssl=1" },
+  { id: 4, caminho_imagem: "https://http2.mlstatic.com/D_NQ_NP_632729-MLB106540127854_022026-O.webp" },
+  { id: 5, caminho_imagem: "https://cdn.awsli.com.br/300x300/506/506650/produto/89384787/0d570cc8af.jpg" },
+  { id: 6, caminho_imagem: "https://cdn.awsli.com.br/300x300/2592/2592224/produto/394704801/radiador-ford-fusion-2-5-2010-a-2012-automatico-notus-nt2857116-8zbtb142rh.jpg" },
+  { id: 7, caminho_imagem: "https://belzag.com/wp-content/uploads/2025/02/DSC4340-scaled-1-300x300.jpg.webp" },
+  { id: 8, caminho_imagem: "https://images.tcdn.com.br/img/img_prod/659062/90_retrovisor_corsa_2003_2004_2005_2006_2007_2008_2009_2010_2011_2012_montana_2003_2004_2005_2006_2007__51737_2_0ef36a401d5b3fa37715cb6eeac6f7a3.jpg" },
+  { id: 9, caminho_imagem: "https://cdn.awsli.com.br/300x300/2648/2648682/produto/24189396164ac760332.jpg" },
+  { id: 10, caminho_imagem: "https://images.tcdn.com.br/img/img_prod/681755/90_alternador_mercruiser_gasolina_619_1_74028c752d6ec08613a3568df994e170.png" },
+  { id: 11, caminho_imagem: "https://www.migliorinipecas.com/wp-content/uploads/2022/04/migliorini-auto-pecas-e-acessorios-produto-parachoques-2-300x300.png" },
+  { id: 12, caminho_imagem: "https://images.tcdn.com.br/img/img_prod/673340/90_cin573_mola_suspensao_dianteira_com_ar_fiat_punto_1_6_16v_1_8_c_ar_s_t_a_07_em_diante_cindumel_41552_1_e5e5a8d0334d2a6743d09bfbe7df4359.jpg" },
 ];
 
 export const produtoImagens: ProdutoImagem[] = [
