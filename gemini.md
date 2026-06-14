@@ -98,6 +98,7 @@
 ## 5. Ajustes Importantes
 * `ModuleTabContainer` recebe `key` única por módulo para evitar estado persistente entre trocas.
 * `Topbar` configurada com `z-50` para evitar problemas de sobreposição do dropdown.
-* Layout desktop Tauri usa `h-screen` e `overflow-hidden` na raiz para rolagem apenas em painéis internos.
 * **Teclas de Atalho / Fechamento de Modais**: Ao criar ou modificar modais/overlays na aplicação, é padrão do projeto utilizar o hook customizado `useEscapeKey` (`src/hooks/useEscapeKey.ts`) para garantir que pressionar a tecla `Esc` feche o modal de maneira uniforme e acessível.
+* **Estilização de Botões (Sem Botões Brancos)**: Não são permitidos botões totalmente brancos ou neutros na aplicação. Todos os botões devem ser coloridos (ex: usando tons de azul, verde, vermelho ou âmbar) para destacar as ações e atrair a atenção do usuário com facilidade.
+
 

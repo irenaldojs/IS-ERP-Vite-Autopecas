@@ -481,21 +481,22 @@ export default function Orcamento(props: Props) {
                 setSearchModalMode("code");
                 setIsSearchModalOpen(true);
               }}
-              style={{ height: "32px" }}
+              appearance="primary"
+              style={{ height: "32px", fontWeight: "bold" }}
               title="Pesquisar Produto (F9-F12)"
               icon={<SearchRegular />}
             >
               Pesquisar
-              <span className="text-[10px] text-[var(--colorNeutralForeground4)] font-mono bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] px-1 py-0.5 rounded leading-none select-none ml-1.5">F9-F12</span>
+              <span className="text-[10px] text-white/90 font-mono bg-white/20 border border-white/30 px-1 py-0.5 rounded leading-none select-none ml-1.5">F9-F12</span>
             </Button>
             <Button
               onClick={() => setIsSavedBudgetsModalOpen(true)}
-              style={{ height: "32px" }}
+              style={{ height: "32px", backgroundColor: "#e88004", color: "#ffffff", borderColor: "#e88004", fontWeight: "bold" }}
               title="Procurar Orçamentos Salvos (F8)"
               icon={<FolderOpenRegular />}
             >
               Carregar
-              <span className="text-[10px] text-[var(--colorNeutralForeground4)] font-mono bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] px-1 py-0.5 rounded leading-none select-none ml-1.5">F8</span>
+              <span className="text-[10px] text-white/90 font-mono bg-white/20 border border-white/30 px-1 py-0.5 rounded leading-none select-none ml-1.5">F8</span>
             </Button>
           </div>
         </div>
@@ -710,26 +711,26 @@ export default function Orcamento(props: Props) {
               {/* Salvar Orçamento */}
               <Button
                 onClick={() => setIsSaveModalOpen(true)}
-                style={{ flex: 1, height: "38px" }}
+                style={{ flex: 1, height: "38px", backgroundColor: "var(--colorBrandBackground)", color: "#ffffff", borderColor: "var(--colorBrandBorder1)", fontWeight: "bold" }}
                 title="Salvar Orçamento"
                 icon={<SaveRegular />}
               >
                 <div className="flex justify-between items-center w-full">
-                  <span>Salvar</span>
-                  <span className="text-[9px] text-[var(--colorNeutralForeground4)] font-mono bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] px-1 py-0.5 rounded leading-none select-none ml-1.5">F4</span>
+                  <span className="text-white">Salvar</span>
+                  <span className="text-[9px] text-white/90 font-mono bg-white/20 border border-white/30 px-1 py-0.5 rounded leading-none select-none ml-1.5">F4</span>
                 </div>
               </Button>
 
               {/* Limpar Lista */}
               <Button
                 onClick={handleClearList}
-                style={{ flex: 1, height: "38px", color: "var(--colorPaletteRedForeground1)" }}
+                style={{ flex: 1, height: "38px", backgroundColor: "var(--colorPaletteRedBackground3)", color: "#ffffff", borderColor: "var(--colorPaletteRedBorder2)", fontWeight: "bold" }}
                 title="Limpar Lista"
                 icon={<DeleteRegular />}
               >
                 <div className="flex justify-between items-center w-full">
-                  <span>Limpar</span>
-                  <span className="text-[9px] text-[var(--colorPaletteRedForeground2)] font-mono bg-[var(--colorNeutralBackground1)] border border-[var(--colorNeutralStroke1)] px-1 py-0.5 rounded leading-none select-none ml-1.5">F3</span>
+                  <span className="text-white">Limpar</span>
+                  <span className="text-[9px] text-white/90 font-mono bg-white/20 border border-white/30 px-1 py-0.5 rounded leading-none select-none ml-1.5">F3</span>
                 </div>
               </Button>
             </div>
