@@ -93,7 +93,7 @@ function AutocompleteSelect<T>({
 
   return (
     <div className="space-y-1 relative">
-      <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">{label}</label>
+      <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">{label}</label>
       <div className="relative">
         <input
           type="text"
@@ -110,10 +110,10 @@ function AutocompleteSelect<T>({
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors"
+          className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 transition-colors shadow-sm dark:shadow-none"
         />
         {isOpen && filteredItems.length > 0 && (
-          <div className="absolute top-full left-0 z-50 w-full mt-1 max-h-48 overflow-y-auto bg-[#070a13] border border-slate-800 rounded-lg shadow-xl divide-y divide-slate-900 scrollbar-thin">
+          <div className="absolute top-full left-0 z-50 w-full mt-1 max-h-48 overflow-y-auto bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg shadow-xl divide-y divide-slate-100 dark:divide-slate-900 scrollbar-thin">
             {filteredItems.map((item, index) => {
               const itemId = getValue(item);
               const isSelected = itemId === value;
@@ -123,10 +123,10 @@ function AutocompleteSelect<T>({
                   key={itemId}
                   type="button"
                   onMouseDown={() => handleSelect(item)}
-                  className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-indigo-950/30 hover:text-indigo-400 ${
-                    isSelected ? "bg-indigo-950/20 text-indigo-450 font-semibold" : ""
+                  className={`w-full text-left px-3 py-2 text-xs transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-950/30 hover:text-indigo-600 dark:hover:text-indigo-400 ${
+                    isSelected ? "bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 font-semibold" : ""
                   } ${
-                    isHighlighted ? "bg-indigo-900/40 text-indigo-305 outline-none border-l-2 border-indigo-500" : "text-slate-300"
+                    isHighlighted ? "bg-indigo-100/50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 outline-none border-l-2 border-indigo-500" : "text-slate-650 dark:text-slate-300"
                   }`}
                 >
                   {getLabel(item)}
@@ -136,7 +136,7 @@ function AutocompleteSelect<T>({
           </div>
         )}
         {isOpen && filteredItems.length === 0 && (
-          <div className="absolute top-full left-0 z-50 w-full mt-1 bg-[#070a13] border border-slate-800 rounded-lg p-3 text-center text-[10px] text-slate-500 shadow-xl">
+          <div className="absolute top-full left-0 z-50 w-full mt-1 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-center text-[10px] text-slate-500 shadow-xl">
             Nenhuma sugestão encontrada
           </div>
         )}
@@ -310,14 +310,14 @@ export default function CadastroProduto() {
     <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
       <div className="max-w-7xl mx-auto w-full space-y-4">
         {/* Barra superior de ações */}
-        <div className="flex items-center justify-between gap-4 border border-slate-850 rounded-xl bg-[#0e1626]/20 p-4">
+        <div className="flex items-center justify-between gap-4 border border-slate-200 dark:border-slate-850 rounded-xl bg-white dark:bg-[#0e1626]/20 p-4 shadow-sm dark:shadow-none">
           <div className="flex-1 max-w-md">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por código, descrição ou original..."
-              className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none text-xs"
+              className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 text-xs shadow-sm dark:shadow-none"
             />
           </div>
           <Button
@@ -330,8 +330,8 @@ export default function CadastroProduto() {
 
         {showForm ? (
           /* Formulário de Cadastro */
-          <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-5 space-y-5">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">
+          <div className="border border-slate-200 dark:border-slate-850 rounded-xl bg-white dark:bg-[#0e1626]/20 p-5 space-y-5 shadow-sm dark:shadow-none">
+            <h3 className="text-xs font-bold text-slate-750 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-850/80 pb-2">
               Cadastrar Nova Autopeça no Banco Local
             </h3>
 
@@ -339,35 +339,35 @@ export default function CadastroProduto() {
               {/* Informações Básicas */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">SKU / Código Interno *</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">SKU / Código Interno *</label>
                   <input
                     type="text"
                     required
                     value={codigo}
                     onChange={(e) => setCodigo(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="Ex: FLT-101"
                   />
                 </div>
                 <div className="md:col-span-2 space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Descrição *</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Descrição *</label>
                   <input
                     type="text"
                     required
                     value={descricao}
                     onChange={(e) => setDescricao(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="Ex: Filtro de Combustível Injeção"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Código Original *</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Código Original *</label>
                   <input
                     type="text"
                     required
                     value={codigoOriginal}
                     onChange={(e) => setCodigoOriginal(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="Ex: 5U0127177B"
                   />
                 </div>
@@ -396,102 +396,102 @@ export default function CadastroProduto() {
                   required
                 />
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Código Referência</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Código Referência</label>
                   <input
                     type="text"
                     value={referencia}
                     onChange={(e) => setReferencia(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="Ex: GI04/7"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Código Barras (EAN)</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Código Barras (EAN)</label>
                   <input
                     type="text"
                     value={codigoBarras}
                     onChange={(e) => setCodigoBarras(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="Ex: 789000000000"
                   />
                 </div>
               </div>
 
               {/* Financeiro / Custos */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-slate-850 pt-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-slate-200 dark:border-slate-850 pt-3">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Custo Compra (R$)</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Custo Compra (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={custoCompra}
                     onChange={(e) => setCustoCompra(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="0.00"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Custo Impostos (R$)</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Custo Impostos (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={custoImpostos}
                     onChange={(e) => setCustoImpostos(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="0.00"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Preço de Venda (R$)</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Preço de Venda (R$)</label>
                   <input
                     type="number"
                     step="0.01"
                     value={precoVenda}
                     onChange={(e) => setPrecoVenda(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="0.00"
                   />
                 </div>
               </div>
 
               {/* Estoque e Fiscal */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border-t border-slate-850 pt-3">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 border-t border-slate-200 dark:border-slate-850 pt-3">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Estoque Atual Inicial</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Estoque Atual Inicial</label>
                   <input
                     type="number"
                     value={estoqueAtual}
                     onChange={(e) => setEstoqueAtual(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="0"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Estoque Mínimo</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Estoque Mínimo</label>
                   <input
                     type="number"
                     value={estoqueMinimo}
                     onChange={(e) => setEstoqueMinimo(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="0"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">NCM Fiscal</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">NCM Fiscal</label>
                   <input
                     type="text"
                     value={ncm}
                     onChange={(e) => setNcm(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                     placeholder="Ex: 84212300"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Origem</label>
+                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Origem</label>
                   <select
                     value={origem}
                     onChange={(e) => setOrigem(Number(e.target.value))}
-                    className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                   >
                     <option value={0}>0 - Nacional</option>
                     <option value={1}>1 - Estrangeira (Importação direta)</option>
@@ -509,15 +509,15 @@ export default function CadastroProduto() {
           </div>
         ) : (
           /* Listagem dos Produtos */
-          <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-5 space-y-4">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">
+          <div className="border border-slate-200 dark:border-slate-850 rounded-xl bg-white dark:bg-[#0e1626]/20 p-5 space-y-4 shadow-sm dark:shadow-none">
+            <h3 className="text-xs font-bold text-slate-750 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-850/80 pb-2">
               Autopeças no Banco Local
             </h3>
 
             <div className="overflow-x-auto text-xs">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-850 text-slate-500">
+                  <tr className="border-b border-slate-200 dark:border-slate-850 text-slate-550 dark:text-slate-500">
                     <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px]">Código</th>
                     <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px]">Descrição</th>
                     <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px]">Marca</th>
@@ -528,7 +528,7 @@ export default function CadastroProduto() {
                     <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px] text-right">Ações</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="text-slate-650 dark:text-slate-350">
                   {loading ? (
                     <tr>
                       <td colSpan={8} className="py-8 text-center text-slate-500">
@@ -545,31 +545,33 @@ export default function CadastroProduto() {
                     produtos.map((p) => {
                       const estoqueTotal = p.estoque?.reduce((acc, curr) => acc + curr.estoque_atual, 0) ?? 0;
                       return (
-                        <tr key={p.id} className="border-b border-slate-850/50 hover:bg-slate-900/10 text-slate-300">
-                          <td className="py-3 px-3 font-semibold text-indigo-400">{p.codigo}</td>
+                        <tr key={p.id} className="border-b border-slate-100 dark:border-slate-850/50 hover:bg-slate-50 dark:hover:bg-slate-900/10">
+                          <td className="py-3 px-3 font-semibold text-indigo-600 dark:text-indigo-400">{p.codigo}</td>
                           <td className="py-3 px-3">
-                            <div>{p.descricao}</div>
+                            <div className="font-semibold text-slate-700 dark:text-slate-200">{p.descricao}</div>
                             {p.descricao_complementar && (
-                              <div className="text-[10px] text-slate-500">{p.descricao_complementar}</div>
+                              <div className="text-[10px] text-slate-450 dark:text-slate-500">{p.descricao_complementar}</div>
                             )}
                           </td>
-                          <td className="py-3 px-3 text-slate-400">{p.marca_nome || "-"}</td>
-                          <td className="py-3 px-3 text-slate-400">{p.grupo_descricao || "-"}</td>
-                          <td className="py-3 px-3 font-mono text-slate-500">{p.codigo_original}</td>
+                          <td className="py-3 px-3 text-slate-600 dark:text-slate-400">{p.marca_nome || "-"}</td>
+                          <td className="py-3 px-3 text-slate-600 dark:text-slate-400">{p.grupo_descricao || "-"}</td>
+                          <td className="py-3 px-3 font-mono text-slate-500 dark:text-slate-500">{p.codigo_original}</td>
                           <td className="py-3 px-3">
                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              estoqueTotal > 0 ? "bg-emerald-950/20 text-emerald-450 border border-emerald-900/30" : "bg-rose-950/20 text-rose-450 border border-rose-900/30"
+                              estoqueTotal > 0 
+                                ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30" 
+                                : "bg-rose-50 dark:bg-rose-950/20 text-rose-650 dark:text-rose-450 border border-rose-200 dark:border-rose-900/30"
                             }`}>
                               {estoqueTotal} un
                             </span>
                           </td>
-                          <td className="py-3 px-3 font-medium text-emerald-400">
+                          <td className="py-3 px-3 font-semibold text-emerald-600 dark:text-emerald-400">
                             {p.preco?.preco_venda ? `R$ ${p.preco.preco_venda.toFixed(2)}` : "R$ 0,00"}
                           </td>
                           <td className="py-3 px-3 text-right">
                             <button
                               onClick={() => p.id && handleDeletar(p.id)}
-                              className="text-rose-500 hover:text-rose-400 font-bold px-2 py-1 transition-colors cursor-pointer"
+                              className="text-rose-600 hover:text-rose-500 dark:text-rose-500 dark:hover:text-rose-400 font-bold px-2 py-1 transition-colors cursor-pointer"
                             >
                               Excluir
                             </button>
