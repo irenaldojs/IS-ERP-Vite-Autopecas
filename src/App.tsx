@@ -114,6 +114,18 @@ function App() {
     [productSearchQuery]
   );
 
+  const activeStaffBySector = useMemo(() => {
+    const activeUsers = usuarios.filter((u) => u.ativo);
+    const groups: { [key: string]: number } = {};
+    activeUsers.forEach((u) => {
+      groups[u.cargo] = (groups[u.cargo] || 0) + 1;
+    });
+    return {
+      total: activeUsers.length,
+      sectors: Object.entries(groups).map(([name, count]) => ({ name, count })),
+    };
+  }, []);
+
   const subtotalSale = activeSaleItems.reduce((sum, item) => sum + item.quantidade * item.preco_unitario, 0);
   const totalSale = Math.max(0, subtotalSale - discountValue);
 
@@ -474,26 +486,67 @@ function App() {
           <Route
             path="/"
             element={
-              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-                {[
-                  { id: "vendas", label: "Vendas", icon: ShoppingCart },
-                  { id: "caixa", label: "Caixa", icon: Wallet },
-                  { id: "produto", label: "Produtos", icon: Box },
-                  { id: "estoque", label: "Estoque", icon: Archive },
-                  { id: "garantia", label: "Garantia", icon: ShieldCheck },
-                  { id: "entregas", label: "Entregas", icon: Truck },
-                  { id: "financas", label: "Finanças", icon: DollarSign },
-                  { id: "faturamento", label: "Faturamento", icon: Receipt },
-                  { id: "gerencia", label: "Gerência", icon: BarChart3 },
-                ].map((module) => (
-                  <ModuleCard
-                    key={module.id}
-                    title={module.label}
-                    icon={module.icon}
-                    onClick={() => handleSelectModule(module.id)}
-                    description={`Acesse o módulo de ${module.label.toLowerCase()}.`}
-                  />
-                ))}
+              <div className="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto">
+                {/* Welcome Header */}
+                <div className="mb-6 space-y-1">
+                  <h1 className="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+                    Módulos do Sistema
+                  </h1>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Selecione o módulo de trabalho desejado para iniciar as operações.
+                  </p>
+                </div>
+
+                {/* Main Content Grid: Modules + Sidebar */}
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 items-start">
+                  {/* Modules Grid (left columns) */}
+                  <div className="lg:col-span-3 grid gap-3.5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+                    {[
+                      { id: "vendas", label: "Vendas", icon: ShoppingCart, description: "Orçamentos, vendas e painel", color: "blue" },
+                      { id: "caixa", label: "Caixa", icon: Wallet, description: "Fluxo de caixa, emissão e sangrias", color: "green" },
+                      { id: "produto", label: "Produtos", icon: Box, description: "Cadastro de peças e fabricantes", color: "amber" },
+                      { id: "estoque", label: "Estoque", icon: Archive, description: "Controle de entradas e balanços", color: "emerald" },
+                      { id: "garantia", label: "Garantia", icon: ShieldCheck, description: "Trocas, devoluções e retornos", color: "red" },
+                      { id: "entregas", label: "Entregas", icon: Truck, description: "Roteirização, baias e frota", color: "cyan" },
+                      { id: "financas", label: "Finanças", icon: DollarSign, description: "Contas a pagar e receber", color: "teal" },
+                      { id: "faturamento", label: "Faturamento", icon: Receipt, description: "Emissão fiscal e regras tributárias", color: "rose" },
+                      { id: "gerencia", label: "Gerência", icon: BarChart3, description: "Configurações e auditorias", color: "violet" },
+                    ].map((module) => (
+                      <ModuleCard
+                        key={module.id}
+                        title={module.label}
+                        icon={module.icon}
+                        onClick={() => handleSelectModule(module.id)}
+                        description={module.description}
+                        color={module.color as any}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Active Staff Sidebar Widget (right column) */}
+                  <div className="bg-white dark:bg-[#0e1626]/20 border border-slate-200 dark:border-slate-800/60 rounded-xl p-4.5 flex flex-col shadow-sm dark:shadow-none">
+                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-150 dark:border-slate-800/40">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                        <Users className="h-4 w-4 text-indigo-500 dark:text-indigo-400" />
+                        Staff por Setor
+                      </h3>
+                      <span className="text-[10px] font-extrabold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20 px-2 py-0.5 rounded-full">
+                        {activeStaffBySector.total} Ativos
+                      </span>
+                    </div>
+
+                    <div className="space-y-3">
+                      {activeStaffBySector.sectors.map((sector) => (
+                        <div key={sector.name} className="flex items-center justify-between text-xs">
+                          <span className="text-slate-600 dark:text-slate-300 font-medium">{sector.name}</span>
+                          <span className="text-slate-500 dark:text-slate-400 font-bold bg-slate-50 dark:bg-[#0d1527]/40 border border-slate-200 dark:border-slate-800 px-2 py-0.5 rounded">
+                            {sector.count} {sector.count === 1 ? "ativo" : "ativos"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             }
           />

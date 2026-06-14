@@ -335,6 +335,12 @@ export const enderecos: Endereco[] = [
 export const usuarios: Usuario[] = [
   { id: 1, nome: "Marcos Vendedor", email: "marcos@loja.com", senha_hash: "hash", cargo: "Vendedor", perfil_acesso: "operador", ativo: true, data_criacao: "2026-01-01T00:00:00Z" },
   { id: 2, nome: "Juliana Gerente", email: "juliana@loja.com", senha_hash: "hash", cargo: "Gerente", perfil_acesso: "supervisor", ativo: true, data_criacao: "2026-01-01T00:00:00Z" },
+  { id: 3, nome: "Roberto Caixa", email: "roberto@loja.com", senha_hash: "hash", cargo: "Caixa", perfil_acesso: "operador", ativo: true, data_criacao: "2026-01-02T00:00:00Z" },
+  { id: 4, nome: "Carlos Estoque", email: "carlos@loja.com", senha_hash: "hash", cargo: "Estoque", perfil_acesso: "operador", ativo: true, data_criacao: "2026-01-03T00:00:00Z" },
+  { id: 5, nome: "Ana Entregas", email: "ana@loja.com", senha_hash: "hash", cargo: "Entregas", perfil_acesso: "operador", ativo: true, data_criacao: "2026-01-04T00:00:00Z" },
+  { id: 6, nome: "Bruno Garantia", email: "bruno@loja.com", senha_hash: "hash", cargo: "Garantia", perfil_acesso: "operador", ativo: true, data_criacao: "2026-01-05T00:00:00Z" },
+  { id: 7, nome: "Sandra Faturamento", email: "sandra@loja.com", senha_hash: "hash", cargo: "Faturamento", perfil_acesso: "operador", ativo: true, data_criacao: "2026-01-06T00:00:00Z" },
+  { id: 8, nome: "Paulo Inativo", email: "paulo@loja.com", senha_hash: "hash", cargo: "Vendedor", perfil_acesso: "operador", ativo: false, data_criacao: "2026-01-07T00:00:00Z" },
 ];
 
 export const mocks = {
