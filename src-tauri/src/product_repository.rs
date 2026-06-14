@@ -154,8 +154,8 @@ impl ProductRepository {
             if let Some(apps) = produto.aplicacoes {
                 for app in apps {
                     tx.execute(
-                        "INSERT INTO produto_aplicacao (lista_id, modelo, ano_inicial, ano_final, detalhes) VALUES (?1, ?2, ?3, ?4, ?5)",
-                        params![app_id, app.modelo, app.ano_inicial, app.ano_final, app.detalhes],
+                        "INSERT INTO produto_aplicacao (lista_id, montadora_id, modelo, ano_inicial, ano_final, detalhes) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+                        params![app_id, app.montadora_id, app.modelo, app.ano_inicial, app.ano_final, app.detalhes],
                     ).map_err(|e| e.to_string())?;
                 }
             }
@@ -329,8 +329,8 @@ impl ProductRepository {
             if let Some(apps) = produto.aplicacoes {
                 for app in apps {
                     tx.execute(
-                        "INSERT INTO produto_aplicacao (lista_id, modelo, ano_inicial, ano_final, detalhes) VALUES (?1, ?2, ?3, ?4, ?5)",
-                        params![app_id, app.modelo, app.ano_inicial, app.ano_final, app.detalhes],
+                        "INSERT INTO produto_aplicacao (lista_id, montadora_id, modelo, ano_inicial, ano_final, detalhes) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+                        params![app_id, app.montadora_id, app.modelo, app.ano_inicial, app.ano_final, app.detalhes],
                     ).map_err(|e| e.to_string())?;
                 }
             }
@@ -348,8 +348,8 @@ impl ProductRepository {
             if let Some(apps) = produto.aplicacoes {
                 for app in apps {
                     tx.execute(
-                        "INSERT INTO produto_aplicacao (lista_id, modelo, ano_inicial, ano_final, detalhes) VALUES (?1, ?2, ?3, ?4, ?5)",
-                        params![new_list_id, app.modelo, app.ano_inicial, app.ano_final, app.detalhes],
+                        "INSERT INTO produto_aplicacao (lista_id, montadora_id, modelo, ano_inicial, ano_final, detalhes) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+                        params![new_list_id, app.montadora_id, app.modelo, app.ano_inicial, app.ano_final, app.detalhes],
                     ).map_err(|e| e.to_string())?;
                 }
             }
@@ -626,7 +626,7 @@ impl ProductRepository {
         if let Some(lista_id) = produto.aplicacao_lista_id {
             let mut app_stmt = conn
                 .prepare(
-                    "SELECT id, modelo, ano_inicial, ano_final, detalhes
+                    "SELECT id, montadora_id, modelo, ano_inicial, ano_final, detalhes
                      FROM produto_aplicacao WHERE lista_id = ?1",
                 )
                 .map_err(|e| e.to_string())?;
@@ -636,10 +636,11 @@ impl ProductRepository {
                     Ok(ProdutoAplicacao {
                         id: Some(row.get(0)?),
                         lista_id,
-                        modelo: row.get(1)?,
-                        ano_inicial: row.get(2)?,
-                        ano_final: row.get(3)?,
-                        detalhes: row.get(4)?,
+                        montadora_id: row.get(1)?,
+                        modelo: row.get(2)?,
+                        ano_inicial: row.get(3)?,
+                        ano_final: row.get(4)?,
+                        detalhes: row.get(5)?,
                     })
                 })
                 .map_err(|e| e.to_string())?;

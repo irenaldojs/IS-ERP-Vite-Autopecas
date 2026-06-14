@@ -85,43 +85,43 @@ export const produtoAplicacaoListas: ProdutoAplicacaoLista[] = [
   {
     id: 1,
     aplicaoes: [
-      { id: 1, lista_id: 1, modelo: "Gol", ano: "2013-2018", detalhes: "1.0/1.6 Aspirado" },
-      { id: 2, lista_id: 1, modelo: "Uno", ano: "2010-2014", detalhes: "1.0/1.4 Fire" },
+      { id: 1, lista_id: 1, montadora_id: 1, modelo: "Gol", ano: "2013-2018", detalhes: "1.0/1.6 Aspirado" },
+      { id: 2, lista_id: 1, montadora_id: 2, modelo: "Uno", ano: "2010-2014", detalhes: "1.0/1.4 Fire" },
     ],
   },
   {
     id: 2,
     aplicaoes: [
-      { id: 3, lista_id: 2, modelo: "Onix", ano: "2013-2019", detalhes: "1.0/1.4 8V" },
-      { id: 4, lista_id: 2, modelo: "Gol", ano: "2016-2022", detalhes: "1.0 TSI" },
+      { id: 3, lista_id: 2, montadora_id: 3, modelo: "Onix", ano: "2013-2019", detalhes: "1.0/1.4 8V" },
+      { id: 4, lista_id: 2, montadora_id: 1, modelo: "Gol", ano: "2016-2022", detalhes: "1.0 TSI" },
     ],
   },
   {
     id: 3,
     aplicaoes: [
-      { id: 5, lista_id: 3, modelo: "Toro", ano: "2016-2023", detalhes: "2.0 Diesel" },
-      { id: 6, lista_id: 3, modelo: "Ranger", ano: "2012-2022", detalhes: "3.2 Diesel" },
+      { id: 5, lista_id: 3, montadora_id: 2, modelo: "Toro", ano: "2016-2023", detalhes: "2.0 Diesel" },
+      { id: 6, lista_id: 3, montadora_id: 4, modelo: "Ranger", ano: "2012-2022", detalhes: "3.2 Diesel" },
     ],
   },
   {
     id: 4,
     aplicaoes: [
-      { id: 7, lista_id: 4, modelo: "Corolla", ano: "2019-2024", detalhes: "1.8 Flex" },
-      { id: 8, lista_id: 4, modelo: "Civic", ano: "2012-2016", detalhes: "2.0 16V" },
+      { id: 7, lista_id: 4, montadora_id: 7, modelo: "Corolla", ano: "2019-2024", detalhes: "1.8 Flex" },
+      { id: 8, lista_id: 4, montadora_id: 6, modelo: "Civic", ano: "2012-2016", detalhes: "2.0 16V" },
     ],
   },
   {
     id: 5,
     aplicaoes: [
-      { id: 9, lista_id: 5, modelo: "Virtus", ano: "2020-2024", detalhes: "1.0 TSI" },
-      { id: 10, lista_id: 5, modelo: "Sandero", ano: "2015-2020", detalhes: "1.0 SCe" },
+      { id: 9, lista_id: 5, montadora_id: 1, modelo: "Virtus", ano: "2020-2024", detalhes: "1.0 TSI" },
+      { id: 10, lista_id: 5, montadora_id: 5, modelo: "Sandero", ano: "2015-2020", detalhes: "1.0 SCe" },
     ],
   },
   {
     id: 6,
     aplicaoes: [
-      { id: 11, lista_id: 6, modelo: "S10", ano: "2012-2018", detalhes: "2.5 Flex" },
-      { id: 12, lista_id: 6, modelo: "HR-V", ano: "2016-2022", detalhes: "1.8 Flex" },
+      { id: 11, lista_id: 6, montadora_id: 3, modelo: "S10", ano: "2012-2018", detalhes: "2.5 Flex" },
+      { id: 12, lista_id: 6, montadora_id: 6, modelo: "HR-V", ano: "2016-2022", detalhes: "1.8 Flex" },
     ],
   },
 ];

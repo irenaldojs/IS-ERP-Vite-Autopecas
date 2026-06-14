@@ -58,6 +58,7 @@ export interface ProdutoAplicacao {
   /** Mapeamento detalhado de quais carros aceitam a peça */
   id: number;
   lista_id: number;
+  montadora_id: number;
   modelo: string;
   ano_inicial?: number | null;
   ano_final?: number | null;

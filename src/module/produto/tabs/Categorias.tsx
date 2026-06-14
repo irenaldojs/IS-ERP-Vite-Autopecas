@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@fluentui/react-components";
-import { Edit, X } from "lucide-react";
+import { Edit } from "lucide-react";
 import { ProductService } from "@/services/product.service";
 import { ProdutoCategoria } from "@/types/products.entities";
 
@@ -58,8 +58,8 @@ export default function Categorias() {
     <div className="flex-grow flex flex-col space-y-4 h-full min-h-0 overflow-y-auto pr-1">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start max-w-6xl mx-auto w-full">
         {/* Formulário de Cadastro / Edição */}
-        <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-5 space-y-4 w-full">
-          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">
+        <div className="border border-slate-200 dark:border-slate-850 rounded-xl bg-white dark:bg-[#0e1626]/20 p-5 space-y-4 w-full shadow-sm dark:shadow-none">
+          <h4 className="text-xs font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-850/80 pb-2">
             {editingCategoria ? "Editar Categoria" : "Nova Categoria"}
           </h4>
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
@@ -71,7 +71,7 @@ export default function Categorias() {
                 type="text"
                 value={descricao}
                 onChange={(e) => setDescricao(e.target.value)}
-                className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                 placeholder="Ex: Motor"
                 required
               />
@@ -90,20 +90,20 @@ export default function Categorias() {
         </div>
 
         {/* Listagem */}
-        <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-5 space-y-4 md:col-span-2 w-full">
-          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">
+        <div className="border border-slate-200 dark:border-slate-850 rounded-xl bg-white dark:bg-[#0e1626]/20 p-5 space-y-4 md:col-span-2 w-full shadow-sm dark:shadow-none">
+          <h4 className="text-xs font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-850/80 pb-2">
             Categorias Cadastradas
           </h4>
           <div className="overflow-x-auto text-xs">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-850 text-slate-500">
+                <tr className="border-b border-slate-200 dark:border-slate-850 text-slate-500">
                   <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px]">ID</th>
                   <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px]">Descrição</th>
                   <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px] text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-slate-650 dark:text-slate-300">
                 {categorias.length === 0 ? (
                   <tr>
                     <td colSpan={3} className="py-4 text-center text-slate-500">
@@ -112,13 +112,13 @@ export default function Categorias() {
                   </tr>
                 ) : (
                   categorias.map((cat) => (
-                    <tr key={cat.id} className="border-b border-slate-850/50 hover:bg-slate-900/10 text-slate-300">
-                      <td className="py-2 px-3">{cat.id}</td>
-                      <td className="py-2 px-3">{cat.descricao}</td>
+                    <tr key={cat.id} className="border-b border-slate-100 dark:border-slate-850/50 hover:bg-slate-50 dark:hover:bg-slate-900/10">
+                      <td className="py-2 px-3 font-mono">{cat.id}</td>
+                      <td className="py-2 px-3 font-semibold text-slate-700 dark:text-slate-200">{cat.descricao}</td>
                       <td className="py-2 px-3 text-right">
                         <button
                           onClick={() => startEdit(cat)}
-                          className="p-1 hover:text-blue-400 rounded text-slate-500 hover:bg-slate-800/40 transition-colors"
+                          className="p-1 hover:text-blue-600 dark:hover:text-blue-400 rounded text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
                           title="Editar"
                         >
                           <Edit size={14} />

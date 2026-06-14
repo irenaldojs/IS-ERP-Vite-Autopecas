@@ -24,6 +24,7 @@ pub struct ProdutoFabricante {
 pub struct ProdutoAplicacao {
     pub id: Option<i64>,
     pub lista_id: i64,
+    pub montadora_id: i64,
     pub modelo: String,
     pub ano_inicial: Option<i64>,
     pub ano_final: Option<i64>,
@@ -146,3 +147,14 @@ pub struct Produto {
     pub aplicacoes: Option<Vec<ProdutoAplicacao>>,
     pub imagens: Option<Vec<Imagem>>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LogEntry {
+    pub id: Option<i64>,
+    pub timestamp: String,
+    pub nivel: String,
+    pub contexto: String,
+    pub query: Option<String>,
+    pub erro: String,
+}
+

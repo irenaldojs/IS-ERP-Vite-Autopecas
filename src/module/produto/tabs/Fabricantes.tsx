@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@fluentui/react-components";
-import { Edit, X, AlertTriangle } from "lucide-react";
+import { Edit, AlertTriangle } from "lucide-react";
 import { ProductService } from "@/services/product.service";
 import { ProdutoFabricante } from "@/types/products.entities";
 
@@ -74,8 +74,8 @@ export default function Fabricantes() {
     <div className="flex-grow flex flex-col h-full min-h-0 overflow-hidden pr-1">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start max-w-6xl mx-auto w-full h-full min-h-0">
         {/* Formulário de Cadastro / Edição */}
-        <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-5 space-y-4 w-full">
-          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-850/80 pb-2">
+        <div className="border border-slate-200 dark:border-slate-850 rounded-xl bg-white dark:bg-[#0e1626]/20 p-5 space-y-4 w-full shadow-sm dark:shadow-none">
+          <h4 className="text-xs font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-850/80 pb-2">
             {editingFabricante ? "Editar Fabricante" : "Novo Fabricante"}
           </h4>
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
@@ -87,7 +87,7 @@ export default function Fabricantes() {
                 type="text"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                className="w-full px-3 py-1.5 bg-[#070a13] border border-slate-800 rounded-lg text-slate-300 focus:outline-none"
+                className="w-full px-3 py-1.5 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
                 placeholder="Ex: Bosch"
                 required
               />
@@ -106,22 +106,22 @@ export default function Fabricantes() {
         </div>
 
         {/* Listagem */}
-        <div className="border border-slate-850 rounded-xl bg-[#0e1626]/20 p-5 space-y-4 md:col-span-2 w-full h-full flex flex-col min-h-0">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-850/80 pb-2">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+        <div className="border border-slate-200 dark:border-slate-850 rounded-xl bg-white dark:bg-[#0e1626]/20 p-5 space-y-4 md:col-span-2 w-full h-full flex flex-col min-h-0 shadow-sm dark:shadow-none">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200 dark:border-slate-850/80 pb-2">
+            <h4 className="text-xs font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wider">
               Fabricantes Cadastrados
             </h4>
           </div>
           <div className="flex-grow overflow-y-auto text-xs min-h-0 pr-1">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-850 text-slate-500 sticky top-0 bg-[#0c101d]">
+                <tr className="border-b border-slate-200 dark:border-slate-850 text-slate-500 sticky top-0 bg-slate-50 dark:bg-[#0c101d] z-10">
                   <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px]">ID</th>
                   <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px]">Nome</th>
                   <th className="py-2 px-3 font-semibold uppercase tracking-wider text-[9px] text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-slate-650 dark:text-slate-300">
                 {fabricantesFiltrados.length === 0 ? (
                   <tr>
                     <td colSpan={3} className="py-4 text-center text-slate-500">
@@ -130,13 +130,13 @@ export default function Fabricantes() {
                   </tr>
                 ) : (
                   fabricantesFiltrados.map((fab) => (
-                    <tr key={fab.id} className="border-b border-slate-850/50 hover:bg-slate-900/10 text-slate-300">
-                      <td className="py-2 px-3">{fab.id}</td>
-                      <td className="py-2 px-3">{fab.nome}</td>
+                    <tr key={fab.id} className="border-b border-slate-100 dark:border-slate-850/50 hover:bg-slate-50 dark:hover:bg-slate-900/10">
+                      <td className="py-2 px-3 font-mono">{fab.id}</td>
+                      <td className="py-2 px-3 font-semibold text-slate-700 dark:text-slate-200">{fab.nome}</td>
                       <td className="py-2 px-3 text-right">
                         <button
                           onClick={() => startEdit(fab)}
-                          className="p-1 hover:text-blue-400 rounded text-slate-500 hover:bg-slate-800/40 transition-colors"
+                          className="p-1 hover:text-blue-650 dark:hover:text-blue-400 rounded text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
                           title="Editar"
                         >
                           <Edit size={14} />
@@ -154,17 +154,17 @@ export default function Fabricantes() {
       {/* Modal de Confirmação para Fabricantes Semelhantes */}
       {showConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
-          <div className="border border-slate-800 rounded-xl bg-[#0b101d] p-6 space-y-6 max-w-md w-full shadow-2xl animate-scale-up">
+          <div className="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-[#0b101d] p-6 space-y-6 max-w-md w-full shadow-2xl animate-scale-up">
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-amber-500/10 rounded-lg text-amber-500">
+              <div className="p-2 bg-amber-500/10 rounded-lg text-amber-600 dark:text-amber-500">
                 <AlertTriangle size={20} />
               </div>
               <div className="space-y-2">
-                <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                   Fabricante Semelhante Encontrado
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Já existem fabricantes cadastrados contendo <span className="text-blue-400 font-semibold">"{nome}"</span> na listagem. Tem certeza que deseja cadastrar este novo fabricante?
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Já existem fabricantes cadastrados contendo <span className="text-blue-650 dark:text-blue-400 font-semibold">"{nome}"</span> na listagem. Tem certeza que deseja cadastrar este novo fabricante?
                 </p>
               </div>
             </div>

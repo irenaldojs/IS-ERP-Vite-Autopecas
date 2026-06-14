@@ -1,6 +1,6 @@
 import { useMemo, useEffect } from "react";
 import { useLocation, useNavigate, Routes, Route, Navigate } from "react-router-dom";
-import { FluentProvider, webDarkTheme, webLightTheme } from "@fluentui/react-components";
+import { FluentProvider, webDarkTheme, teamsLightTheme } from "@fluentui/react-components";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ModuleCard } from "@/components/dashboard/ModuleCard";
 import { ModuleTabContainer } from "@/components/layout/ModuleTabContainer";
@@ -55,6 +55,8 @@ import CadastroProduto from "@/module/produto/tabs/CadastroProduto";
 import Categorias from "@/module/produto/tabs/Categorias";
 import Grupos from "@/module/produto/tabs/Grupos";
 import Fabricantes from "@/module/produto/tabs/Fabricantes";
+import Auditoria from "@/module/gerencia/tabs/Auditoria";
+
 
 
 function App() {
@@ -476,11 +478,11 @@ function App() {
     { id: "dashboard", label: "Dashboard", icon: LayoutGrid, component: createPlaceholderTab("Dashboard") },
     { id: "usuarios", label: "Usuários", icon: Users, component: createPlaceholderTab("Usuários") },
     { id: "configuracoes", label: "Configurações", icon: Settings, component: createPlaceholderTab("Configurações") },
-    { id: "auditoria", label: "Auditoria", icon: Activity, component: createPlaceholderTab("Auditoria") },
+    { id: "auditoria", label: "Auditoria", icon: Activity, component: <Auditoria /> },
   ];
 
   return (
-    <FluentProvider theme={theme === "dark" ? webDarkTheme : webLightTheme} style={{ height: "100%", width: "100%", display: "flex", flexDirection: "column" }}>
+    <FluentProvider theme={theme === "dark" ? webDarkTheme : teamsLightTheme} style={{ height: "100%", width: "100%", display: "flex", flexDirection: "column" }}>
       <DashboardLayout activeModule={activeModule} onSelectModule={handleSelectModule} onHomeClick={handleHomeClick}>
         <Routes>
           <Route
@@ -503,14 +505,14 @@ function App() {
                   <div className="lg:col-span-3 grid gap-3.5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
                     {[
                       { id: "vendas", label: "Vendas", icon: ShoppingCart, description: "Orçamentos, vendas e painel", color: "blue" },
-                      { id: "caixa", label: "Caixa", icon: Wallet, description: "Fluxo de caixa, emissão e sangrias", color: "green" },
-                      { id: "produto", label: "Produtos", icon: Box, description: "Cadastro de peças e fabricantes", color: "amber" },
-                      { id: "estoque", label: "Estoque", icon: Archive, description: "Controle de entradas e balanços", color: "emerald" },
-                      { id: "garantia", label: "Garantia", icon: ShieldCheck, description: "Trocas, devoluções e retornos", color: "red" },
-                      { id: "entregas", label: "Entregas", icon: Truck, description: "Roteirização, baias e frota", color: "cyan" },
-                      { id: "financas", label: "Finanças", icon: DollarSign, description: "Contas a pagar e receber", color: "teal" },
-                      { id: "faturamento", label: "Faturamento", icon: Receipt, description: "Emissão fiscal e regras tributárias", color: "rose" },
-                      { id: "gerencia", label: "Gerência", icon: BarChart3, description: "Configurações e auditorias", color: "violet" },
+                      { id: "caixa", label: "Caixa", icon: Wallet, description: "Fluxo de caixa, emissão e sangrias", color: "emerald" },
+                      { id: "produto", label: "Produtos", icon: Box, description: "Cadastro de peças e fabricantes", color: "slate" },
+                      { id: "estoque", label: "Estoque", icon: Archive, description: "Controle de entradas e balanços", color: "slate" },
+                      { id: "garantia", label: "Garantia", icon: ShieldCheck, description: "Trocas, devoluções e retornos", color: "amber" },
+                      { id: "entregas", label: "Entregas", icon: Truck, description: "Roteirização, baias e frota", color: "slate" },
+                      { id: "financas", label: "Finanças", icon: DollarSign, description: "Contas a pagar e receber", color: "emerald" },
+                      { id: "faturamento", label: "Faturamento", icon: Receipt, description: "Emissão fiscal e regras tributárias", color: "slate" },
+                      { id: "gerencia", label: "Gerência", icon: BarChart3, description: "Configurações e auditorias", color: "blue" },
                     ].map((module) => (
                       <ModuleCard
                         key={module.id}

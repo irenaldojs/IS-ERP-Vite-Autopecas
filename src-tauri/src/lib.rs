@@ -33,6 +33,8 @@ pub fn run() {
             commands::criar_fabricante,
             commands::listar_fabricantes,
             commands::atualizar_fabricante,
+            commands::listar_logs,
+            commands::limpar_logs,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

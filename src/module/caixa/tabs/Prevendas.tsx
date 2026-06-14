@@ -13,20 +13,20 @@ export default function Prevendas(props: any) {
           <input
             type="text"
             placeholder="Buscar pré-venda pendente..."
-            className="w-full pl-9 pr-4 py-1.5 bg-[#0e1626]/40 border border-slate-800 rounded-lg text-xs text-slate-355 focus:outline-none focus:border-indigo-500"
+            className="w-full pl-9 pr-4 py-1.5 bg-white dark:bg-[#0e1626]/40 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm dark:shadow-none"
           />
         </div>
-        <div className="text-[10px] text-slate-400 bg-[#0e1626]/20 px-3 py-1.5 rounded-lg border border-slate-800">
-          Estação de Caixa: <strong className="text-slate-200">Terminal 01</strong>
+        <div className="text-[10px] text-slate-500 dark:text-slate-400 bg-white dark:bg-[#0e1626]/20 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none">
+          Estação de Caixa: <strong className="text-slate-700 dark:text-slate-200">Terminal 01</strong>
         </div>
       </div>
 
       {/* Pending pre-sales table */}
-      <div className="flex-1 border border-slate-850 rounded-xl bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col">
+      <div className="flex-1 border border-slate-200 dark:border-slate-850 rounded-xl bg-white dark:bg-[#0e1626]/20 overflow-hidden min-h-0 flex flex-col shadow-sm dark:shadow-none">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-slate-850 bg-[#0e1626]/60 text-slate-450 font-semibold">
+              <tr className="border-b border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-[#0e1626]/60 text-slate-650 dark:text-slate-400 font-semibold">
                 <th className="p-3">Código PV</th>
                 <th className="p-3">Cliente</th>
                 <th className="p-3">Vendedor</th>
@@ -35,16 +35,16 @@ export default function Prevendas(props: any) {
                 <th className="p-3 text-center">Ação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-850 text-slate-300">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-850 text-slate-600 dark:text-slate-300">
               {preSales
                 .filter((pv: any) => pv.status === "Pendente")
                 .map((pv: any) => (
-                  <tr key={pv.id} className="hover:bg-[#16223f]/10">
-                    <td className="p-3 font-mono text-indigo-400">{pv.id}</td>
-                    <td className="p-3 font-semibold text-slate-200">{pv.client}</td>
+                  <tr key={pv.id} className="hover:bg-slate-50/80 dark:hover:bg-[#16223f]/10 border-b border-slate-100 dark:border-slate-850">
+                    <td className="p-3 font-mono text-indigo-650 dark:text-indigo-400">{pv.id}</td>
+                    <td className="p-3 font-semibold text-slate-850 dark:text-slate-200">{pv.client}</td>
                     <td className="p-3">{pv.seller}</td>
                     <td className="p-3">{pv.date}</td>
-                    <td className="p-3 text-right font-bold text-slate-100">R$ {pv.total.toFixed(2)}</td>
+                    <td className="p-3 text-right font-bold text-slate-800 dark:text-slate-100 font-mono">R$ {pv.total.toFixed(2)}</td>
                     <td className="p-3 text-center">
                       <Button
                         onClick={() => handleReceivePreSale(pv.id)}
