@@ -48,23 +48,23 @@
 }
 
 :root {
-    --background: oklch(0.975 0.005 240); /* Softer slate light gray */
+    --background: #e2e8f0; /* Slate 200 - body background */
     --foreground: oklch(0.25 0.01 240);
-    --card: oklch(0.99 0.003 240);
+    --card: #ffffff;
     --card-foreground: oklch(0.25 0.01 240);
-    --popover: oklch(0.99 0.003 240);
+    --popover: #ffffff;
     --popover-foreground: oklch(0.25 0.01 240);
     --primary: oklch(0.205 0 0);
     --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.93 0.01 240);
+    --secondary: #94a3b8;
     --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.93 0.01 240);
+    --muted: #94a3b8;
     --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.93 0.01 240);
+    --accent: #94a3b8;
     --accent-foreground: oklch(0.205 0 0);
     --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.89 0.01 240);
-    --input: oklch(0.89 0.01 240);
+    --border: #94a3b8;
+    --input: #94a3b8;
     --ring: oklch(0.708 0 0);
     --chart-1: oklch(0.87 0 0);
     --chart-2: oklch(0.556 0 0);
@@ -72,29 +72,29 @@
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
     --radius: 0.625rem;
-    --sidebar: oklch(0.96 0.005 240);
+    --sidebar: var(--colorNeutralForegroundDisabled); /* Disabled foreground color from Fluent UI as background */
     --sidebar-foreground: oklch(0.25 0.01 240);
     --sidebar-primary: oklch(0.205 0 0);
     --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.93 0.01 240);
+    --sidebar-accent: #64748b;
     --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.89 0.01 240);
+    --sidebar-border: #64748b;
     --sidebar-ring: oklch(0.708 0 0);
 
     /* Fluent UI Light Theme customization for eye comfort */
-    --colorNeutralBackground1: #f8fafc; /* Slate 50 - very soft primary background */
-    --colorNeutralBackground2: #f1f5f9; /* Slate 100 - secondary background */
-    --colorNeutralBackground3: #e2e8f0; /* Slate 200 - tertiary background */
-    --colorNeutralBackground4: #cbd5e1; /* Slate 300 */
-    --colorNeutralBackground5: #e2e8f0;
+    --colorNeutralBackground1: #e2e8f0; /* Slate 200 - body background */
+    --colorNeutralBackground2: var(--colorNeutralForegroundDisabled); /* Sidebar & Topbar using the requested Fluent UI token */
+    --colorNeutralBackground3: #cbd5e1; /* Slate 300 - tertiary background */
+    --colorNeutralBackground4: #64748b; /* Slate 500 */
+    --colorNeutralBackground5: var(--colorNeutralForegroundDisabled);
     --colorNeutralBackground6: #ffffff;
     
-    --colorNeutralBackground1Hover: #f1f5f9;
-    --colorNeutralBackground1Selected: #e2e8f0;
-    --colorNeutralBackground2Hover: #e2e8f0;
-    --colorNeutralBackground2Selected: #cbd5e1;
-    --colorNeutralBackground3Hover: #cbd5e1;
-    --colorNeutralBackground3Selected: #94a3b8;
+    --colorNeutralBackground1Hover: #cbd5e1;
+    --colorNeutralBackground1Selected: #94a3b8;
+    --colorNeutralBackground2Hover: #64748b;
+    --colorNeutralBackground2Selected: #475569;
+    --colorNeutralBackground3Hover: #475569;
+    --colorNeutralBackground3Selected: #334155;
 }
 
 .dark {
@@ -139,16 +139,26 @@
   }
   body {
     @apply bg-background text-foreground;
-    color-scheme: dark;
+    color-scheme: light;
   }
   html {
     @apply font-sans;
+    color-scheme: light;
+  }
+  .dark body, .dark html {
     color-scheme: dark;
   }
   select {
+    color-scheme: light;
+  }
+  .dark select {
     color-scheme: dark;
   }
   select option {
+    background-color: #ffffff;
+    color: #334155;
+  }
+  .dark select option {
     background-color: rgb(7, 10, 19);
     color: #e2e8f0;
   }
