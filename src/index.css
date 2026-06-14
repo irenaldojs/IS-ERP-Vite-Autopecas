@@ -45,6 +45,8 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+    --color-slate-200: #cbd5e1; /* Remap for higher contrast borders in light mode */
+    --color-slate-100: #e2e8f0; /* Remap for visible table rows in light mode */
 }
 
 :root {
@@ -82,12 +84,14 @@
     --sidebar-ring: oklch(0.708 0 0);
 
     /* Fluent UI Light Theme customization for eye comfort */
-    --colorNeutralBackground1: #e2e8f0; /* Slate 200 - body background */
+    --colorNeutralBackground1: #ffffff; /* White card/table background for high contrast */
     --colorNeutralBackground2: var(--colorNeutralForegroundDisabled); /* Sidebar & Topbar using the requested Fluent UI token */
     --colorNeutralBackground3: #cbd5e1; /* Slate 300 - tertiary background */
     --colorNeutralBackground4: #64748b; /* Slate 500 */
     --colorNeutralBackground5: var(--colorNeutralForegroundDisabled);
     --colorNeutralBackground6: #ffffff;
+    
+    --colorNeutralStroke1: #cbd5e1; /* Slate 300 border for clear separation */
     
     --colorNeutralBackground1Hover: #cbd5e1;
     --colorNeutralBackground1Selected: #94a3b8;
