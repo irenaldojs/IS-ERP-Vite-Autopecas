@@ -694,15 +694,15 @@ export default function Orcamento(props: Props) {
                 height: "42px",
                 backgroundColor: "var(--colorPaletteGreenBackground3)",
                 borderColor: "var(--colorPaletteGreenBorder2)",
-                color: "var(--colorPaletteGreenForeground1)",
+                color: "#ffffff",
                 fontWeight: "bold"
               }}
               title="Vender (Pré-Venda)"
               icon={<CartRegular />}
             >
               <div className="flex justify-between items-center w-full">
-                <span>Fechar Venda</span>
-                <span className="text-[9px] font-mono bg-[var(--colorPaletteGreenBackground1)] border border-[var(--colorPaletteGreenBorder1)] text-[var(--colorPaletteGreenForeground1)] px-1.5 py-0.5 rounded leading-none select-none ml-2">F5</span>
+                <span className="text-white">Fechar Venda</span>
+                <span className="text-[9px] font-mono bg-white/20 border border-white/30 text-white px-1.5 py-0.5 rounded leading-none select-none ml-2">F5</span>
               </div>
             </Button>
 
