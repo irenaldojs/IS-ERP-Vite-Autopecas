@@ -3,7 +3,9 @@ import {
   Produto, 
   ProdutoCategoria, 
   ProdutoGrupo, 
-  ProdutoFabricante 
+  ProdutoFabricante,
+  CarroMontadora,
+  CarroModelo
 } from '../types/products.entities';
 
 export const ProductService = {
@@ -63,5 +65,37 @@ export const ProductService = {
 
   async atualizarFabricante(id: number, nome: string): Promise<void> {
     return await invoke<void>('atualizar_fabricante', { id, nome });
+  },
+
+  async criarMontadora(nome: string): Promise<number> {
+    return await invoke<number>('criar_montadora', { nome });
+  },
+
+  async listarMontadoras(): Promise<CarroMontadora[]> {
+    return await invoke<CarroMontadora[]>('listar_montadoras');
+  },
+
+  async atualizarMontadora(id: number, nome: string): Promise<void> {
+    return await invoke<void>('atualizar_montadora', { id, nome });
+  },
+
+  async deletarMontadora(id: number): Promise<void> {
+    return await invoke<void>('deletar_montadora', { id });
+  },
+
+  async criarModelo(montadoraId: number, nome: string): Promise<number> {
+    return await invoke<number>('criar_modelo', { montadoraId, nome });
+  },
+
+  async listarModelos(): Promise<CarroModelo[]> {
+    return await invoke<CarroModelo[]>('listar_modelos');
+  },
+
+  async atualizarModelo(id: number, montadoraId: number, nome: string): Promise<void> {
+    return await invoke<void>('atualizar_modelo', { id, montadoraId, nome });
+  },
+
+  async deletarModelo(id: number): Promise<void> {
+    return await invoke<void>('deletar_modelo', { id });
   }
 };

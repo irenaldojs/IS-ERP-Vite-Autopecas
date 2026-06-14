@@ -24,13 +24,7 @@ import { SavedBudgetsModal } from "@/components/ui/SavedBudgetsModal";
 import { SaveBudgetModal } from "@/components/ui/SaveBudgetModal";
 import { SavePreVendaModal } from "@/components/ui/SavePreVendaModal";
 import { useAppStore } from "@/store/useAppStore";
-import {
-  produtos,
-  produtoGrupos,
-  produtoMarcas,
-  imagens,
-  produtoImagens,
-} from "../../../../mocks/products.mock";
+import { ProductService } from "@/services/product.service";
 
 import type { Orcamento as OrcamentoType, OrcamentoItem } from "@/types/sales.entities";
 
@@ -94,6 +88,7 @@ export default function Orcamento(props: Props) {
 
   const [currentProduct, setCurrentProduct] = useState<Product | undefined>(undefined);
   const [selectedItemCode, setSelectedItemCode] = useState<string | null>(null);
+  const [productImagesMap, setProductImagesMap] = useState<Record<string, string>>({});
   const inputIdRef = useRef<HTMLInputElement>(null);
   const addBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -185,28 +180,38 @@ export default function Orcamento(props: Props) {
     }
   }, [currentProduct]);
 
-  const handleSearchProduct = () => {
+  const handleSearchProduct = async () => {
     if (productSearchQuery.trim()) {
       const searchVal = productSearchQuery.trim();
-      const mockProd = produtos.find((p) => p.id.toString() === searchVal);
-      
-      if (mockProd) {
-        const grupo = produtoGrupos.find(g => g.id === mockProd.grupo_id);
-        const marca = produtoMarcas.find(m => m.id === mockProd.marca_id);
-        
-        const prod: Product = {
-          code: mockProd.id.toString(),
-          originalCode: mockProd.codigo_original,
-          reference: mockProd.referencia || "",
-          name: grupo?.descricao || "Produto Desconhecido",
-          brand: marca?.nome || "Sem Marca",
-          price: mockProd.preco,
-          stock: 10
-        };
-        setCurrentProduct(prod);
-      } else {
-        setCurrentProduct(undefined);
-        showToast("Produto não encontrado com este ID!", "error");
+      const prodId = parseInt(searchVal);
+      if (isNaN(prodId)) {
+        showToast("ID inválido!", "error");
+        return;
+      }
+      try {
+        const dbProd = await ProductService.buscarProduto(prodId);
+        if (dbProd) {
+          const mainImg = dbProd.imagens?.[0]?.caminho_imagem;
+          if (mainImg) {
+            setProductImagesMap((prev) => ({ ...prev, [dbProd.id!.toString()]: mainImg }));
+          }
+          const prod: Product = {
+            code: dbProd.id!.toString(),
+            originalCode: dbProd.codigo_original,
+            reference: dbProd.referencia || "",
+            name: dbProd.grupo_descricao || "Produto Desconhecido",
+            brand: dbProd.marca_nome || "Sem Marca",
+            price: dbProd.preco?.preco_venda || 0,
+            stock: dbProd.estoque?.[0]?.estoque_atual || 0
+          };
+          setCurrentProduct(prod);
+        } else {
+          setCurrentProduct(undefined);
+          showToast("Produto não encontrado com este ID!", "error");
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("Erro ao buscar produto!", "error");
       }
     } else {
       setCurrentProduct(undefined);
@@ -267,17 +272,19 @@ export default function Orcamento(props: Props) {
   };
 
   const handleAddProductFromModal = (prod: any) => {
-    const group = produtoGrupos.find(g => g.id === prod.grupo_id);
-    const brand = produtoMarcas.find(m => m.id === prod.marca_id);
+    const mainImg = prod.imagens?.[0]?.caminho_imagem;
+    if (mainImg) {
+      setProductImagesMap((prev) => ({ ...prev, [prod.id.toString()]: mainImg }));
+    }
     
     const productToAdd: Product = {
       code: prod.id.toString(),
       originalCode: prod.codigo_original,
       reference: prod.referencia || "",
-      name: group?.descricao || "Produto Desconhecido",
-      brand: brand?.nome || "Sem Marca",
-      price: prod.preco,
-      stock: 10
+      name: prod.grupo_descricao || "Produto Desconhecido",
+      brand: prod.marca_nome || "Sem Marca",
+      price: prod.preco?.preco_venda || 0,
+      stock: prod.estoque?.[0]?.estoque_atual || 0
     };
     
     setActiveSaleItems((prev: OrcamentoItem[]) => {
@@ -311,14 +318,9 @@ export default function Orcamento(props: Props) {
 
   // Helper to get product image
   const getProductImage = (code: string) => {
-    const prodId = parseInt(code);
-    if (isNaN(prodId)) return undefined;
-    const relation = produtoImagens.find((pi) => pi.produto_id === prodId);
-    if (relation) {
-      const img = imagens.find((im) => im.id === relation.imagem_id);
-      if (img) {
-        return img.caminho_imagem.startsWith("http") ? img.caminho_imagem : convertFileSrc(img.caminho_imagem);
-      }
+    const cachedImg = productImagesMap[code];
+    if (cachedImg) {
+      return cachedImg.startsWith("http") ? cachedImg : convertFileSrc(cachedImg);
     }
     return undefined;
   };

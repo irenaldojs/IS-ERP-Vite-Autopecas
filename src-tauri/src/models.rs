@@ -158,3 +158,17 @@ pub struct LogEntry {
     pub erro: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CarroMontadora {
+    pub id: Option<i64>,
+    pub nome: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CarroModelo {
+    pub id: Option<i64>,
+    pub montadora_id: i64,
+    pub nome: String,
+    pub montadora_nome: Option<String>,
+}
+

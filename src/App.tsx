@@ -36,6 +36,7 @@ import {
   Archive,
   Activity,
   Handshake,
+  Car,
 } from "lucide-react";
 import Orcamento from "@/module/vendas/tabs/Orcamento";
 import StatusVenda from "@/module/vendas/tabs/StatusVenda";
@@ -54,7 +55,7 @@ import Retorno from "@/module/garantia/tabs/Retorno";
 import CadastroProduto from "@/module/produto/tabs/CadastroProduto";
 import Categorias from "@/module/produto/tabs/Categorias";
 import Grupos from "@/module/produto/tabs/Grupos";
-import Fabricantes from "@/module/produto/tabs/Fabricantes";
+import Veiculos from "@/module/produto/tabs/Veiculos";
 import Auditoria from "@/module/gerencia/tabs/Auditoria";
 
 
@@ -438,10 +439,10 @@ function App() {
       component: <Grupos />,
     },
     {
-      id: "fabricantes",
-      label: "Fabricantes",
-      icon: Sliders,
-      component: <Fabricantes />,
+      id: "veiculos",
+      label: "Veículos",
+      icon: Car,
+      component: <Veiculos />,
     },
   ];
 

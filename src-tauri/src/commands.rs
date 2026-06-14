@@ -225,3 +225,134 @@ pub fn listar_logs(app_handle: AppHandle) -> Result<Vec<LogEntry>, String> {
 pub fn limpar_logs(app_handle: AppHandle) -> Result<(), String> {
     crate::db::limpar_logs(&app_handle)
 }
+
+#[tauri::command]
+pub fn criar_montadora(app_handle: AppHandle, nome: String) -> Result<i64, String> {
+    handle_db_op(&app_handle, "criar_montadora", Some("INSERT INTO carro_montadora"), || {
+        let conn = get_connection(&app_handle)?;
+        conn.execute(
+            "INSERT INTO carro_montadora (nome) VALUES (?1)",
+            params![nome],
+        )
+        .map_err(|e| e.to_string())?;
+        Ok(conn.last_insert_rowid())
+    })
+}
+
+#[tauri::command]
+pub fn listar_montadoras(app_handle: AppHandle) -> Result<Vec<CarroMontadora>, String> {
+    handle_db_op(&app_handle, "listar_montadoras", Some("SELECT FROM carro_montadora"), || {
+        let conn = get_connection(&app_handle)?;
+        let mut stmt = conn.prepare("SELECT id, nome FROM carro_montadora ORDER BY nome")
+            .map_err(|e| e.to_string())?;
+        
+        let rows = stmt.query_map([], |row| {
+            Ok(CarroMontadora {
+                id: Some(row.get(0)?),
+                nome: row.get(1)?,
+            })
+        })
+        .map_err(|e| e.to_string())?;
+
+        let mut list = Vec::new();
+        for r in rows {
+            list.push(r.map_err(|e| e.to_string())?);
+        }
+        Ok(list)
+    })
+}
+
+#[tauri::command]
+pub fn atualizar_montadora(app_handle: AppHandle, id: i64, nome: String) -> Result<(), String> {
+    handle_db_op(&app_handle, "atualizar_montadora", Some("UPDATE carro_montadora"), || {
+        let conn = get_connection(&app_handle)?;
+        conn.execute(
+            "UPDATE carro_montadora SET nome = ?1 WHERE id = ?2",
+            params![nome, id],
+        )
+        .map_err(|e| e.to_string())?;
+        Ok(())
+    })
+}
+
+#[tauri::command]
+pub fn deletar_montadora(app_handle: AppHandle, id: i64) -> Result<(), String> {
+    handle_db_op(&app_handle, "deletar_montadora", Some("DELETE FROM carro_montadora"), || {
+        let conn = get_connection(&app_handle)?;
+        conn.execute(
+            "DELETE FROM carro_montadora WHERE id = ?1",
+            params![id],
+        )
+        .map_err(|e| e.to_string())?;
+        Ok(())
+    })
+}
+
+#[tauri::command]
+pub fn criar_modelo(app_handle: AppHandle, montadora_id: i64, nome: String) -> Result<i64, String> {
+    handle_db_op(&app_handle, "criar_modelo", Some("INSERT INTO carro_modelo"), || {
+        let conn = get_connection(&app_handle)?;
+        conn.execute(
+            "INSERT INTO carro_modelo (montadora_id, nome) VALUES (?1, ?2)",
+            params![montadora_id, nome],
+        )
+        .map_err(|e| e.to_string())?;
+        Ok(conn.last_insert_rowid())
+    })
+}
+
+#[tauri::command]
+pub fn listar_modelos(app_handle: AppHandle) -> Result<Vec<CarroModelo>, String> {
+    handle_db_op(&app_handle, "listar_modelos", Some("SELECT FROM carro_modelo"), || {
+        let conn = get_connection(&app_handle)?;
+        let mut stmt = conn.prepare(
+            "SELECT m.id, m.montadora_id, m.nome, mon.nome as montadora_nome 
+             FROM carro_modelo m
+             JOIN carro_montadora mon ON m.montadora_id = mon.id
+             ORDER BY mon.nome, m.nome"
+        )
+        .map_err(|e| e.to_string())?;
+        
+        let rows = stmt.query_map([], |row| {
+            Ok(CarroModelo {
+                id: Some(row.get(0)?),
+                montadora_id: row.get(1)?,
+                nome: row.get(2)?,
+                montadora_nome: Some(row.get(3)?),
+            })
+        })
+        .map_err(|e| e.to_string())?;
+
+        let mut list = Vec::new();
+        for r in rows {
+            list.push(r.map_err(|e| e.to_string())?);
+        }
+        Ok(list)
+    })
+}
+
+#[tauri::command]
+pub fn atualizar_modelo(app_handle: AppHandle, id: i64, montadora_id: i64, nome: String) -> Result<(), String> {
+    handle_db_op(&app_handle, "atualizar_modelo", Some("UPDATE carro_modelo"), || {
+        let conn = get_connection(&app_handle)?;
+        conn.execute(
+            "UPDATE carro_modelo SET montadora_id = ?1, nome = ?2 WHERE id = ?3",
+            params![montadora_id, nome, id],
+        )
+        .map_err(|e| e.to_string())?;
+        Ok(())
+    })
+}
+
+#[tauri::command]
+pub fn deletar_modelo(app_handle: AppHandle, id: i64) -> Result<(), String> {
+    handle_db_op(&app_handle, "deletar_modelo", Some("DELETE FROM carro_modelo"), || {
+        let conn = get_connection(&app_handle)?;
+        conn.execute(
+            "DELETE FROM carro_modelo WHERE id = ?1",
+            params![id],
+        )
+        .map_err(|e| e.to_string())?;
+        Ok(())
+    })
+}

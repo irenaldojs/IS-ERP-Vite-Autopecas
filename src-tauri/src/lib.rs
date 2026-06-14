@@ -35,6 +35,14 @@ pub fn run() {
             commands::atualizar_fabricante,
             commands::listar_logs,
             commands::limpar_logs,
+            commands::criar_montadora,
+            commands::listar_montadoras,
+            commands::atualizar_montadora,
+            commands::deletar_montadora,
+            commands::criar_modelo,
+            commands::listar_modelos,
+            commands::atualizar_modelo,
+            commands::deletar_modelo,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
