@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Button } from "@fluentui/react-components";
+
 import { Search, Image, X, Plus, FileText, Car } from "lucide-react";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
 import { convertFileSrc } from '@tauri-apps/api/core';
 import {
-  carroModelos,
-  carroMontadoras,
-} from "../../../mocks/products.mock";
-import {
   Produto,
   ProdutoGrupo,
   CarroMontadora,
+  CarroModelo,
 } from "../../types/products.entities";
 import { ProductService } from "@/services/product.service";
 import AutocompleteInput from "./AutocompleteInput";
@@ -33,10 +31,33 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
 
   const [dbProducts, setDbProducts] = useState<Produto[]>([]);
   const [dbGroups, setDbGroups] = useState<ProdutoGrupo[]>([]);
+  const [dbMontadoras, setDbMontadoras] = useState<CarroMontadora[]>([]);
+  const [dbModelos, setDbModelos] = useState<CarroModelo[]>([]);
 
   const [selectedModalProduct, setSelectedModalProduct] = useState<any>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
+  const [listHeight, setListHeight] = useState(300);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      const calculated = Math.max(200, window.innerHeight * 0.9 - 520);
+      setListHeight(calculated);
+    };
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
+  // Scroll selected item into view
+  useEffect(() => {
+    if (!selectedModalProduct?.id) return;
+    const el = document.getElementById(`search-prod-row-${selectedModalProduct.id}`);
+    if (el && scrollContainerRef.current) {
+      el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  }, [selectedModalProduct?.id]);
 
   useEffect(() => {
     if (isOpen) {
@@ -50,12 +71,19 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
       setSelectedModalProduct(null);
       setCurrentImageIndex(0);
       setDbProducts([]);
+      
+      // Carregar dados atualizados do banco ao abrir o modal
+      ProductService.listarGrupos().then(setDbGroups).catch(console.error);
+      ProductService.listarMontadoras().then(setDbMontadoras).catch(console.error);
+      ProductService.listarModelos().then(setDbModelos).catch(console.error);
     }
   }, [isOpen, initialSearchMode]);
 
-  // Load groups on mount
+  // Load initial lists on mount
   useEffect(() => {
     ProductService.listarGrupos().then(setDbGroups).catch(console.error);
+    ProductService.listarMontadoras().then(setDbMontadoras).catch(console.error);
+    ProductService.listarModelos().then(setDbModelos).catch(console.error);
   }, []);
 
   // Fetch full details of the product when selected row changes to load specifications, applications, images
@@ -143,18 +171,22 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
     };
   }, [isOpen, isZoomModalOpen]);
 
-  const groupItems = dbGroups.map((g: ProdutoGrupo) => ({
-    id: g.id!.toString(),
-    label: g.descricao || "",
-  }));
+  const groupItems = useMemo(() => {
+    return dbGroups.map((g: ProdutoGrupo) => ({
+      id: g.id!.toString(),
+      label: g.descricao || "",
+    }));
+  }, [dbGroups]);
 
-  const vehicleItems = carroModelos.map((m: any) => {
-    const brand = carroMontadoras.find((b: any) => b.id === m.montadora_id);
-    return {
-      id: m.id.toString(),
-      label: brand ? `${brand.nome} ${m.nome}` : m.nome,
-    };
-  });
+  const vehicleItems = useMemo(() => {
+    return dbModelos.map((m: CarroModelo) => {
+      const brand = dbMontadoras.find((b: CarroMontadora) => b.id === m.montadora_id);
+      return {
+        id: m.id!.toString(),
+        label: brand ? `${brand.nome} ${m.nome}` : m.nome,
+      };
+    });
+  }, [dbModelos, dbMontadoras]);
 
   useEscapeKey(isOpen && !isZoomModalOpen, onClose);
   useEscapeKey(isZoomModalOpen, () => setIsZoomModalOpen(false));
@@ -239,28 +271,52 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
     setHasSearched(true);
 
     try {
+      // 1. Consulta ao banco (pesquisa rápida)
       const allProds = await ProductService.listarProdutos();
-      const filtered = [];
-      for (const prod of allProds) {
-        const matchesGroup = selectedGroupId ? prod.grupo_id === Number(selectedGroupId) : true;
-        let matchesVehicle = true;
-        if (selectedVehicleId) {
-          const targetModel = carroModelos.find((m) => m.id.toString() === selectedVehicleId);
-          if (!targetModel) {
-            matchesVehicle = false;
-          } else {
-            // Load full details for checking applications
+      
+      // 2. Filtra inicialmente pelo grupo
+      let groupFiltered = allProds;
+      if (selectedGroupId) {
+        groupFiltered = allProds.filter(p => p.grupo_id === Number(selectedGroupId));
+      }
+
+      // 3. Filtra pelo veículo apenas se o campo não estiver vazio
+      const typedVehicle = vehicleInputRef.current?.value?.trim() || "";
+      let finalFiltered = groupFiltered;
+
+      if (selectedVehicleId || typedVehicle) {
+        const tempFiltered = [];
+        for (const prod of groupFiltered) {
+          let matchesVehicle = false;
+
+          if (selectedVehicleId) {
+            const targetModel = dbModelos.find((m) => m.id!.toString() === selectedVehicleId);
+            if (targetModel) {
+              const fullProd = await ProductService.buscarProduto(prod.id!);
+              matchesVehicle = fullProd?.aplicacoes?.some((app: any) => 
+                app.montadora_id === targetModel.montadora_id &&
+                app.modelo.toLowerCase().includes(targetModel.nome.toLowerCase())
+              ) || false;
+            }
+          } else if (typedVehicle) {
+            const searchVal = typedVehicle.toLowerCase();
             const fullProd = await ProductService.buscarProduto(prod.id!);
-            matchesVehicle = fullProd?.aplicacoes?.some((app: any) => app.modelo === targetModel.nome) || false;
+            matchesVehicle = fullProd?.aplicacoes?.some((app: any) => 
+              app.modelo.toLowerCase().includes(searchVal) ||
+              dbMontadoras.find((m) => m.id === app.montadora_id)?.nome.toLowerCase().includes(searchVal)
+            ) || false;
+          }
+
+          if (matchesVehicle) {
+            tempFiltered.push(prod);
           }
         }
-        if (matchesGroup && matchesVehicle) {
-          filtered.push(prod);
-        }
+        finalFiltered = tempFiltered;
       }
-      setDbProducts(filtered);
-      if (filtered.length > 0) {
-        setSelectedModalProduct(filtered[0]);
+
+      setDbProducts(finalFiltered);
+      if (finalFiltered.length > 0) {
+        setSelectedModalProduct(finalFiltered[0]);
       } else {
         setSelectedModalProduct(null);
       }
@@ -277,14 +333,40 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
 
   const modalResults = dbProducts;
 
-  const activeSelectedProd = selectedModalProduct && modalResults.some((p: Produto) => p.id === selectedModalProduct.id)
-    ? selectedModalProduct
-    : modalResults[0] || null;
+  // Nunca esvazia a seleção se ainda houver itens na lista
+  const clearSelection = () => {
+    if (modalResults.length === 0) {
+      setSelectedModalProduct(null);
+      setCurrentImageIndex(0);
+    }
+  };
+
+  // Seleciona automaticamente o primeiro item quando os resultados mudam
+  // Usa ref para não reagir a mudanças de selectedModalProduct (evita loop)
+  const selectedModalProductRef = useRef<any>(null);
+  selectedModalProductRef.current = selectedModalProduct;
+
+  useEffect(() => {
+    if (modalResults.length > 0) {
+      const current = selectedModalProductRef.current;
+      const isStillInResults = current && modalResults.some((p: Produto) => p.id === current.id);
+      if (!isStillInResults) {
+        setSelectedModalProduct(modalResults[0]);
+        setCurrentImageIndex(0);
+      }
+    } else {
+      setSelectedModalProduct(null);
+      setCurrentImageIndex(0);
+    }
+  }, [modalResults]);
+
+  const activeSelectedProd = selectedModalProduct;
 
   const activeSelectedProductImages = activeSelectedProd
-    ? (activeSelectedProd.imagens || []).map((i: any) =>
-        i.caminho_imagem.startsWith("http") ? i.caminho_imagem : convertFileSrc(i.caminho_imagem)
-      )
+    ? (activeSelectedProd.imagens || []).map((i: any) => {
+        const urlStr = i.url || i.caminho_imagem || "";
+        return urlStr.startsWith("http") ? urlStr : convertFileSrc(urlStr);
+      })
     : [];
 
   // Keyboard navigation inside search results modal
@@ -361,10 +443,10 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
               <button
                 onClick={() => {
                   setSearchMode("id");
-                  setSelectedModalProduct(null);
-                  setCurrentImageIndex(0);
+                  clearSelection();
                   setSearchId("");
                   setHasSearched(false);
+                  setDbProducts([]);
                 }}
                 className={`px-3 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   searchMode === "id"
@@ -377,11 +459,11 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
               <button
                 onClick={() => {
                   setSearchMode("group_vehicle");
-                  setSelectedModalProduct(null);
-                  setCurrentImageIndex(0);
+                  clearSelection();
                   setSelectedGroupId("");
                   setSelectedVehicleId("");
                   setHasSearched(false);
+                  setDbProducts([]);
                 }}
                 className={`px-3 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   searchMode === "group_vehicle"
@@ -394,10 +476,10 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
               <button
                 onClick={() => {
                   setSearchMode("code");
-                  setSelectedModalProduct(null);
-                  setCurrentImageIndex(0);
+                  clearSelection();
                   setSearchCode("");
                   setHasSearched(false);
+                  setDbProducts([]);
                 }}
                 className={`px-3 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   searchMode === "code"
@@ -410,10 +492,10 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
               <button
                 onClick={() => {
                   setSearchMode("free");
-                  setSelectedModalProduct(null);
-                  setCurrentImageIndex(0);
+                  clearSelection();
                   setSearchFree("");
                   setHasSearched(false);
+                  setDbProducts([]);
                 }}
                 className={`px-3 py-1.5 rounded text-xs font-semibold transition-all cursor-pointer ${
                   searchMode === "free"
@@ -627,75 +709,72 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
         </div>
 
         {/* Results Table (Middle) */}
-        <div className="flex-grow overflow-y-auto min-h-0 bg-[var(--colorNeutralBackground1)]">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead className="sticky top-0 bg-[var(--colorNeutralBackground2)] z-10">
-              <tr className="border-b border-[var(--colorNeutralStroke1)] text-[var(--colorNeutralForeground2)] font-bold bg-[var(--colorNeutralBackground2)]">
-                <th className="py-2 px-3 pl-4">ID</th>
-                <th className="py-2 px-3">Código Original</th>
-                <th className="py-2 px-3">Grupo</th>
-                <th className="py-2 px-3">Marca</th>
-                <th className="py-2 px-3 text-right pr-6">Preço</th>
-                <th className="py-2 px-3 text-center w-28">Ação (Insert)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--colorNeutralStroke1)]/20">
-              {!hasSearched ? (
-                <tr>
-                  <td colSpan={6} className="p-10 text-center text-[var(--colorNeutralForeground3)]">
-                    Digite os termos de pesquisa e clique em Buscar ou pressione Enter.
-                  </td>
-                </tr>
-              ) : modalResults.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-10 text-center text-[var(--colorNeutralForeground3)]">
-                    Nenhum produto encontrado. Refine os filtros acima.
-                  </td>
-                </tr>
-              ) : (
-                modalResults.map((prod: Produto, idx: number) => {
-                  const isSelected = activeSelectedProd?.id === prod.id;
-                  return (
-                    <tr
-                      key={prod.id}
-                      id={`search-prod-row-${prod.id}`}
-                      onClick={() => {
-                        setSelectedModalProduct(prod);
-                        setCurrentImageIndex(0);
-                      }}
-                      onDoubleClick={() => {
-                        onAddProduct(prod);
-                      }}
-                      className={`hover:bg-[var(--colorSubtleBackgroundHover)] cursor-pointer transition-all ${
-                        isSelected
-                          ? "bg-[var(--colorSubtleBackgroundSelected)] font-semibold text-[var(--colorNeutralForeground1Selected)] shadow-inner"
-                          : idx % 2 === 0
-                          ? "bg-[var(--colorNeutralBackground1)]"
-                          : "bg-[var(--colorNeutralBackground2)]"
-                      }`}
-                    >
-                      <td className={`py-1.5 px-3 pl-4 font-mono text-[var(--colorNeutralForeground3)] border-l-4 ${isSelected ? "border-[var(--colorBrandStroke1)]" : "border-transparent"}`}>{prod.id}</td>
-                      <td className="py-1.5 px-3 font-semibold text-[var(--colorNeutralForeground1)]">{prod.codigo_original}</td>
-                      <td className="py-1.5 px-3 text-[var(--colorNeutralForeground2)]">{prod.grupo_descricao || "Sem Grupo"}</td>
-                      <td className="py-1.5 px-3 text-[var(--colorNeutralForeground3)]">{prod.marca_nome || "Sem Marca"}</td>
-                      <td className="py-1.5 px-3 text-right pr-6 font-bold text-[var(--colorNeutralForeground1)]">
-                        R$ {(prod.preco?.preco_venda || 0).toFixed(2)}
-                      </td>
-                      <td className="py-1.5 px-3 text-center" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          onClick={() => onAddProduct(prod)}
-                          appearance="primary"
-                          style={{ height: "24px", minWidth: "32px", padding: "0" }}
-                        >
-                          <Plus className="h-3.5 w-3.5" />
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+        <div className="flex-grow overflow-hidden bg-[var(--colorNeutralBackground1)] flex flex-col min-h-0 text-xs">
+          {/* Sticky Header */}
+          <div className="shrink-0 flex w-full items-center border-b border-[var(--colorNeutralStroke1)] bg-[var(--colorNeutralBackground2)] text-[var(--colorNeutralForeground2)] font-bold">
+            <span className="py-2 px-3 pl-4 w-16 shrink-0">ID</span>
+            <span className="py-2 px-3 w-32 shrink-0">Cód. Original</span>
+            <span className="py-2 px-3 grow shrink min-w-0">Descrição</span>
+            <span className="py-2 px-3 w-32 shrink-0">Marca</span>
+            <span className="py-2 px-3 text-right pr-6 w-24 shrink-0">Preço</span>
+            <span className="py-2 px-3 text-center w-24 shrink-0">Ação</span>
+          </div>
+
+          {/* Scrollable Body */}
+          {!hasSearched ? (
+            <div className="p-10 text-center text-[var(--colorNeutralForeground3)] w-full">
+              Digite os termos de pesquisa e clique em Buscar ou pressione Enter.
+            </div>
+          ) : modalResults.length === 0 ? (
+            <div className="p-10 text-center text-[var(--colorNeutralForeground3)] w-full">
+              Nenhum produto encontrado. Refine os filtros acima.
+            </div>
+          ) : (
+            <div
+              ref={scrollContainerRef}
+              className="overflow-y-auto flex-grow min-h-0"
+              style={{ height: listHeight }}
+            >
+              {modalResults.map((prod) => {
+                const isSelected = activeSelectedProd?.id === prod.id;
+                return (
+                  <div
+                    key={prod.id}
+                    id={`search-prod-row-${prod.id}`}
+                    onClick={() => {
+                      setSelectedModalProduct(prod);
+                      setCurrentImageIndex(0);
+                    }}
+                    onDoubleClick={() => onAddProduct(prod)}
+                    className={`flex w-full items-center border-b border-[var(--colorNeutralStroke1)]/10 last:border-b-0 h-8 cursor-pointer transition-colors select-none border-l-4 ${
+                      isSelected
+                        ? "bg-[var(--colorBrandBackground2)] border-l-[var(--colorBrandStroke1)] text-[var(--colorBrandForeground2)] outline outline-1 outline-white/40 outline-offset-[-1px]"
+                        : "border-l-transparent hover:bg-[var(--colorSubtleBackgroundHover)]"
+                    }`}
+                  >
+                    <span className="py-1 px-3 pl-3 font-mono text-[var(--colorNeutralForeground3)] truncate w-16 shrink-0">{prod.id}</span>
+                    <span className="py-1 px-3 font-semibold text-[var(--colorNeutralForeground1)] truncate w-32 shrink-0" title={prod.codigo_original}>{prod.codigo_original}</span>
+                    <span className="py-1 px-3 text-[var(--colorNeutralForeground2)] truncate grow shrink min-w-0" title={`${prod.grupo_descricao || "Sem Grupo"}${prod.referencia ? ` - ${prod.referencia}` : ""}`}>
+                      {prod.grupo_descricao || "Sem Grupo"}{prod.referencia ? ` - ${prod.referencia}` : ""}
+                    </span>
+                    <span className="py-1 px-3 text-[var(--colorNeutralForeground3)] truncate w-32 shrink-0" title={prod.marca_nome}>{prod.marca_nome || "Sem Marca"}</span>
+                    <span className="py-1 px-3 text-right pr-6 font-bold text-[var(--colorNeutralForeground1)] truncate w-24 shrink-0">
+                      R$ {(prod.preco?.preco_venda || 0).toFixed(2)}
+                    </span>
+                    <span className="py-1 px-3 text-center w-24 shrink-0 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        onClick={() => onAddProduct(prod)}
+                        appearance="primary"
+                        style={{ height: "24px", minWidth: "32px", padding: "0" }}
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                      </Button>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Specifications & Applications grids (Bottom) */}
@@ -756,7 +835,7 @@ export function ProductSearchModal({ isOpen, onClose, onAddProduct, initialSearc
               {activeSelectedProd ? (
                 (() => {
                   const applications = (activeSelectedProd.aplicacoes || []).map((app: any) => {
-                    const brand = carroMontadoras.find((b: CarroMontadora) => b.id === app.montadora_id);
+                    const brand = dbMontadoras.find((b: CarroMontadora) => b.id === app.montadora_id);
                     return {
                       brandName: brand ? brand.nome : "Outros",
                       modelo: app.modelo,

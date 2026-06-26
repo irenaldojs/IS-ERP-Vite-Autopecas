@@ -56,6 +56,7 @@ import CadastroProduto from "@/module/produto/tabs/CadastroProduto";
 import Categorias from "@/module/produto/tabs/Categorias";
 import Grupos from "@/module/produto/tabs/Grupos";
 import Veiculos from "@/module/produto/tabs/Veiculos";
+import ImportarProdutos from "@/module/produto/tabs/ImportarProdutos";
 import Auditoria from "@/module/gerencia/tabs/Auditoria";
 
 
@@ -443,6 +444,12 @@ function App() {
       label: "Veículos",
       icon: Car,
       component: <Veiculos />,
+    },
+    {
+      id: "importar-produtos",
+      label: "Importar JSON",
+      icon: FileUp,
+      component: <ImportarProdutos />,
     },
   ];
 

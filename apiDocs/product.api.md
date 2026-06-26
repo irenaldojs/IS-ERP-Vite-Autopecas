@@ -17,8 +17,8 @@ Cria um produto completo com dados de preço, estoque, especificações, referê
 {
   "produto": {
     "codigo": "MTR-1002",
-    "descricao": "Filtro de Óleo Gol 1.0",
-    "descricao_complementar": "Filtro de óleo lubrificante de motor",
+    "descricao": "Gol / Fox",
+    "descricao_complementar": "VW 508",
     "grupo_id": 1,
     "marca_id": 1,
     "codigo_original": "030115561A",

@@ -7,49 +7,59 @@ fn process_and_save_image(
     app_handle: &tauri::AppHandle,
     produto_id: i64,
     image_index: usize,
-    caminho_imagem: &str,
+    url: &str,
 ) -> Result<String, String> {
-    if !caminho_imagem.starts_with("http://") && !caminho_imagem.starts_with("https://") {
-        if let Some(pos) = caminho_imagem.find("images/products/") {
-            return Ok(caminho_imagem[pos..].to_string());
+    if !url.starts_with("http://") && !url.starts_with("https://") {
+        if let Some(pos) = url.find("images/products/") {
+            return Ok(url[pos..].to_string());
         }
-        return Ok(caminho_imagem.to_string());
+        return Ok(url.to_string());
     }
 
-    let client = reqwest::blocking::Client::builder()
-        .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-        .build()
-        .map_err(|e| e.to_string())?;
-    
-    let bytes = client.get(caminho_imagem)
-        .send()
-        .map_err(|e| e.to_string())?
-        .bytes()
-        .map_err(|e| e.to_string())?;
+    let try_process = || -> Result<String, String> {
+        let client = reqwest::blocking::Client::builder()
+            .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+            .build()
+            .map_err(|e| e.to_string())?;
+        
+        let bytes = client.get(url)
+            .send()
+            .map_err(|e| e.to_string())?
+            .bytes()
+            .map_err(|e| e.to_string())?;
 
-    let img = image::load_from_memory(&bytes).map_err(|e| e.to_string())?;
+        let img = image::load_from_memory(&bytes).map_err(|e| e.to_string())?;
 
-    let img_150 = img.resize_exact(150, 150, image::imageops::FilterType::Lanczos3);
-    let img_600 = img.resize_exact(600, 600, image::imageops::FilterType::Lanczos3);
+        let img_150 = img.resize_exact(150, 150, image::imageops::FilterType::Lanczos3);
+        let img_600 = img.resize_exact(600, 600, image::imageops::FilterType::Lanczos3);
 
-    let app_data_dir = app_handle
-        .path()
-        .app_data_dir()
-        .map_err(|e| e.to_string())?;
-    
-    let product_dir = app_data_dir.join("images").join("products").join(produto_id.to_string());
-    std::fs::create_dir_all(&product_dir).map_err(|e| e.to_string())?;
+        let app_data_dir = app_handle
+            .path()
+            .app_data_dir()
+            .map_err(|e| e.to_string())?;
+        
+        let product_dir = app_data_dir.join("images").join("products").join(produto_id.to_string());
+        std::fs::create_dir_all(&product_dir).map_err(|e| e.to_string())?;
 
-    let filename_150 = format!("{}_150_150.webP", image_index);
-    let filename_600 = format!("{}_600_600.webP", image_index);
+        let filename_150 = format!("{}_150_150.webP", image_index);
+        let filename_600 = format!("{}_600_600.webP", image_index);
 
-    let path_150 = product_dir.join(&filename_150);
-    let path_600 = product_dir.join(&filename_600);
+        let path_150 = product_dir.join(&filename_150);
+        let path_600 = product_dir.join(&filename_600);
 
-    img_150.save_with_format(&path_150, image::ImageFormat::WebP).map_err(|e| e.to_string())?;
-    img_600.save_with_format(&path_600, image::ImageFormat::WebP).map_err(|e| e.to_string())?;
+        img_150.save_with_format(&path_150, image::ImageFormat::WebP).map_err(|e| e.to_string())?;
+        img_600.save_with_format(&path_600, image::ImageFormat::WebP).map_err(|e| e.to_string())?;
 
-    Ok(format!("images/products/{}/{}", produto_id, filename_600))
+        Ok(format!("images/products/{}/{}", produto_id, filename_600))
+    };
+
+    match try_process() {
+        Ok(saved_path) => Ok(saved_path),
+        Err(e) => {
+            eprintln!("Aviso: Falha ao baixar/processar imagem '{}'. Mantendo URL original. Erro: {}", url, e);
+            Ok(url.to_string())
+        }
+    }
 }
 
 pub struct ProductRepository;
@@ -182,9 +192,26 @@ impl ProductRepository {
         // 6. Inserir Especificações
         if let Some(specs) = produto.especificacoes {
             for spec in specs {
+                let mut tipo_id = spec.tipo_id;
+                if let Some(ref tipo_spec_name) = spec.tipo_especificacao {
+                    tipo_id = match tx.query_row(
+                        "SELECT id FROM produto_tipo_especificacao WHERE tipo_spec = ?1",
+                        params![tipo_spec_name],
+                        |row| row.get(0),
+                    ) {
+                        Ok(id) => id,
+                        Err(_) => {
+                            tx.execute(
+                                "INSERT INTO produto_tipo_especificacao (tipo_spec) VALUES (?1)",
+                                params![tipo_spec_name],
+                            ).map_err(|e| e.to_string())?;
+                            tx.last_insert_rowid()
+                        }
+                    };
+                }
                 tx.execute(
                     "INSERT INTO produto_especificacao (produto_id, tipo_id, especificacao) VALUES (?1, ?2, ?3)",
-                    params![produto_id, spec.tipo_id, spec.especificacao],
+                    params![produto_id, tipo_id, spec.especificacao],
                 ).map_err(|e| e.to_string())?;
             }
         }
@@ -215,10 +242,10 @@ impl ProductRepository {
         if let Some(imgs) = produto.imagens {
             for (idx, img) in imgs.into_iter().enumerate() {
                 let image_index = idx + 1;
-                let saved_path = process_and_save_image(app_handle, produto_id, image_index, &img.caminho_imagem)?;
+                let saved_path = process_and_save_image(app_handle, produto_id, image_index, &img.url)?;
 
                 tx.execute(
-                    "INSERT INTO imagem (caminho_imagem) VALUES (?1)",
+                    "INSERT INTO imagem (url) VALUES (?1)",
                     params![saved_path],
                 ).map_err(|e| e.to_string())?;
                 let img_id = tx.last_insert_rowid();
@@ -356,9 +383,26 @@ impl ProductRepository {
         tx.execute("DELETE FROM produto_especificacao WHERE produto_id = ?1", params![id]).map_err(|e| e.to_string())?;
         if let Some(specs) = produto.especificacoes {
             for spec in specs {
+                let mut tipo_id = spec.tipo_id;
+                if let Some(ref tipo_spec_name) = spec.tipo_especificacao {
+                    tipo_id = match tx.query_row(
+                        "SELECT id FROM produto_tipo_especificacao WHERE tipo_spec = ?1",
+                        params![tipo_spec_name],
+                        |row| row.get(0),
+                    ) {
+                        Ok(id) => id,
+                        Err(_) => {
+                            tx.execute(
+                                "INSERT INTO produto_tipo_especificacao (tipo_spec) VALUES (?1)",
+                                params![tipo_spec_name],
+                            ).map_err(|e| e.to_string())?;
+                            tx.last_insert_rowid()
+                        }
+                    };
+                }
                 tx.execute(
                     "INSERT INTO produto_especificacao (produto_id, tipo_id, especificacao) VALUES (?1, ?2, ?3)",
-                    params![id, spec.tipo_id, spec.especificacao],
+                    params![id, tipo_id, spec.especificacao],
                 ).map_err(|e| e.to_string())?;
             }
         }
@@ -411,16 +455,16 @@ impl ProductRepository {
         if let Some(imgs) = produto.imagens {
             for (idx, img) in imgs.into_iter().enumerate() {
                 let image_index = idx + 1;
-                let saved_path = process_and_save_image(app_handle, id, image_index, &img.caminho_imagem)?;
+                let saved_path = process_and_save_image(app_handle, id, image_index, &img.url)?;
 
                 let img_id: i64 = match tx.query_row(
-                    "SELECT id FROM imagem WHERE caminho_imagem = ?1",
+                    "SELECT id FROM imagem WHERE url = ?1",
                     params![saved_path],
                     |row| row.get(0),
                 ) {
                     Ok(img_id) => img_id,
                     Err(_) => {
-                        tx.execute("INSERT INTO imagem (caminho_imagem) VALUES (?1)", params![saved_path])
+                        tx.execute("INSERT INTO imagem (url) VALUES (?1)", params![saved_path])
                             .map_err(|e| e.to_string())?;
                         tx.last_insert_rowid()
                     }
@@ -714,7 +758,7 @@ impl ProductRepository {
         // Carregar imagens
         let mut img_stmt = conn
             .prepare(
-                "SELECT i.id, i.caminho_imagem
+                "SELECT i.id, i.url
                  FROM produto_imagem pi
                  JOIN imagem i ON pi.imagem_id = i.id
                  WHERE pi.produto_id = ?1",
@@ -732,7 +776,7 @@ impl ProductRepository {
                 };
                 Ok(Imagem {
                     id: Some(row.get(0)?),
-                    caminho_imagem: resolved_path,
+                    url: resolved_path,
                 })
             })
             .map_err(|e| e.to_string())?;

@@ -191,7 +191,7 @@ export default function Orcamento(props: Props) {
       try {
         const dbProd = await ProductService.buscarProduto(prodId);
         if (dbProd) {
-          const mainImg = dbProd.imagens?.[0]?.caminho_imagem;
+          const mainImg = dbProd.imagens?.[0]?.url || dbProd.imagens?.[0]?.caminho_imagem;
           if (mainImg) {
             setProductImagesMap((prev) => ({ ...prev, [dbProd.id!.toString()]: mainImg }));
           }
@@ -272,7 +272,7 @@ export default function Orcamento(props: Props) {
   };
 
   const handleAddProductFromModal = (prod: any) => {
-    const mainImg = prod.imagens?.[0]?.caminho_imagem;
+    const mainImg = prod.imagens?.[0]?.url || prod.imagens?.[0]?.caminho_imagem;
     if (mainImg) {
       setProductImagesMap((prev) => ({ ...prev, [prod.id.toString()]: mainImg }));
     }

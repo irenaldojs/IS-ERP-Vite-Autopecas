@@ -157,7 +157,7 @@ export default function CadastroProduto() {
 
   // Estados do Formulário
   const [showForm, setShowForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<"dados" | "aplicacoes" | "imagens">("dados");
+  const [activeTab, setActiveTab] = useState<"dados" | "aplicacoes" | "especificacoes" | "imagens">("dados");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [codigo, setCodigo] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -197,6 +197,12 @@ export default function CadastroProduto() {
   const [veiculoAnoFinal, setVeiculoAnoFinal] = useState("");
   const [veiculoDetalhes, setVeiculoDetalhes] = useState("");
   const [veiculoEditingIndex, setVeiculoEditingIndex] = useState<number | null>(null);
+
+  // Aba Especificações
+  const [especificacoes, setEspecificacoes] = useState<any[]>([]);
+  const [novaSpecTipo, setNovaSpecTipo] = useState("");
+  const [novaSpecValor, setNovaSpecValor] = useState("");
+  const [specEditingIndex, setSpecEditingIndex] = useState<number | null>(null);
 
   // Aba Imagens
   const [imagens, setImagens] = useState<Imagem[]>([]);
@@ -257,6 +263,10 @@ export default function CadastroProduto() {
     setVeiculoAnoFinal("");
     setVeiculoDetalhes("");
     setVeiculoEditingIndex(null);
+    setEspecificacoes([]);
+    setNovaSpecTipo("");
+    setNovaSpecValor("");
+    setSpecEditingIndex(null);
     setImagens([]);
     setNovaImagemUrl("");
   };
@@ -322,9 +332,9 @@ export default function CadastroProduto() {
       alert("Por favor, insira a URL da imagem.");
       return;
     }
-    const novaImg: Imagem = {
-      id: 0,
-      caminho_imagem: novaImagemUrl.trim(),
+    const novaImg: any = {
+      id: "0",
+      url: novaImagemUrl.trim(),
     };
     setImagens([...imagens, novaImg]);
     setNovaImagemUrl("");
@@ -371,6 +381,7 @@ export default function CadastroProduto() {
       // Campos das Abas adicionais
       setAplicacaoListaId(p.aplicacao_lista_id ? String(p.aplicacao_lista_id) : "");
       setAplicacoes(p.aplicacoes || []);
+      setEspecificacoes(p.especificacoes || []);
       setImagens(p.imagens || []);
       
       setShowForm(true);
@@ -438,6 +449,7 @@ export default function CadastroProduto() {
       },
       aplicacao_lista_id: aplicacaoListaId ? Number(aplicacaoListaId) : null,
       aplicacoes: aplicacoes.length > 0 ? aplicacoes : null,
+      especificacoes: especificacoes.length > 0 ? especificacoes : null,
       imagens: imagens.length > 0 ? imagens : null,
     };
 
@@ -509,6 +521,17 @@ export default function CadastroProduto() {
                     }`}
                   >
                     Aplicações / Veículos ({aplicacoes.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("especificacoes")}
+                    className={`px-3 py-1.5 text-xs font-semibold border-b-2 transition-colors cursor-pointer ${
+                      activeTab === "especificacoes"
+                        ? "border-indigo-500 text-indigo-600 dark:text-indigo-400"
+                        : "border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-350"
+                    }`}
+                  >
+                    Especificações ({especificacoes.length})
                   </button>
                   <button
                     type="button"
@@ -868,6 +891,139 @@ export default function CadastroProduto() {
                 </div>
               )}
 
+              {/* Aba: Especificações Técnicas */}
+              {activeTab === "especificacoes" && (
+                <div className="space-y-3">
+                  <div className="bg-slate-50 dark:bg-slate-900/20 p-3 rounded-lg border border-slate-200/60 dark:border-slate-800 space-y-2.5">
+                    <h4 className="font-semibold text-slate-700 dark:text-slate-300 text-xs">Adicionar Especificação Técnica</h4>
+                    <div className="grid grid-cols-12 gap-2 items-end">
+                      <div className="col-span-12 md:col-span-5 space-y-1">
+                        <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Tipo (Ex: Diâmetro, Material) *</label>
+                        <input
+                          type="text"
+                          value={novaSpecTipo}
+                          onChange={(e) => setNovaSpecTipo(e.target.value)}
+                          className="w-full px-2 py-1 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-80 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm text-xs"
+                          placeholder="Diâmetro, Comprimento, Voltagem..."
+                        />
+                      </div>
+                      <div className="col-span-12 md:col-span-5 space-y-1">
+                        <label className="text-[9px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Valor *</label>
+                        <input
+                          type="text"
+                          value={novaSpecValor}
+                          onChange={(e) => setNovaSpecValor(e.target.value)}
+                          className="w-full px-2 py-1 bg-white dark:bg-[#070a13] border border-slate-200 dark:border-slate-80 rounded-lg text-slate-700 dark:text-slate-300 focus:outline-none focus:border-indigo-500 shadow-sm text-xs"
+                          placeholder="32mm, 12V, Aço..."
+                        />
+                      </div>
+                      <div className="col-span-12 md:col-span-2 flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!novaSpecTipo.trim() || !novaSpecValor.trim()) {
+                              alert("Por favor, preencha tipo e valor.");
+                              return;
+                            }
+                            const novaSpec = {
+                              id: 0,
+                              produto_id: editingId || 0,
+                              tipo_id: 0,
+                              especificacao: novaSpecValor.trim(),
+                              tipo_especificacao: novaSpecTipo.trim()
+                            };
+                            if (specEditingIndex !== null) {
+                              const novasSpecs = [...especificacoes];
+                              novasSpecs[specEditingIndex] = novaSpec;
+                              setEspecificacoes(novasSpecs);
+                              setSpecEditingIndex(null);
+                            } else {
+                              setEspecificacoes([...especificacoes, novaSpec]);
+                            }
+                            setNovaSpecTipo("");
+                            setNovaSpecValor("");
+                          }}
+                          className="flex-1 px-1.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-[10px] shadow-sm transition-colors cursor-pointer text-center whitespace-nowrap"
+                        >
+                          {specEditingIndex !== null ? "Salvar" : "Adicionar"}
+                        </button>
+                        {specEditingIndex !== null && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSpecEditingIndex(null);
+                              setNovaSpecTipo("");
+                              setNovaSpecValor("");
+                            }}
+                            className="flex-1 px-1.5 py-1 bg-slate-200 hover:bg-slate-350 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-bold text-[10px] shadow-sm transition-colors cursor-pointer text-center"
+                          >
+                            Cancelar
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-slate-700 dark:text-slate-300 text-xs">Especificações Cadastradas ({especificacoes.length})</h4>
+                    {especificacoes.length === 0 ? (
+                      <div className="text-center p-4 border border-dashed border-slate-200 dark:border-slate-800 rounded-lg text-slate-550 text-[10px]">
+                        Nenhuma especificação cadastrada.
+                      </div>
+                    ) : (
+                      <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-y-auto max-h-52 scrollbar-thin">
+                        <table className="w-full text-left border-collapse text-xs table-auto">
+                          <thead className="sticky top-0 bg-slate-50 dark:bg-[#070a13] z-10 shadow-sm">
+                            <tr className="border-b border-slate-200 dark:border-slate-80 text-slate-550 dark:text-slate-500">
+                              <th className="py-1.5 px-2.5 font-semibold text-[9px] uppercase tracking-wider">Tipo</th>
+                              <th className="py-1.5 px-2.5 font-semibold text-[9px] uppercase tracking-wider">Valor / Especificação</th>
+                              <th className="py-1.5 px-2.5 font-semibold text-[9px] uppercase tracking-wider text-right">Ações</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100 dark:divide-slate-80/30">
+                            {especificacoes.map((spec, index) => (
+                              <tr key={index} className="hover:bg-slate-50 dark:hover:bg-slate-900/10">
+                                <td className="py-1.5 px-2.5 font-semibold text-slate-750 dark:text-slate-300">
+                                  {spec.tipo_especificacao || `ID: ${spec.tipo_id}`}
+                                </td>
+                                <td className="py-1.5 px-2.5 text-slate-700 dark:text-slate-300">{spec.especificacao}</td>
+                                <td className="py-1.5 px-2.5 text-right">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setNovaSpecTipo(spec.tipo_especificacao || "");
+                                      setNovaSpecValor(spec.especificacao);
+                                      setSpecEditingIndex(index);
+                                    }}
+                                    className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-500 font-bold px-1.5 py-0.5 cursor-pointer mr-1"
+                                  >
+                                    Editar
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEspecificacoes(especificacoes.filter((_, i) => i !== index));
+                                      if (specEditingIndex === index) {
+                                        setSpecEditingIndex(null);
+                                        setNovaSpecTipo("");
+                                        setNovaSpecValor("");
+                                      }
+                                    }}
+                                    className="text-rose-600 hover:text-rose-500 dark:text-rose-500 font-bold px-1.5 py-0.5 cursor-pointer"
+                                  >
+                                    Remover
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Aba: Imagens */}
               {activeTab === "imagens" && (
                 <div className="space-y-4">
@@ -906,9 +1062,10 @@ export default function CadastroProduto() {
                     ) : (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                         {imagens.map((img, index) => {
-                          const imgSrc = img.caminho_imagem.startsWith("http")
-                            ? img.caminho_imagem
-                            : convertFileSrc(img.caminho_imagem.replace("_600_600.webP", "_150_150.webP"));
+                          const imgUrl = img.url || img.caminho_imagem || "";
+                          const imgSrc = imgUrl.startsWith("http")
+                            ? imgUrl
+                            : convertFileSrc(imgUrl.replace("_600_600.webP", "_150_150.webP"));
                           return (
                             <div key={index} className="relative group border border-slate-200 dark:border-slate-80 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 p-2 flex flex-col items-center">
                               <img
@@ -919,8 +1076,8 @@ export default function CadastroProduto() {
                                   (e.target as HTMLImageElement).src = "https://placehold.co/150x100?text=Sem+Imagem";
                                 }}
                               />
-                              <div className="w-full text-center truncate text-[9px] text-slate-450 dark:text-slate-500 mb-1 px-1" title={img.caminho_imagem}>
-                                {img.caminho_imagem.substring(img.caminho_imagem.lastIndexOf('/') + 1)}
+                              <div className="w-full text-center truncate text-[9px] text-slate-450 dark:text-slate-500 mb-1 px-1" title={imgUrl}>
+                                {imgUrl.substring(imgUrl.lastIndexOf('/') + 1)}
                               </div>
                               <button
                                 type="button"

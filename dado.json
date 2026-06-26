@@ -1,0 +1,31 @@
+[{ "codigo_fabricante": "2301", "referencia": "Sensor de Nível de Combustível",
+"codigo_barras": "7898568761203", "categoria": "Sistema de Combustível",
+"grupo": "Sensor de Nível de Combustível", "fabricante": "DS", "aplicacoes": [
+["Dodge", "Vision", 2015, null, "1.6 4Cil 16v Gasolina"], ["Fiat", "Argo", 2017,
+null, "1.8 4Cil 16v Flex E-Tor.Q"], ["Fiat", "Cronos", 2017, null, "1.8 4Cil 16v
+Flex E-Tor.Q"], ["Fiat", "Grand Siena", 2016, 2021, "1.0 4Cil 8v Flex"],
+["Fiat", "Grand Siena", 2012, 2021, "1.4 4Cil 8v Flex"], ["Fiat",
+"Idea", 2006, 2016, "1.4 4Cil 8v Flex"], ["Fiat", "Idea", 2010, 2016,
+"1.6 4Cil 16v Flex E-Tor.Q"], ["Fiat", "Idea", 2010, 2016, "1.8 4Cil 16v Flex
+E-Tor.Q"], ["Fiat", "Idea", 2006, 2010, "1.8 4Cil 8v Flex"], ["Fiat", "Palio
+Weekend", 2009, 2010, "1.4 4Cil 8v Flex"], ["Fiat", "Palio Weekend", 2013, null,
+"1.4 4Cil 8v Flex"], ["Fiat", "Palio", 2007, 2017, "1.0 4Cil 8v Flex"], ["Fiat",
+"Palio", 2007, 2015, "1.4 4Cil 8v Flex"], ["Fiat", "Punto", 2007, 2008, "1.4 8v
+MPI Flex"], ["Fiat", "Punto", 2007, 2008, "1.8 8v MPI Flex"], ["Fiat",
+"Siena", 2006, null, "1.0 4Cil 8v MPI Flex"], ["Fiat", "Siena", 2006, null,
+"1.4 8v MPI Flex"], ["Fiat", "Siena", 2006, null, "1.8 8v MPI Flex"], ["Fiat",
+"Strada", 2013, null, "1.4 8v MPI Flex"], ["Fiat", "Uno", 2010, null,
+"Vivace/Way"] ], "referencias_cruzadas": [ ["Bosch", "F000TE0086"], ["Bosch",
+"1587410912"], ["Bosch", "0580314424"], ["Bosch", "F000TE0080"], ["Bosch",
+"F000TE0081"], ["Bosch", "0580314383"], ["Bosch", "F000TE0085"], ["Bosch",
+"1587410688"], ["Bosch", "F000TE106J"], ["DODGE", "51807830"], ["DODGE",
+"51795398"], ["DODGE", "51880112"], ["FIAT", "51849807"], ["FIAT", "51795399"],
+["FIAT", "51883556"], ["FIAT", "51851861"], ["FIAT", "7086497"], ["FIAT",
+"51880112"], ["FIAT", "51795398"], ["FIAT", "51807830"], ["INDEBRÁS",
+"0116110PR"], ["INDEBRÁS", "0114520PR"], ["Marelli", "MAM00787"], ["TSA",
+"T010129"], ["VDO", "221040056R"], ["VP", "8688"] ], "especificacoes_tecnicas":
+[ ["Sistema", "Bosch"], ["Tecnologia", "Resistivo"], ["Cheio", "63 ± 4 ohms"],
+["Vazio", "363 ± 4 ohms"] ], "imagens": [
+"https://www.ds.ind.br/cache/media/gallery/94/c7/bb/1-sensor-de-nivel-de-combustivel-2305-826-image-800x800.jpg"
+] }
+]

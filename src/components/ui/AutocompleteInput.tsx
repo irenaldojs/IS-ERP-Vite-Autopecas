@@ -12,6 +12,7 @@ export interface AutocompleteInputProps {
   nextInputRef?: React.RefObject<HTMLInputElement | null>;
   onSubmit?: () => void;
   resetTrigger?: number;
+  onInputChange?: (value: string) => void;
 }
 
 export default function AutocompleteInput({
@@ -25,6 +26,7 @@ export default function AutocompleteInput({
   nextInputRef,
   onSubmit,
   resetTrigger,
+  onInputChange,
 }: AutocompleteInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -37,9 +39,18 @@ export default function AutocompleteInput({
       const match = items.find((item) => item.id === selectedValue);
       if (match) {
         setInputValue(match.label);
+        if (onInputChange) {
+          onInputChange(match.label);
+        }
       }
     } else {
-      setInputValue("");
+      // Apenas limpa se o input não estiver focado (indica reset programático externo, não digitação ativa)
+      if (document.activeElement !== containerRef.current?.querySelector("input")) {
+        setInputValue("");
+        if (onInputChange) {
+          onInputChange("");
+        }
+      }
     }
   }, [selectedValue, items]);
 
@@ -48,6 +59,9 @@ export default function AutocompleteInput({
     if (resetTrigger && resetTrigger > 0) {
       setInputValue("");
       onClear();
+      if (onInputChange) {
+        onInputChange("");
+      }
     }
   }, [resetTrigger]);
 
@@ -96,12 +110,15 @@ export default function AutocompleteInput({
       if (filteredItems[activeIndex]) {
         onSelect(filteredItems[activeIndex].id);
         setInputValue(filteredItems[activeIndex].label);
-        setIsOpen(false);
-        if (nextInputRef?.current) {
-          nextInputRef.current.focus();
-        } else if (onSubmit) {
-          onSubmit();
+        if (onInputChange) {
+          onInputChange(filteredItems[activeIndex].label);
         }
+      }
+      setIsOpen(false);
+      if (nextInputRef?.current) {
+        nextInputRef.current.focus();
+      } else if (onSubmit) {
+        onSubmit();
       }
     } else if (e.key === "Escape") {
       e.preventDefault();
@@ -112,6 +129,9 @@ export default function AutocompleteInput({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setInputValue(val);
+    if (onInputChange) {
+      onInputChange(val);
+    }
     if (val.trim() === "") {
       setIsOpen(false);
       onClear();
@@ -124,6 +144,9 @@ export default function AutocompleteInput({
   const handleSelectItem = (item: { id: string; label: string }) => {
     onSelect(item.id);
     setInputValue(item.label);
+    if (onInputChange) {
+      onInputChange(item.label);
+    }
     setIsOpen(false);
     if (nextInputRef?.current) {
       nextInputRef.current.focus();
@@ -156,6 +179,9 @@ export default function AutocompleteInput({
             onClick={() => {
               setInputValue("");
               onClear();
+              if (onInputChange) {
+                onInputChange("");
+              }
               setIsOpen(false);
             }}
             className="absolute right-2.5 top-2 text-[var(--colorNeutralForeground3)] hover:text-[var(--colorNeutralForeground1)] cursor-pointer"
